@@ -1,0 +1,20 @@
+.DS_Store
+noco.db
+
+# Runtime state
+data/logs/
+data/run/
+
+# NocoDB local metadata and smoke-test artifacts
+data/nocodb-meta/
+data/nocodb-meta-*/
+data/*.log
+
+# Rebuilt demo SQLite database files
+data/sqlite/*.sqlite
+data/sqlite/*.sqlite-shm
+data/sqlite/*.sqlite-wal
+
+# Local binaries / caches
+bin/nocodb
+scripts/__pycache__/

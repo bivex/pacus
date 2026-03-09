@@ -1,0 +1,48 @@
+2026-03-08
+
+Work Acts demo / SQLite + NocoDB + Print MVP
+
+1. Domain and data model
+- Focused the solution on work acts (Акты работ), not generic formal documents.
+- Added history-oriented structure with immutable revisions and printable artifacts.
+- Kept correction linkage between original and correction acts.
+
+2. SQLite schema
+- Added core schema for tenant, counterparty, contract, work_act, work_act_item,
+  work_act_revision, work_act_status_history, document_artifact, audit_event.
+- Added constraints, indexes, and triggers for status transitions and immutability.
+- Added NocoDB-oriented SQL views, including v_nocodb_print_links.
+
+3. Demo data
+- Added reusable demo seed data for multiple act states:
+  draft, sent, corrected, signed correction, cancelled.
+- Seed includes printable HTML artifact paths and audit/history examples.
+
+4. Print MVP
+- Added print artifacts under data/artifacts/.
+- Added print center at data/artifacts/index.html.
+- Added shared print styles in data/artifacts/print.css.
+- Added printable demo act HTML pages for seeded documents.
+- Added scripts/start_print_artifacts_server.sh.
+
+5. NocoDB setup
+- Connected the SQLite demo database to NocoDB.
+- Created and verified operator-facing grid views.
+- Added print-links surface through v_nocodb_print_links.
+- Synced the new SQL view into NocoDB and created Print Links grid view.
+
+6. One-click bootstrap
+- Added scripts/start_work_acts_demo.sh.
+- Script rebuilds demo SQLite DB, starts print server, starts NocoDB,
+  bootstraps auth/base/source on fresh meta storage, runs Meta Sync,
+  verifies print URLs, and opens ready pages.
+
+7. Runtime defaults
+- NocoDB default URL: http://127.0.0.1:1233/
+- Print center default URL: http://127.0.0.1:4000/
+- Default login: admin@local.test / Admin123!
+
+8. Validation
+- Verified the bootstrap flow on isolated test ports.
+- Verified the same flow on default ports 1233 and 4000.
+- Verified sample printable HTML artifact opens successfully.
