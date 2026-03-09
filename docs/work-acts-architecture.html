@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Архитектура хранения Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    :root { --text:#1f2937; --muted:#4b5563; --line:#d1d5db; --soft:#f3f4f6; --accent:#0f766e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: var(--text); background: #fff; }
+    main { max-width: 920px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.2; }
+    h1 { font-size: 26px; color: var(--accent); }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; margin: 8px 0 12px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+    th { background: var(--soft); text-align: left; }
+    .lead, .muted { color: var(--muted); }
+    .box { background: #fafafa; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.95em; }
+    @media print {
+      main { max-width: none; padding: 0; }
+      a { color: inherit; text-decoration: none; }
+      tr, img, .box { break-inside: avoid; }
+      thead { display: table-header-group; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Архитектура хранения Актов работ</h1>
+      <p class="lead">Документ описывает доменную модель, версионирование, хранение печатных HTML-артефактов и обязательные инварианты для системы формирования и хранения Актов выполненных работ / оказанных услуг.</p>
+    </header>
+
+    <section>
+      <h2>1. Цель</h2>
+      <p>Система должна хранить не только текущий акт, но и полную историю его содержания: какие данные входили в документ, какая версия была отправлена, какая распечатана и какая подписана.</p>
+      <div class="box">
+        <strong>Ключевой принцип:</strong> бизнес-данные акта храним структурировано в БД, а печатную форму конкретной версии сохраняем как неизменяемый HTML-артефакт.
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Какие факты о мире храним</h2>
+      <ul>
+        <li>Кто исполнитель, кто заказчик, по какому договору и за какой период сформирован акт.</li>
+        <li>Какие работы/услуги вошли в акт, в каком количестве, по какой цене и с какими налогами.</li>
+        <li>Какие версии акта существовали и чем они отличались.</li>
+        <li>Какая версия была отправлена, согласована, подписана или аннулирована.</li>
+        <li>Какой печатный HTML соответствовал каждой зафиксированной версии.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. Архитектурная модель</h2>
+      <table>
+        <thead>
+          <tr><th>Слой</th><th>Назначение</th><th>Что храним</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Доменный</td><td>Структурированные бизнес-данные</td><td><code>work_act</code>, <code>work_act_item</code>, <code>contract</code>, <code>counterparty</code></td></tr>
+          <tr><td>Версионный</td><td>История содержания</td><td><code>work_act_revision</code>, snapshot данных, номер версии, автор изменений</td></tr>
+          <tr><td>Артефактный</td><td>Печатная форма и воспроизводимость</td><td><code>document_artifact</code> с HTML/PDF, checksum, путь хранения, версия шаблона</td></tr>
+          <tr><td>Аудит</td><td>История действий и статусов</td><td><code>work_act_status_history</code>, <code>audit_event</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Основные сущности</h2>
+      <table>
+        <thead>
+          <tr><th>Сущность</th><th>Смысл</th><th>Ключевые поля</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>work_act</code></td><td>Бизнес-сущность акта</td><td>id, tenant_id, contract_id, source_act_id, act_number, act_date, period_from, period_to, status</td></tr>
+          <tr><td><code>work_act_item</code></td><td>Строка работ/услуг</td><td>act_id, description, unit, quantity, price, amount, vat_rate, vat_amount</td></tr>
+          <tr><td><code>work_act_revision</code></td><td>Зафиксированная версия содержания</td><td>act_id, revision_no, snapshot_json, created_at, created_by, html_artifact_id</td></tr>
+          <tr><td><code>document_artifact</code></td><td>Неизменяемый файл печатной формы</td><td>type, storage_path, checksum_sha256, content_type, size_bytes</td></tr>
+          <tr><td><code>work_act_status_history</code></td><td>История переходов статуса</td><td>from_status, to_status, changed_at, changed_by, reason</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Статусы акта</h2>
+      <p><code>draft</code> → <code>generated</code> → <code>sent</code> → <code>signed</code></p>
+      <p>Дополнительные статусы: <code>cancelled</code>, <code>corrected</code>. После <code>signed</code> содержимое версии нельзя менять; исправления оформляются новой юридически значимой сущностью.</p>
+    </section>
+
+    <section class="page-break">
+      <h2>6. История и версии</h2>
+      <h3>6.1 Что фиксирует ревизия</h3>
+      <ul>
+        <li>Полный snapshot содержимого акта на момент фиксации.</li>
+        <li>Номер версии <code>revision_no</code>.</li>
+        <li>Кто и когда создал версию.</li>
+        <li>Какой HTML-файл соответствует версии.</li>
+        <li>Какая версия была отправлена и какая подписана.</li>
+      </ul>
+      <h3>6.2 Почему нужен и snapshot, и HTML</h3>
+      <ul>
+        <li><strong>snapshot_json</strong> нужен для сравнения версий, аналитики и аудита.</li>
+        <li><strong>HTML-артефакт</strong> нужен для печати, отправки и точного воспроизведения вида документа.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Инварианты модели данных</h2>
+      <ol>
+        <li>У каждой таблицы есть явный первичный ключ.</li>
+        <li>У каждой версии акта уникальная пара <code>(act_id, revision_no)</code>.</li>
+        <li>У акта не более одной текущей черновой редакции.</li>
+        <li>У финальной версии обязателен <code>html_artifact_id</code>.</li>
+        <li>Подписанная версия и её артефакты неизменяемы.</li>
+        <li>Все связи выражены через внешние ключи.</li>
+        <li>Денежные поля хранятся в <code>DECIMAL</code>, не в <code>FLOAT</code>.</li>
+        <li>Время хранится в UTC.</li>
+        <li>Удаление подписанных актов через hard delete запрещено.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>8. Хранение HTML-артефактов</h2>
+      <p>HTML хранится как самостоятельный неизменяемый артефакт версии, а не как единственный источник данных.</p>
+      <div class="box">
+        Рекомендуемый путь хранения: <code>acts/{tenant_id}/{year}/{act_id}/rev-{revision_no}/act.html</code><br />
+        Дополнительно можно хранить: <code>act.pdf</code>, если нужен архив в фиксированном виде.
+      </div>
+      <p>Для каждого файла сохраняются: путь, тип контента, размер, SHA-256 checksum, версия шаблона и версия рендерера.</p>
+    </section>
+
+    <section>
+      <h2>9. Формирование печатной формы</h2>
+      <ul>
+        <li>Печатная форма генерируется на сервере из snapshot версии.</li>
+        <li>HTML должен быть статическим и независимым от SPA/UI-логики.</li>
+        <li>Для печати используется отдельный print CSS: формат A4, контролируемые page-break, повтор шапки таблиц.</li>
+        <li>Перегенерация подписанного документа поверх старого файла запрещена.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>10. Жизненный цикл</h2>
+      <ol>
+        <li>Создание акта и заполнение строк.</li>
+        <li>Фиксация версии <code>revision_no = 1</code>.</li>
+        <li>Генерация HTML и привязка артефакта к версии.</li>
+        <li>При правке создаётся новая версия, старая остаётся в истории.</li>
+        <li>При отправке фиксируется, какая именно версия ушла контрагенту.</li>
+        <li>При подписании версия становится immutable.</li>
+        <li>Если требуется исправление после подписи, создаётся новый акт, связанный с исходным через <code>source_act_id</code> или отдельную relation-модель.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>11. Вопросы, на которые обязана отвечать система</h2>
+      <ul>
+        <li>Как выглядел акт в конкретной версии?</li>
+        <li>Кто и когда изменил его содержание?</li>
+        <li>Какая версия была отправлена и какая подписана?</li>
+        <li>Какие строки изменились между версиями?</li>
+        <li>Какие акты не подписаны или требуют корректировки?</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>12. Рекомендация по следующему шагу</h2>
+      <p>Следующим документом стоит зафиксировать физическую схему БД: таблицы, ключи, ограничения, статусы, индексы и правила zero-downtime миграций для <code>work_act</code>, <code>work_act_revision</code> и <code>document_artifact</code>.</p>
+    </section>
+  </main>
+</body>
+</html>

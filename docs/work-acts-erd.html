@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERD для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #0f766e; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    pre { white-space: pre-wrap; border: 1px solid #d1d5db; background: #fafafa; padding: 12px; border-radius: 6px; }
+    .page-break { break-before: page; page-break-before: always; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ERD для Актов работ</h1>
+    <p>Документ фиксирует логические сущности, кратности связей и обязательные зависимости для модели актов, ревизий и печатных артефактов.</p>
+
+    <section>
+      <h2>1. Логическая карта связей</h2>
+      <pre>tenant 1 ── N counterparty
+tenant 1 ── N contract
+tenant 1 ── N work_act
+contract 1 ── N work_act
+counterparty 1 ── N work_act
+work_act 1 ── N work_act_item
+work_act 1 ── N work_act_revision
+work_act 0..1 ── N work_act (source_act_id для correction/replacement)
+work_act_revision 0..1 ── 1 document_artifact (HTML)
+work_act_revision 0..1 ── 1 document_artifact (PDF)
+work_act 1 ── N work_act_status_history
+tenant 1 ── N audit_event</pre>
+    </section>
+
+    <section>
+      <h2>2. Сущности и их роль</h2>
+      <table>
+        <thead><tr><th>Сущность</th><th>Роль</th><th>Ключевые идентификаторы</th></tr></thead>
+        <tbody>
+          <tr><td><code>tenant</code></td><td>Граница изоляции данных</td><td><code>id</code>, <code>code</code></td></tr>
+          <tr><td><code>counterparty</code></td><td>Заказчик/контрагент</td><td><code>id</code>, <code>tenant_id</code></td></tr>
+          <tr><td><code>contract</code></td><td>Основание выставления акта</td><td><code>id</code>, <code>counterparty_id</code></td></tr>
+          <tr><td><code>work_act</code></td><td>Документ верхнего уровня</td><td><code>id</code>, <code>act_number</code>, <code>source_act_id</code></td></tr>
+          <tr><td><code>work_act_item</code></td><td>Строка акта</td><td><code>id</code>, <code>act_id</code>, <code>line_no</code></td></tr>
+          <tr><td><code>work_act_revision</code></td><td>Слепок содержания версии</td><td><code>id</code>, <code>act_id</code>, <code>revision_no</code></td></tr>
+          <tr><td><code>document_artifact</code></td><td>Физический HTML/PDF файл версии</td><td><code>id</code>, <code>storage_path</code></td></tr>
+          <tr><td><code>work_act_status_history</code></td><td>Лента смены статусов</td><td><code>id</code>, <code>act_id</code></td></tr>
+          <tr><td><code>audit_event</code></td><td>Общий аудит действий</td><td><code>id</code>, <code>entity_type</code>, <code>entity_id</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Кратности и delete-правила</h2>
+      <table>
+        <thead><tr><th>Связь</th><th>Кратность</th><th>Правило удаления</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td><code>tenant -> work_act</code></td><td>1:N</td><td>RESTRICT</td><td>Нельзя потерять документы арендатора</td></tr>
+          <tr><td><code>contract -> work_act</code></td><td>1:N</td><td>RESTRICT</td><td>Подписанные акты должны сохранять основание</td></tr>
+          <tr><td><code>work_act -> work_act_item</code></td><td>1:N</td><td>CASCADE только для draft</td><td>Подписанные лучше защищать на уровне приложения</td></tr>
+          <tr><td><code>work_act -> work_act_revision</code></td><td>1:N</td><td>RESTRICT</td><td>История версий не удаляется</td></tr>
+          <tr><td><code>work_act_revision -> document_artifact</code></td><td>0..1:1</td><td>RESTRICT</td><td>Immutable-артефакты нельзя терять</td></tr>
+          <tr><td><code>work_act(source) -> work_act(correction)</code></td><td>1:N</td><td>RESTRICT</td><td>Цепочка корректировок сохраняется</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>4. Карточка сущности work_act</h2>
+      <table>
+        <thead><tr><th>Поле</th><th>Смысл</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td><code>status</code></td><td>Текущее состояние документа</td><td>Должно согласовываться с историей переходов</td></tr>
+          <tr><td><code>current_revision_id</code></td><td>Текущая актуальная версия</td><td>Обычно для draft/generated</td></tr>
+          <tr><td><code>signed_revision_id</code></td><td>Подписанная версия</td><td>После подписи больше не меняется</td></tr>
+          <tr><td><code>source_act_id</code></td><td>Исходный акт</td><td>Используется для corrected/replacement сценариев</td></tr>
+          <tr><td><code>total_amount</code></td><td>Сумма без НДС</td><td>Контрольный итог по текущему состоянию</td></tr>
+          <tr><td><code>grand_total_amount</code></td><td>Итог к оплате</td><td>Используется для быстрых списков</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Инварианты ERD</h2>
+      <ul>
+        <li>Один акт имеет много ревизий, но только одну текущую и не более одной подписанной.</li>
+        <li>Каждая ревизия принадлежит ровно одному акту.</li>
+        <li>Артефакт относится к конкретной ревизии, а не к акту в целом.</li>
+        <li>Корректировочный акт всегда знает исходный документ.</li>
+        <li>Строки акта относятся к рабочему состоянию акта, а не к immutable-истории; история строк фиксируется внутри snapshot ревизии.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Навигационные запросы</h2>
+      <table>
+        <thead><tr><th>Запрос</th><th>Путь по сущностям</th></tr></thead>
+        <tbody>
+          <tr><td>Показать карточку акта</td><td><code>work_act -> work_act_item + current_revision_id</code></td></tr>
+          <tr><td>Открыть подписанную версию</td><td><code>work_act -> signed_revision_id -> document_artifact</code></td></tr>
+          <tr><td>Показать историю</td><td><code>work_act -> work_act_revision</code></td></tr>
+          <tr><td>Показать корректировки</td><td><code>work_act(source) -> work_act(children by source_act_id)</code></td></tr>
+          <tr><td>Показать кто менял статусы</td><td><code>work_act -> work_act_status_history</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

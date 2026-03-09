@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Каталог документации по Актам работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 920px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #7c3aed; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    p, li { margin: 0 0 8px; }
+    ul { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Каталог документации по Актам работ</h1>
+    <p>Этот файл — точка входа в пакет документов по архитектуре, схеме БД, ERD, API, миграциям и хранению печатных HTML-артефактов.</p>
+
+    <section>
+      <h2>1. Порядок чтения</h2>
+      <ol>
+        <li>Сначала общая архитектура и доменная модель.</li>
+        <li>Потом физическая схема БД и ERD.</li>
+        <li>Затем API/операции и рендеринг артефактов.</li>
+        <li>После этого — план миграций и внедрения.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>2. Документы</h2>
+      <table>
+        <thead><tr><th>Файл</th><th>Назначение</th><th>Когда нужен</th></tr></thead>
+        <tbody>
+          <tr><td><a href="work-acts-architecture.html">work-acts-architecture.html</a></td><td>Доменная архитектура и инварианты</td><td>Для согласования бизнес-модели</td></tr>
+          <tr><td><a href="work-acts-db-schema.html">work-acts-db-schema.html</a></td><td>Физическая схема БД</td><td>Для проектирования таблиц и ограничений</td></tr>
+          <tr><td><a href="work-acts-erd.html">work-acts-erd.html</a></td><td>ERD и кратности связей</td><td>Для визуального контроля модели</td></tr>
+          <tr><td><a href="work-acts-api.html">work-acts-api.html</a></td><td>API, команды, транзакции и статусы</td><td>Для backend и интеграций</td></tr>
+          <tr><td><a href="work-acts-rendering-and-storage.html">work-acts-rendering-and-storage.html</a></td><td>Рендеринг HTML/PDF и хранение артефактов</td><td>Для document pipeline</td></tr>
+          <tr><td><a href="work-acts-migrations-plan.html">work-acts-migrations-plan.html</a></td><td>План миграций и rollout</td><td>Для внедрения и эволюции схемы</td></tr>
+          <tr><td><a href="work-acts-sqlite-and-gui.html">work-acts-sqlite-and-gui.html</a></td><td>SQLite-адаптация и выбор CRUD GUI</td><td>Для технологического решения и быстрого запуска</td></tr>
+          <tr><td><a href="work-acts-nocodb-views-plan.html">work-acts-nocodb-views-plan.html</a></td><td>NocoDB views plan и режимы доступа</td><td>Для настройки backoffice без поломки истории</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Ключевые решения</h2>
+      <div class="box">
+        <ul>
+          <li>Акт — это доменная сущность, а не просто HTML-файл.</li>
+          <li>Каждая версия акта фиксируется отдельно в <code>work_act_revision</code>.</li>
+          <li>HTML печатной формы хранится как неизменяемый артефакт версии.</li>
+          <li>После подписи версия и связанные артефакты не изменяются.</li>
+          <li>Исправления после подписи оформляются новым актом, связанным с исходным.</li>
+          <li>Для быстрого старта допустим SQLite, но immutable-историю и статусы всё равно должен контролировать backend-слой.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Следующий технический шаг</h2>
+      <p>После утверждения этого пакета можно использовать <code>db/sqlite/work_acts_schema.sql</code>, подключить SQLite к NocoDB и затем готовить backend-contract для операций: фиксация ревизии, генерация HTML, отправка, подписание и корректировка.</p>
+      <p>Для быстрого demo-старта также подготовлен <code>db/sqlite/work_acts_seed_demo.sql</code> с данными по tenant, контрагентам, договорам, актам, версиям и артефактам.</p>
+    </section>
+  </main>
+</body>
+</html>

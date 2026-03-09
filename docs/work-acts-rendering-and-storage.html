@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Рендеринг и хранение HTML для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #be185d; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Рендеринг и хранение HTML для Актов работ</h1>
+    <p>Документ описывает pipeline генерации печатных HTML/PDF-артефактов, хранение файлов, versioning шаблонов и требования к неизменяемости.</p>
+
+    <section>
+      <h2>1. Главный принцип</h2>
+      <div class="box">
+        Печатная форма не должна строиться на лету из текущих данных акта для уже зафиксированной или подписанной версии. Для каждой ревизии хранится отдельный неизменяемый артефакт.
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Pipeline</h2>
+      <ol>
+        <li>Пользователь формирует или меняет draft-акт.</li>
+        <li>Система фиксирует <code>work_act_revision</code> со snapshot.</li>
+        <li>Рендерер получает snapshot + template_version.</li>
+        <li>На выходе формируется статический HTML.</li>
+        <li>HTML сохраняется в object storage и регистрируется в <code>document_artifact</code>.</li>
+        <li>При необходимости отдельным шагом генерируется PDF.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>3. Входные данные рендерера</h2>
+      <table>
+        <thead><tr><th>Поле</th><th>Источник</th><th>Зачем</th></tr></thead>
+        <tbody>
+          <tr><td>Шапка акта</td><td><code>snapshot_json</code></td><td>Номер, дата, период, контрагент</td></tr>
+          <tr><td>Строки акта</td><td><code>snapshot_json</code></td><td>Печатная таблица услуг/работ</td></tr>
+          <tr><td>Итоги</td><td><code>totals_json</code></td><td>Контроль сумм и НДС</td></tr>
+          <tr><td>Версия шаблона</td><td><code>template_version</code></td><td>Повторяемый внешний вид</td></tr>
+          <tr><td>Метаданные версии</td><td><code>revision_no</code>, <code>created_at</code></td><td>Маркировка документа</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Требования к HTML</h2>
+      <ul>
+        <li>Формат A4, корректный print CSS.</li>
+        <li>Без клиентского JavaScript для вычисления содержимого.</li>
+        <li>Повторяемая шапка таблицы на новых страницах.</li>
+        <li>Контроль page-break для итогов и блоков подписи.</li>
+        <li>Минимум внешних зависимостей; предпочтительно встроенный CSS.</li>
+        <li>Без редактируемых полей, кнопок и SPA-компонентов.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5. Хранилище артефактов</h2>
+      <table>
+        <thead><tr><th>Решение</th><th>Рекомендация</th></tr></thead>
+        <tbody>
+          <tr><td>Тип хранилища</td><td>S3 / MinIO / совместимое object storage</td></tr>
+          <tr><td>Путь</td><td><code>acts/{tenant_id}/{year}/{act_id}/rev-{revision_no}/act.html</code></td></tr>
+          <tr><td>Контроль целостности</td><td>SHA-256 checksum</td></tr>
+          <tr><td>Версия рендера</td><td><code>renderer_version</code> в БД</td></tr>
+          <tr><td>Доступ</td><td>Через backend с проверкой прав, не публичный bucket</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. Template versioning</h2>
+      <ul>
+        <li>Каждый шаблон имеет явный <code>template_version</code>.</li>
+        <li>Смена шаблона не должна изменять уже выпущенные документы.</li>
+        <li>Новые ревизии могут рендериться новым шаблоном, старые остаются на старом.</li>
+        <li>Подписанные акты не перерендериваются новым шаблоном поверх старого артефакта.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Политика неизменяемости</h2>
+      <table>
+        <thead><tr><th>Состояние</th><th>Можно перегенерировать?</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td><code>draft</code></td><td>Да</td><td>Разрешено до фиксации отправки/подписи</td></tr>
+          <tr><td><code>generated</code></td><td>Да, но только в новую ревизию</td><td>Старый артефакт остаётся в истории</td></tr>
+          <tr><td><code>sent</code></td><td>Только в новую ревизию до подписи</td><td>Нельзя терять отправленный вариант</td></tr>
+          <tr><td><code>signed</code></td><td>Нет</td><td>Immutable-артефакт</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. Безопасность</h2>
+      <ul>
+        <li>Все пользовательские поля должны проходить escaping/санитизацию при рендеринге.</li>
+        <li>Не хранить артефакты в публичном доступе без авторизации.</li>
+        <li>Для чувствительных данных — аудит доступа к скачиванию.</li>
+        <li>Указывать <code>content-type</code> строго по типу артефакта.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. Архивирование и retention</h2>
+      <ul>
+        <li>Подписанные документы хранятся по политике бухгалтерского/юридического retention.</li>
+        <li>Неподписанные черновые артефакты можно чистить по TTL, если они не являются частью истории.</li>
+        <li>Перед удалением draft-артефактов нужна проверка, что версия не закреплена в статусе <code>sent</code> или <code>signed</code>.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

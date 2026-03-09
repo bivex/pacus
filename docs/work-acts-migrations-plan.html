@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>План миграций для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #1d4ed8; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>План миграций для Актов работ</h1>
+      <p>Документ задаёт порядок внедрения схемы БД и правила будущих zero-downtime изменений для истории версий и печатных артефактов.</p>
+      <p>Для SQLite нужно учитывать ограничения <code>ALTER TABLE</code> и чаще использовать схему: новая таблица → копирование данных → rename.</p>
+
+    <section>
+      <h2>1. Цели миграционного плана</h2>
+      <ul>
+        <li>Создать базовую схему без ручных правок в проде.</li>
+        <li>Обеспечить безопасную эволюцию модели версий и артефактов.</li>
+        <li>Не ломать чтение старых актов при добавлении новых полей и правил.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Базовый стартовый набор миграций</h2>
+      <table>
+        <thead><tr><th>Миграция</th><th>Содержимое</th></tr></thead>
+        <tbody>
+          <tr><td><code>V001__create_reference_tables</code></td><td><code>tenant</code>, <code>counterparty</code>, <code>contract</code></td></tr>
+          <tr><td><code>V002__create_work_act</code></td><td><code>work_act</code> + базовые ограничения</td></tr>
+          <tr><td><code>V003__create_work_act_item</code></td><td><code>work_act_item</code> + FK и сортировка</td></tr>
+          <tr><td><code>V004__create_document_artifact</code></td><td><code>document_artifact</code> + checksum и storage_path</td></tr>
+          <tr><td><code>V005__create_work_act_revision</code></td><td><code>work_act_revision</code> + partial unique на current</td></tr>
+          <tr><td><code>V006__create_status_and_audit</code></td><td><code>work_act_status_history</code>, <code>audit_event</code></td></tr>
+          <tr><td><code>V007__create_indexes</code></td><td>Индексы под списки, ревизии, статусы, корректировки</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Правила zero-downtime изменений</h2>
+      <ol>
+        <li>Сначала добавлять новые таблицы или nullable-колонки.</li>
+        <li>Потом выкатывать код, который умеет читать старый и новый формат.</li>
+        <li>Затем выполнять backfill небольшими пачками.</li>
+        <li>После backfill включать новые ограничения <code>NOT NULL</code>, <code>CHECK</code>, индексы.</li>
+        <li>Удаление старых полей — последним этапом, после полной миграции кода.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>4. Пример безопасого изменения</h2>
+      <div class="box">
+        Пример: нужно добавить <code>source_act_id</code> для корректировок.<br />
+        Шаг 1 — добавить nullable-колонку и индекс.<br />
+        Шаг 2 — выкатить код, который умеет создавать и читать связь.<br />
+        Шаг 3 — заполнить связи для исторических данных.<br />
+        Шаг 4 — включить бизнес-валидации на новые сценарии.<br />
+        Шаг 5 — при необходимости добавить stricter checks.
+      </div>
+    </section>
+
+    <section class="page-break">
+      <h2>5. Rollout по средам</h2>
+      <table>
+        <thead><tr><th>Среда</th><th>Что проверяем</th></tr></thead>
+        <tbody>
+          <tr><td>Local/Testcontainers</td><td>Применение всех миграций с нуля</td></tr>
+          <tr><td>CI</td><td>Подъём пустой БД + smoke тесты схемы</td></tr>
+          <tr><td>Stage</td><td>Backfill, API smoke, генерация HTML, откат</td></tr>
+          <tr><td>Prod</td><td>Пошаговый rollout, мониторинг lock time и ошибок</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. Валидация миграций</h2>
+      <ul>
+        <li>Миграции применяются на пустую БД и на БД с тестовыми данными.</li>
+        <li>Проверяется создание акта, фиксация ревизии, генерация HTML, перевод статусов.</li>
+        <li>Проверяется, что уникальные ограничения реально ловят дубли.</li>
+        <li>Проверяется, что подписанный акт нельзя случайно изменить.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Риски и меры</h2>
+      <table>
+        <thead><tr><th>Риск</th><th>Мера</th></tr></thead>
+        <tbody>
+          <tr><td>Долгий lock при индексации</td><td>Создавать индексы безопасным способом, отдельно от тяжёлых DDL</td></tr>
+          <tr><td>Неполный backfill</td><td>Запускать верификационные запросы до включения ограничений</td></tr>
+          <tr><td>Несовместимость кода и схемы</td><td>Backward-compatible rollout в 2–3 фазы</td></tr>
+          <tr><td>Повреждение истории документов</td><td>Отдельные миграции для immutable-правил и обязательные интеграционные тесты</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. Наблюдаемость rollout</h2>
+      <ul>
+        <li>Логировать время выполнения каждой миграции.</li>
+        <li>Следить за lock wait, deadlock, ошибками FK/UNIQUE/CHECK.</li>
+        <li>После rollout проверять количество актов, ревизий и артефактов контрольными SQL-запросами.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. Следующий шаг</h2>
+      <p>После утверждения плана можно подготовить реальный набор миграций Flyway/Liquibase и тест-кейсы на применение схемы и инварианты данных.</p>
+    </section>
+  </main>
+</body>
+</html>

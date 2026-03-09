@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Схема БД для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    :root { --text:#1f2937; --muted:#4b5563; --line:#d1d5db; --soft:#f3f4f6; --accent:#1d4ed8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: var(--text); }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.2; }
+    h1 { font-size: 26px; color: var(--accent); }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; margin: 8px 0 12px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+    th { background: var(--soft); text-align: left; }
+    .lead { color: var(--muted); }
+    .box { background: #fafafa; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.95em; }
+    @media print {
+      main { max-width: none; padding: 0; }
+      thead { display: table-header-group; }
+      tr, .box { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Схема БД для Актов работ</h1>
+      <p class="lead">Физическая модель данных для хранения актов, строк акта, истории версий, печатных HTML-артефактов и статусов жизненного цикла.</p>
+      <p class="lead">Если в качестве движка выбран SQLite, физические типы и миграционные правила уточняются в документе <code>work-acts-sqlite-and-gui.html</code>.</p>
+    </header>
+
+    <section>
+      <h2>1. Принципы схемы</h2>
+      <ul>
+        <li>Текущие рабочие данные акта хранятся нормализованно.</li>
+        <li>Каждая зафиксированная версия хранится отдельно и не перезаписывается.</li>
+        <li>Печатный HTML хранится как отдельный неизменяемый артефакт версии.</li>
+        <li>Все связи выражаются через FK, а инварианты — через <code>UNIQUE</code> и <code>CHECK</code>.</li>
+        <li>Деньги хранятся в <code>DECIMAL</code>, время — в UTC.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Соглашения по именованию и типам</h2>
+      <table>
+        <thead>
+          <tr><th>Элемент</th><th>Рекомендация</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PK</td><td><code>uuid</code> или <code>bigint</code>; далее в документе используется <code>uuid</code></td></tr>
+          <tr><td>Даты документа</td><td><code>date</code></td></tr>
+          <tr><td>Системное время</td><td><code>timestamp with time zone</code> в UTC</td></tr>
+          <tr><td>Деньги</td><td><code>decimal(18,2)</code></td></tr>
+          <tr><td>Количество</td><td><code>decimal(18,3)</code> или точнее по домену</td></tr>
+          <tr><td>JSON snapshot</td><td><code>jsonb</code> с валидацией на уровне приложения и инвариантами в БД</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Основные таблицы</h2>
+      <h3>3.1 <code>tenant</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK, NOT NULL</td><td>Арендатор</td></tr>
+          <tr><td>code</td><td>varchar(64)</td><td>UNIQUE, NOT NULL</td><td>Человекочитаемый код</td></tr>
+          <tr><td>name</td><td>varchar(255)</td><td>NOT NULL</td><td>Название организации</td></tr>
+          <tr><td>created_at</td><td>timestamptz</td><td>NOT NULL</td><td>Дата создания</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 <code>counterparty</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Контрагент</td></tr>
+          <tr><td>tenant_id</td><td>uuid</td><td>FK → tenant(id), NOT NULL</td><td>Принадлежность арендатору</td></tr>
+          <tr><td>full_name</td><td>varchar(500)</td><td>NOT NULL</td><td>Полное наименование</td></tr>
+          <tr><td>inn</td><td>varchar(12)</td><td>NOT NULL</td><td>ИНН</td></tr>
+          <tr><td>kpp</td><td>varchar(9)</td><td>NULL</td><td>КПП</td></tr>
+          <tr><td>legal_address</td><td>text</td><td>NULL</td><td>Юридический адрес</td></tr>
+          <tr><td>is_active</td><td>boolean</td><td>NOT NULL DEFAULT true</td><td>Признак активности</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3.3 <code>contract</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Договор</td></tr>
+          <tr><td>tenant_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Арендатор</td></tr>
+          <tr><td>counterparty_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Контрагент</td></tr>
+          <tr><td>contract_number</td><td>varchar(100)</td><td>NOT NULL</td><td>Номер договора</td></tr>
+          <tr><td>contract_date</td><td>date</td><td>NOT NULL</td><td>Дата договора</td></tr>
+          <tr><td>currency_code</td><td>char(3)</td><td>NOT NULL</td><td>ISO код валюты</td></tr>
+          <tr><td>vat_mode</td><td>varchar(32)</td><td>NOT NULL</td><td>Режим НДС</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>4. Таблица акта и строки акта</h2>
+      <h3>4.1 <code>work_act</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Акт</td></tr>
+          <tr><td>tenant_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Изоляция данных</td></tr>
+          <tr><td>contract_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Основание акта</td></tr>
+          <tr><td>source_act_id</td><td>uuid</td><td>FK → work_act(id), NULL</td><td>Исходный акт для correction/replacement</td></tr>
+          <tr><td>counterparty_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Дублируем для быстрых выборок</td></tr>
+          <tr><td>act_number</td><td>varchar(100)</td><td>NOT NULL</td><td>Номер акта</td></tr>
+          <tr><td>act_date</td><td>date</td><td>NOT NULL</td><td>Дата акта</td></tr>
+          <tr><td>period_from</td><td>date</td><td>NOT NULL</td><td>Начало периода</td></tr>
+          <tr><td>period_to</td><td>date</td><td>NOT NULL</td><td>Конец периода</td></tr>
+          <tr><td>status</td><td>varchar(32)</td><td>NOT NULL</td><td>draft/generated/sent/signed/cancelled/corrected</td></tr>
+          <tr><td>current_revision_id</td><td>uuid</td><td>FK → work_act_revision(id), NULL</td><td>Текущая актуальная ревизия</td></tr>
+          <tr><td>signed_revision_id</td><td>uuid</td><td>FK → work_act_revision(id), NULL</td><td>Подписанная ревизия</td></tr>
+          <tr><td>total_amount</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Итог без НДС</td></tr>
+          <tr><td>total_vat_amount</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Сумма НДС</td></tr>
+          <tr><td>grand_total_amount</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Итог к оплате</td></tr>
+          <tr><td>created_by</td><td>uuid</td><td>NOT NULL</td><td>Кто создал</td></tr>
+          <tr><td>created_at</td><td>timestamptz</td><td>NOT NULL</td><td>Когда создал</td></tr>
+          <tr><td>updated_at</td><td>timestamptz</td><td>NOT NULL</td><td>Когда обновил</td></tr>
+          <tr><td>deleted_at</td><td>timestamptz</td><td>NULL</td><td>Soft delete только для неподписанных</td></tr>
+        </tbody>
+      </table>
+
+      <div class="box">
+        Рекомендуемые ограничения для <code>work_act</code>:<br />
+        <code>unique (tenant_id, act_number)</code><br />
+        <code>check (period_from &lt;= period_to)</code><br />
+        <code>check (status in ('draft','generated','sent','signed','cancelled','corrected'))</code><br />
+        <code>check (total_amount &gt;= 0 and total_vat_amount &gt;= 0 and grand_total_amount &gt;= 0)</code>
+      </div>
+
+      <h3>4.2 <code>work_act_item</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Строка акта</td></tr>
+          <tr><td>act_id</td><td>uuid</td><td>FK → work_act(id), NOT NULL</td><td>Владелец строки</td></tr>
+          <tr><td>line_no</td><td>integer</td><td>NOT NULL</td><td>Порядок строки</td></tr>
+          <tr><td>description</td><td>text</td><td>NOT NULL</td><td>Описание работ/услуг</td></tr>
+          <tr><td>unit_code</td><td>varchar(16)</td><td>NULL</td><td>Единица измерения</td></tr>
+          <tr><td>quantity</td><td>decimal(18,3)</td><td>NOT NULL</td><td>Количество</td></tr>
+          <tr><td>price</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Цена за единицу</td></tr>
+          <tr><td>amount</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Сумма без НДС</td></tr>
+          <tr><td>vat_rate</td><td>decimal(5,2)</td><td>NOT NULL</td><td>Ставка НДС</td></tr>
+          <tr><td>vat_amount</td><td>decimal(18,2)</td><td>NOT NULL</td><td>Сумма НДС</td></tr>
+          <tr><td>sort_order</td><td>integer</td><td>NOT NULL</td><td>Явный порядок вывода</td></tr>
+        </tbody>
+      </table>
+      <p>Ограничения: <code>unique (act_id, line_no)</code>, <code>check (quantity &gt; 0)</code>, <code>check (price &gt;= 0)</code>, <code>check (amount &gt;= 0)</code>.</p>
+    </section>
+
+    <section>
+      <h2>5. История версий и артефакты</h2>
+      <h3>5.1 <code>work_act_revision</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Ревизия</td></tr>
+          <tr><td>act_id</td><td>uuid</td><td>FK → work_act(id), NOT NULL</td><td>Акт-владелец</td></tr>
+          <tr><td>revision_no</td><td>integer</td><td>NOT NULL</td><td>Номер ревизии</td></tr>
+          <tr><td>revision_kind</td><td>varchar(32)</td><td>NOT NULL</td><td>draft/final/correction</td></tr>
+          <tr><td>snapshot_json</td><td>jsonb</td><td>NOT NULL</td><td>Полный снимок содержимого</td></tr>
+          <tr><td>totals_json</td><td>jsonb</td><td>NOT NULL</td><td>Контрольные итоги версии</td></tr>
+          <tr><td>template_version</td><td>varchar(64)</td><td>NOT NULL</td><td>Версия шаблона печати</td></tr>
+          <tr><td>html_artifact_id</td><td>uuid</td><td>FK → document_artifact(id), NULL</td><td>Печатный HTML</td></tr>
+          <tr><td>pdf_artifact_id</td><td>uuid</td><td>FK → document_artifact(id), NULL</td><td>Опциональный PDF</td></tr>
+          <tr><td>created_by</td><td>uuid</td><td>NOT NULL</td><td>Автор ревизии</td></tr>
+          <tr><td>created_at</td><td>timestamptz</td><td>NOT NULL</td><td>Время фиксации</td></tr>
+          <tr><td>comment</td><td>varchar(1000)</td><td>NULL</td><td>Причина изменения</td></tr>
+          <tr><td>is_current</td><td>boolean</td><td>NOT NULL DEFAULT false</td><td>Текущая ревизия</td></tr>
+          <tr><td>is_immutable</td><td>boolean</td><td>NOT NULL DEFAULT false</td><td>Запрет изменения</td></tr>
+        </tbody>
+      </table>
+      <p>Ограничения: <code>unique (act_id, revision_no)</code>, частичный unique на <code>(act_id)</code> где <code>is_current = true</code>.</p>
+
+      <h3>5.2 <code>document_artifact</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Артефакт файла</td></tr>
+          <tr><td>tenant_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Арендатор</td></tr>
+          <tr><td>artifact_type</td><td>varchar(16)</td><td>NOT NULL</td><td>html/pdf</td></tr>
+          <tr><td>storage_path</td><td>varchar(1000)</td><td>UNIQUE, NOT NULL</td><td>Путь в объектном хранилище</td></tr>
+          <tr><td>content_type</td><td>varchar(255)</td><td>NOT NULL</td><td><code>text/html</code>, <code>application/pdf</code></td></tr>
+          <tr><td>checksum_sha256</td><td>char(64)</td><td>NOT NULL</td><td>Контрольная сумма</td></tr>
+          <tr><td>size_bytes</td><td>bigint</td><td>NOT NULL</td><td>Размер файла</td></tr>
+          <tr><td>renderer_version</td><td>varchar(64)</td><td>NOT NULL</td><td>Версия генератора</td></tr>
+          <tr><td>created_at</td><td>timestamptz</td><td>NOT NULL</td><td>Когда создан</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>6. История статусов и аудит</h2>
+      <h3>6.1 <code>work_act_status_history</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Событие перехода</td></tr>
+          <tr><td>act_id</td><td>uuid</td><td>FK → work_act(id), NOT NULL</td><td>Акт</td></tr>
+          <tr><td>from_status</td><td>varchar(32)</td><td>NULL</td><td>Предыдущий статус</td></tr>
+          <tr><td>to_status</td><td>varchar(32)</td><td>NOT NULL</td><td>Новый статус</td></tr>
+          <tr><td>changed_by</td><td>uuid</td><td>NOT NULL</td><td>Кто сменил</td></tr>
+          <tr><td>changed_at</td><td>timestamptz</td><td>NOT NULL</td><td>Когда сменил</td></tr>
+          <tr><td>reason</td><td>varchar(1000)</td><td>NULL</td><td>Комментарий</td></tr>
+        </tbody>
+      </table>
+
+      <h3>6.2 <code>audit_event</code></h3>
+      <table>
+        <thead><tr><th>Колонка</th><th>Тип</th><th>Ограничения</th><th>Смысл</th></tr></thead>
+        <tbody>
+          <tr><td>id</td><td>uuid</td><td>PK</td><td>Событие аудита</td></tr>
+          <tr><td>tenant_id</td><td>uuid</td><td>FK, NOT NULL</td><td>Арендатор</td></tr>
+          <tr><td>entity_type</td><td>varchar(64)</td><td>NOT NULL</td><td>Тип сущности</td></tr>
+          <tr><td>entity_id</td><td>uuid</td><td>NOT NULL</td><td>ID сущности</td></tr>
+          <tr><td>action</td><td>varchar(64)</td><td>NOT NULL</td><td>create/update/send/sign</td></tr>
+          <tr><td>payload_json</td><td>jsonb</td><td>NOT NULL</td><td>Метаданные события</td></tr>
+          <tr><td>actor_id</td><td>uuid</td><td>NOT NULL</td><td>Кто сделал</td></tr>
+          <tr><td>occurred_at</td><td>timestamptz</td><td>NOT NULL</td><td>Когда произошло</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>7. Индексы</h2>
+      <table>
+        <thead><tr><th>Таблица</th><th>Индекс</th><th>Зачем</th></tr></thead>
+        <tbody>
+          <tr><td><code>work_act</code></td><td><code>(tenant_id, act_number)</code> unique</td><td>Поиск по номеру акта</td></tr>
+          <tr><td><code>work_act</code></td><td><code>(tenant_id, counterparty_id, act_date desc)</code></td><td>Список актов по контрагенту</td></tr>
+          <tr><td><code>work_act</code></td><td><code>(tenant_id, status, act_date desc)</code></td><td>Очереди неподписанных / отправленных</td></tr>
+          <tr><td><code>work_act</code></td><td><code>(tenant_id, source_act_id)</code></td><td>Поиск корректировок по исходному акту</td></tr>
+          <tr><td><code>work_act_item</code></td><td><code>(act_id, sort_order)</code></td><td>Быстрая загрузка строк</td></tr>
+          <tr><td><code>work_act_revision</code></td><td><code>(act_id, revision_no desc)</code> unique</td><td>История версий</td></tr>
+          <tr><td><code>work_act_status_history</code></td><td><code>(act_id, changed_at desc)</code></td><td>Лента статусов</td></tr>
+          <tr><td><code>audit_event</code></td><td><code>(tenant_id, entity_type, entity_id, occurred_at desc)</code></td><td>История аудита по сущности</td></tr>
+        </tbody>
+      </table>
+      <p>Не нужно индексировать каждую колонку по отдельности; индексы должны следовать реальным запросам списка актов, карточки акта и просмотра истории.</p>
+    </section>
+
+    <section>
+      <h2>8. Правила неизменяемости</h2>
+      <ol>
+        <li>После перехода акта в <code>signed</code> ссылка на <code>signed_revision_id</code> больше не меняется.</li>
+        <li>Ревизия с <code>is_immutable = true</code> не редактируется и не удаляется.</li>
+        <li>Артефакт, связанный с immutable-ревизией, не перезаписывается.</li>
+        <li>Исправления после подписи оформляются новой ревизией типа <code>correction</code> или новым документом, связанным с исходным актом.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>9. Миграции и zero-downtime</h2>
+      <ul>
+        <li>Сначала добавлять новые nullable-колонки и новые таблицы.</li>
+        <li>Потом выполнять backfill данных по частям.</li>
+        <li>Только после этого переключать код на новые поля.</li>
+        <li>Удаление старых колонок — отдельной поздней миграцией.</li>
+        <li>Новые <code>NOT NULL</code> и тяжелые индексы вводить после заполнения данных.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>10. Минимальный обязательный набор ограничений</h2>
+      <div class="box">
+        <strong>Обязательные ограничения:</strong>
+        <ul>
+          <li>FK на все связи между актом, строками, ревизиями и артефактами.</li>
+          <li><code>UNIQUE (tenant_id, act_number)</code> для номера акта.</li>
+          <li><code>UNIQUE (act_id, revision_no)</code> для версий.</li>
+          <li><code>CHECK</code> на допустимые статусы.</li>
+          <li><code>CHECK</code> на неотрицательные суммы.</li>
+          <li>Частичный unique для одной текущей ревизии.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>11. Следующий шаг</h2>
+      <p>После этого документа имеет смысл зафиксировать ERD и затем подготовить первый набор SQL-миграций: создание таблиц <code>work_act</code>, <code>work_act_item</code>, <code>work_act_revision</code>, <code>document_artifact</code> и индексов под основные запросы.</p>
+    </section>
+  </main>
+</body>
+</html>

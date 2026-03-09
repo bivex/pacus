@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API и операции для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #b45309; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>API и операции для Актов работ</h1>
+    <p>Документ описывает прикладные операции, транзакционные границы, допустимые переходы статусов и контракты для хранения истории и генерации печатных артефактов.</p>
+
+    <section>
+      <h2>1. Границы bounded context</h2>
+      <ul>
+        <li>Контекст отвечает за акты, их строки, ревизии, статусы и печатные артефакты.</li>
+        <li>Контекст не владеет договором или справочником контрагентов, а только ссылается на них.</li>
+        <li>Подписание может интегрироваться с внешним ЭДО, но внутренний статус и история хранятся локально.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Основные команды</h2>
+      <table>
+        <thead><tr><th>Команда</th><th>Что делает</th><th>Транзакция</th></tr></thead>
+        <tbody>
+          <tr><td><code>CreateDraftAct</code></td><td>Создаёт акт в статусе <code>draft</code></td><td>Одна транзакция</td></tr>
+          <tr><td><code>UpdateDraftAct</code></td><td>Обновляет шапку и строки черновика</td><td>Одна транзакция</td></tr>
+          <tr><td><code>FreezeRevision</code></td><td>Фиксирует новую ревизию со snapshot</td><td>Одна транзакция</td></tr>
+          <tr><td><code>RenderRevisionHtml</code></td><td>Генерирует HTML-артефакт для ревизии</td><td>Транзакция + запись артефакта</td></tr>
+          <tr><td><code>SendAct</code></td><td>Меняет статус на <code>sent</code> и фиксирует отправленную ревизию</td><td>Одна транзакция</td></tr>
+          <tr><td><code>SignAct</code></td><td>Фиксирует подписанную ревизию и делает её immutable</td><td>Одна транзакция</td></tr>
+          <tr><td><code>CreateCorrectionAct</code></td><td>Создаёт новый акт с <code>source_act_id</code></td><td>Одна транзакция</td></tr>
+          <tr><td><code>CancelAct</code></td><td>Переводит акт в <code>cancelled</code></td><td>Одна транзакция</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Основные query-операции</h2>
+      <ul>
+        <li><code>GetAct</code> — карточка акта + текущие строки.</li>
+        <li><code>ListActs</code> — список актов по фильтрам.</li>
+        <li><code>ListActRevisions</code> — история версий.</li>
+        <li><code>GetRevisionArtifact</code> — HTML/PDF конкретной ревизии.</li>
+        <li><code>ListCorrections</code> — корректировочные документы по исходному акту.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Рекомендуемый HTTP API</h2>
+      <table>
+        <thead><tr><th>Метод</th><th>URL</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td>POST</td><td><code>/api/work-acts</code></td><td>Создать черновик акта</td></tr>
+          <tr><td>GET</td><td><code>/api/work-acts</code></td><td>Список актов</td></tr>
+          <tr><td>GET</td><td><code>/api/work-acts/{id}</code></td><td>Карточка акта</td></tr>
+          <tr><td>PUT</td><td><code>/api/work-acts/{id}</code></td><td>Обновить draft-акт</td></tr>
+          <tr><td>POST</td><td><code>/api/work-acts/{id}/revisions</code></td><td>Зафиксировать новую ревизию</td></tr>
+          <tr><td>POST</td><td><code>/api/work-acts/{id}/send</code></td><td>Отправить акт</td></tr>
+          <tr><td>POST</td><td><code>/api/work-acts/{id}/sign</code></td><td>Подписать акт</td></tr>
+          <tr><td>POST</td><td><code>/api/work-acts/{id}/corrections</code></td><td>Создать корректировочный акт</td></tr>
+          <tr><td>GET</td><td><code>/api/work-acts/{id}/revisions</code></td><td>История ревизий</td></tr>
+          <tr><td>GET</td><td><code>/api/work-acts/{id}/revisions/{revisionNo}/artifact/html</code></td><td>Получить печатный HTML</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>5. Правила переходов статусов</h2>
+      <table>
+        <thead><tr><th>Из</th><th>В</th><th>Условие</th></tr></thead>
+        <tbody>
+          <tr><td><code>draft</code></td><td><code>generated</code></td><td>Есть хотя бы одна ревизия и HTML-артефакт</td></tr>
+          <tr><td><code>generated</code></td><td><code>sent</code></td><td>Определена отправляемая ревизия</td></tr>
+          <tr><td><code>sent</code></td><td><code>signed</code></td><td>Получено подтверждение подписи</td></tr>
+          <tr><td><code>draft/generated/sent</code></td><td><code>cancelled</code></td><td>Бизнес-разрешение на отмену</td></tr>
+          <tr><td><code>signed</code></td><td><code>corrected</code></td><td>Создан связанный корректировочный акт</td></tr>
+        </tbody>
+      </table>
+      <div class="box">
+        Обратные переходы <code>signed -> draft</code> и редактирование подписанной ревизии запрещены.
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Транзакционные границы</h2>
+      <ul>
+        <li>Операции изменения статуса выполняются в коротких транзакциях.</li>
+        <li>Создание ревизии и запись в <code>work_act_status_history</code>/<code>audit_event</code> должны происходить атомарно.</li>
+        <li>Если рендеринг HTML долгий, допускается схема: сначала ревизия + job, потом артефакт и перевод в <code>generated</code>.</li>
+        <li>Нельзя держать транзакцию открытой на время сетевого вызова во внешний ЭДО.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Идемпотентность и конкурентный доступ</h2>
+      <ul>
+        <li>Для <code>send</code> и <code>sign</code> рекомендуется idempotency key.</li>
+        <li>Для обновления draft-акта нужен optimistic locking: версия записи или <code>updated_at</code>.</li>
+        <li>Повторный вызов <code>SignAct</code> для уже подписанного акта должен возвращать уже зафиксированный результат.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>8. Модель ошибок</h2>
+      <table>
+        <thead><tr><th>Код</th><th>Сценарий</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td><code>validation_error</code></td><td>Неверные поля акта</td><td>Нет обязательных реквизитов, отрицательные суммы</td></tr>
+          <tr><td><code>invalid_status_transition</code></td><td>Недопустимый переход статуса</td><td>Например, попытка подписать draft</td></tr>
+          <tr><td><code>immutable_revision</code></td><td>Попытка изменить зафиксированную версию</td><td>Подписанные версии только для чтения</td></tr>
+          <tr><td><code>concurrency_conflict</code></td><td>Конфликт конкурентного обновления</td><td>Нужно перечитать карточку</td></tr>
+          <tr><td><code>artifact_not_ready</code></td><td>HTML ещё не сгенерирован</td><td>Нужно дождаться pipeline</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>9. Следующий шаг</h2>
+      <p>На базе этого документа можно подготовить OpenAPI-спецификацию и service-layer контракт с командами, валидаторами и политиками доступа.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NocoDB views plan для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #7c2d12; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>NocoDB views plan для Актов работ</h1>
+    <p>Документ задаёт, какие таблицы и SQL views показывать в NocoDB, что можно редактировать, а что должно оставаться только для чтения.</p>
+
+    <section>
+      <h2>1. Цель</h2>
+      <p>NocoDB используется как быстрый backoffice GUI, но не как движок бизнес-логики документов. Статусы, фиксация ревизий, рендеринг HTML и подписание должны выполняться через backend/service.</p>
+    </section>
+
+    <section>
+      <h2>2. Что подключать в NocoDB</h2>
+      <table>
+        <thead><tr><th>Ресурс</th><th>Тип</th><th>Режим</th><th>Зачем</th></tr></thead>
+        <tbody>
+          <tr><td><code>counterparty</code></td><td>Таблица</td><td>Editable</td><td>Поддержка справочника контрагентов</td></tr>
+          <tr><td><code>contract</code></td><td>Таблица</td><td>Editable</td><td>Поддержка договоров</td></tr>
+          <tr><td><code>work_act</code></td><td>Таблица</td><td>Editable only for draft</td><td>Карточка черновика</td></tr>
+          <tr><td><code>work_act_item</code></td><td>Таблица</td><td>Editable only for draft</td><td>Строки черновика</td></tr>
+          <tr><td><code>v_nocodb_work_act_overview</code></td><td>View</td><td>Read only</td><td>Удобный список актов с joins</td></tr>
+          <tr><td><code>v_nocodb_work_act_drafts</code></td><td>View</td><td>Read only</td><td>Отдельная витрина черновиков</td></tr>
+          <tr><td><code>v_nocodb_work_act_revisions_readonly</code></td><td>View</td><td>Read only</td><td>История версий</td></tr>
+          <tr><td><code>v_nocodb_document_artifacts_readonly</code></td><td>View</td><td>Read only</td><td>HTML/PDF артефакты</td></tr>
+          <tr><td><code>v_nocodb_work_act_status_history_readonly</code></td><td>View</td><td>Read only</td><td>История статусов</td></tr>
+          <tr><td><code>v_nocodb_work_act_corrections</code></td><td>View</td><td>Read only</td><td>Связи исходных и корректировочных актов</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. Что не надо напрямую редактировать</h2>
+      <ul>
+        <li><code>work_act_revision</code> — история версий, только чтение.</li>
+        <li><code>document_artifact</code> — артефакты, только чтение.</li>
+        <li><code>work_act_status_history</code> — append-only история.</li>
+        <li><code>audit_event</code> — append-only аудит.</li>
+      </ul>
+      <div class="box">
+        Если дать оператору прямой CRUD на эти сущности, история документов станет недостоверной.
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Рекомендованная структура в NocoDB</h2>
+      <table>
+        <thead><tr><th>Раздел</th><th>Источники</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td>Справочники</td><td><code>counterparty</code>, <code>contract</code></td><td>Редактирование справочников</td></tr>
+          <tr><td>Черновики актов</td><td><code>work_act</code>, <code>work_act_item</code>, <code>v_nocodb_work_act_drafts</code></td><td>Операторская работа до фиксации версии</td></tr>
+          <tr><td>Реестр актов</td><td><code>v_nocodb_work_act_overview</code></td><td>Главный список актов</td></tr>
+          <tr><td>История версий</td><td><code>v_nocodb_work_act_revisions_readonly</code></td><td>Проверка, что и когда менялось</td></tr>
+          <tr><td>Артефакты</td><td><code>v_nocodb_document_artifacts_readonly</code></td><td>HTML/PDF и checksum</td></tr>
+          <tr><td>Статусная история</td><td><code>v_nocodb_work_act_status_history_readonly</code></td><td>Лента отправки/подписания</td></tr>
+          <tr><td>Корректировки</td><td><code>v_nocodb_work_act_corrections</code></td><td>Навигация по исправлениям</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>5. Ролевая модель</h2>
+      <table>
+        <thead><tr><th>Роль</th><th>Доступ</th><th>Ограничения</th></tr></thead>
+        <tbody>
+          <tr><td>Оператор</td><td>Справочники + draft CRUD + read views</td><td>Нельзя менять signed/history/artifacts</td></tr>
+          <tr><td>Бухгалтер</td><td>Read реестр, история, артефакты</td><td>Без прямой правки immutable-данных</td></tr>
+          <tr><td>Администратор</td><td>Шире read, ограниченный CRUD справочников</td><td>Даже админ не правит audit/history вручную</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. Какие действия оставить вне NocoDB</h2>
+      <ol>
+        <li><code>FreezeRevision</code></li>
+        <li><code>RenderRevisionHtml</code></li>
+        <li><code>SendAct</code></li>
+        <li><code>SignAct</code></li>
+        <li><code>CreateCorrectionAct</code></li>
+      </ol>
+      <p>Эти действия должны вызываться из backend/API, потому что они одновременно меняют несколько сущностей и обязаны соблюдать инварианты.</p>
+    </section>
+
+    <section>
+      <h2>7. Практическая схема запуска</h2>
+      <ol>
+        <li>Применить <code>db/sqlite/work_acts_schema.sql</code>.</li>
+        <li>Загрузить <code>db/sqlite/work_acts_seed_demo.sql</code> для demo-данных.</li>
+        <li>Подключить SQLite-файл к NocoDB.</li>
+        <li>Показать операторам только разрешённые таблицы и views.</li>
+        <li>Скрыть history/artifact raw tables из редактируемого меню.</li>
+        <li>Подключить backend endpoints для статусных операций.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>8. Следующий шаг</h2>
+      <p>После этого можно сделать demo NocoDB layout и backend endpoints для операций фиксации ревизии, генерации HTML и подписания.</p>
+    </section>
+  </main>
+</body>
+</html>

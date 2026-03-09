@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQLite и быстрый CRUD GUI для Актов работ</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: #1f2937; }
+    main { max-width: 960px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: 26px; color: #065f46; }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid #d1d5db; }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+    th { background: #f3f4f6; text-align: left; }
+    .box { background: #fafafa; border: 1px solid #d1d5db; border-radius: 6px; padding: 10px 12px; }
+    .ok { color: #166534; font-weight: 600; }
+    .warn { color: #92400e; font-weight: 600; }
+    @media print { main { max-width: none; padding: 0; } thead { display: table-header-group; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SQLite и быстрый CRUD GUI для Актов работ</h1>
+    <p>Документ фиксирует, как адаптировать архитектуру актов под SQLite и какой GUI выбрать для максимально быстрого CRUD без разрушения истории документов.</p>
+
+    <section>
+      <h2>1. Короткий вывод</h2>
+      <div class="box">
+        <p><span class="ok">База:</span> <strong>SQLite</strong> подходит для старта, одиночного инстанса, небольшого числа одновременных записей и локального/внутреннего сервиса.</p>
+        <p><span class="ok">CRUD GUI:</span> лучший быстрый вариант — <strong>NocoDB</strong>.</p>
+        <p><span class="warn">Важно:</span> NocoDB не должен напрямую ломать immutable-историю; операции <code>freeze revision</code>, <code>sign</code>, <code>send</code>, <code>render</code> лучше проводить через backend/API.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Когда SQLite подходит</h2>
+      <ul>
+        <li>Один сервер или десктопное/локальное приложение.</li>
+        <li>Небольшое количество конкурентных write-операций.</li>
+        <li>История документов важнее горизонтального масштабирования.</li>
+        <li>Нужен быстрый старт без отдельного DB-сервера.</li>
+      </ul>
+      <p>Для учёта актов это нормальный выбор, если система не предполагает много параллельных операторов, массовые фоновые записи и распределённую кластерную запись.</p>
+    </section>
+
+    <section>
+      <h2>3. Обязательные настройки SQLite</h2>
+      <table>
+        <thead><tr><th>Настройка</th><th>Рекомендация</th><th>Зачем</th></tr></thead>
+        <tbody>
+          <tr><td><code>PRAGMA foreign_keys</code></td><td><code>ON</code></td><td>Иначе FK фактически не работают</td></tr>
+          <tr><td><code>PRAGMA journal_mode</code></td><td><code>WAL</code></td><td>Лучше чтение при наличии записи</td></tr>
+          <tr><td><code>PRAGMA busy_timeout</code></td><td><code>5000</code>–<code>10000</code></td><td>Меньше ошибок <code>database is locked</code></td></tr>
+          <tr><td><code>PRAGMA synchronous</code></td><td><code>NORMAL</code> или <code>FULL</code></td><td>Баланс надёжности и скорости</td></tr>
+          <tr><td>Хранилище файла БД</td><td>Локальный диск, не network share</td><td>Стабильность блокировок и WAL</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Физическое отображение типов для SQLite</h2>
+      <table>
+        <thead><tr><th>Логический тип</th><th>SQLite-представление</th><th>Рекомендация</th></tr></thead>
+        <tbody>
+          <tr><td>ID сущностей</td><td><code>TEXT</code></td><td>UUID/ULID генерировать в приложении</td></tr>
+          <tr><td>Дата документа</td><td><code>TEXT</code></td><td>Формат <code>YYYY-MM-DD</code></td></tr>
+          <tr><td>Дата-время</td><td><code>TEXT</code></td><td>UTC ISO-8601, например <code>2026-03-08T12:34:56Z</code></td></tr>
+          <tr><td>Деньги</td><td><code>INTEGER</code></td><td>Хранить в копейках/центах, не в <code>REAL</code></td></tr>
+          <tr><td>Количество</td><td><code>INTEGER</code> или <code>TEXT</code></td><td>Либо в milliunits, либо строкой с явным парсингом</td></tr>
+          <tr><td>Boolean</td><td><code>INTEGER</code></td><td><code>CHECK (field in (0,1))</code></td></tr>
+          <tr><td>JSON snapshot</td><td><code>TEXT</code></td><td><code>CHECK (json_valid(snapshot_json))</code></td></tr>
+        </tbody>
+      </table>
+      <div class="box">
+        Для денег в SQLite лучше всего использовать <strong>целые minor units</strong>: например, <code>105055</code> = 1050.55 ₽. Это надёжнее, чем надеяться на десятичную точность SQLite.
+      </div>
+    </section>
+
+    <section>
+      <h2>5. Что меняется в нашей схеме</h2>
+      <ul>
+        <li><code>uuid</code> → <code>TEXT</code></li>
+        <li><code>timestamptz</code> → <code>TEXT</code> в UTC</li>
+        <li><code>jsonb</code> → <code>TEXT</code> + <code>json_valid()</code></li>
+        <li><code>decimal(18,2)</code> для сумм → <code>INTEGER</code> в копейках</li>
+        <li>Partial index для текущей ревизии остаётся допустимым, если версия SQLite современная</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Ограничения и caveats SQLite</h2>
+      <ul>
+        <li>SQLite — это single-writer база; длинные write-транзакции вредны.</li>
+        <li>Нельзя держать транзакцию открытой во время рендера HTML или сетевого вызова ЭДО.</li>
+        <li><code>ALTER TABLE</code> ограничен сильнее, чем в PostgreSQL; часто нужен rebuild таблицы.</li>
+        <li>При росте нагрузки по записи может понадобиться миграция на PostgreSQL без смены доменной модели.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Лучший быстрый CRUD GUI</h2>
+      <h3>NocoDB — основной выбор</h3>
+      <table>
+        <thead><tr><th>Критерий</th><th>Оценка</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td>Скорость запуска</td><td>Очень высокая</td><td>Можно быстро поднять таблицы, формы и списки</td></tr>
+          <tr><td>Подходит для SQLite</td><td>Да</td><td>Хорош для внутреннего CRUD/бэк-офиса</td></tr>
+          <tr><td>Фильтры/таблицы/формы</td><td>Да</td><td>Подходит для операторской работы</td></tr>
+          <tr><td>Безопасность доменной логики</td><td>Средняя</td><td>Нельзя давать прямое редактирование критичных history-таблиц</td></tr>
+        </tbody>
+      </table>
+      <div class="box">
+        <strong>Рекомендация:</strong> использовать NocoDB как быстрый backoffice GUI для просмотра и безопасного CRUD по ограниченному набору сущностей, но не как единственное место, где исполняется бизнес-логика статусов и immutable-версий.
+      </div>
+    </section>
+
+    <section>
+      <h2>8. Как правильно сочетать NocoDB с нашей моделью</h2>
+      <table>
+        <thead><tr><th>Сущность</th><th>Режим в GUI</th><th>Комментарий</th></tr></thead>
+        <tbody>
+          <tr><td><code>work_act</code></td><td>CRUD с ограничениями</td><td>Можно редактировать draft-поля</td></tr>
+          <tr><td><code>work_act_item</code></td><td>CRUD для draft</td><td>Через представление или API</td></tr>
+          <tr><td><code>work_act_revision</code></td><td>Read only</td><td>История не должна правиться руками</td></tr>
+          <tr><td><code>document_artifact</code></td><td>Read only</td><td>Только просмотр метаданных и ссылки</td></tr>
+          <tr><td><code>work_act_status_history</code></td><td>Read only</td><td>Append-only история</td></tr>
+          <tr><td><code>audit_event</code></td><td>Read only</td><td>Никаких ручных изменений</td></tr>
+        </tbody>
+      </table>
+      <p>Лучше всего дать GUI доступ не к сырым таблицам, а к <strong>безопасным views</strong> или к backend-API, который не позволит сломать статусную модель.</p>
+    </section>
+
+    <section>
+      <h2>9. Что не использовать как основной GUI</h2>
+      <ul>
+        <li><strong>DB Browser for SQLite</strong> — хорош для разработчика, но не для операторского CRUD.</li>
+        <li><strong>TablePlus / Beekeeper Studio</strong> — отличные dev/admin-клиенты, но не бизнес-GUI.</li>
+        <li>Любой GUI с прямым редактированием history-таблиц без доменных ограничений.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>10. Практическая рекомендация по стеку</h2>
+      <div class="box">
+        <p><strong>Рекомендуемый стартовый стек:</strong></p>
+        <ul>
+          <li>SQLite как основная БД</li>
+          <li>Файловое/object storage для HTML/PDF-артефактов</li>
+          <li>NocoDB как быстрый CRUD/backoffice GUI</li>
+          <li>Отдельный backend/service для операций <code>freeze</code>, <code>send</code>, <code>sign</code>, <code>render</code>, <code>create correction</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>10.1 Готовые артефакты в репозитории</h2>
+      <ul>
+        <li><code>db/sqlite/work_acts_schema.sql</code> — реальная SQLite schema.sql</li>
+        <li><code>db/sqlite/work_acts_seed_demo.sql</code> — demo seed для красивого старта в NocoDB</li>
+        <li><code>docs/work-acts-nocodb-views-plan.html</code> — план подключения views и режимов доступа в NocoDB</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>11. Если нужен совсем быстрый MVP</h2>
+      <ol>
+        <li>Поднять SQLite.</li>
+        <li>Создать таблицы актов, строк, ревизий, артефактов.</li>
+        <li>Подключить NocoDB только к draft-CRUD и просмотру истории.</li>
+        <li>Сделать 4 backend-операции: <code>freeze revision</code>, <code>render html</code>, <code>send</code>, <code>sign</code>.</li>
+      </ol>
+      <p>Такой MVP будет быстрым, но не разрушит ключевую идею — хранить историю документов корректно.</p>
+    </section>
+  </main>
+</body>
+</html>
