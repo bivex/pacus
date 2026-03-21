@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Акт A-2026-003</title><link rel="stylesheet" href="/print.css" /></head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Акт A-2026-003</title><link rel="stylesheet" href="/print.css" /><script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script></head>
 <body><main>
   <div class="topbar no-print"><div><h1>Акт выполненных работ № A-2026-003</h1><p class="muted">Статус: draft · Версия: rev-1 · Шаблон: tpl-2026.03</p></div><div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div></div>
   <div class="grid"><div><p><strong>Исполнитель:</strong> Pacus Demo</p><p><strong>Заказчик:</strong> ООО Альфа Инжиниринг</p><p><strong>Договор:</strong> DEV-2026-01 от 15.01.2026</p></div><div><p><strong>Дата акта:</strong> 10.03.2026</p><p><strong>Период:</strong> 01.03.2026 — 10.03.2026</p><p><strong>Валюта:</strong> RUB</p></div></div>
   <table><thead><tr><th>#</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>НДС</th></tr></thead><tbody>
-    <tr><td>1</td><td>Разработка backend модуля актов</td><td>1</td><td class="amount">120 000,00 ₽</td><td class="amount">120 000,00 ₽</td><td class="amount">24 000,00 ₽</td></tr>
-    <tr><td>2</td><td>Интеграция печатной HTML-формы</td><td>1</td><td class="amount">65 000,00 ₽</td><td class="amount">65 000,00 ₽</td><td class="amount">13 000,00 ₽</td></tr>
-  </tbody><tfoot><tr><th colspan="4" class="right">Итого без НДС</th><th class="amount">185 000,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">НДС 20%</th><th class="amount">37 000,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">Итого к оплате</th><th class="amount">222 000,00 ₽</th><th></th></tr></tfoot></table>
+    <tr><td>1</td><td>Разработка backend модуля актов</td><td>1</td><td class="amount">120 000,00 <span class="sym"></span></td><td class="amount">120 000,00 <span class="sym"></span></td><td class="amount">24 000,00 <span class="sym"></span></td></tr>
+    <tr><td>2</td><td>Интеграция печатной HTML-формы</td><td>1</td><td class="amount">65 000,00 <span class="sym"></span></td><td class="amount">65 000,00 <span class="sym"></span></td><td class="amount">13 000,00 <span class="sym"></span></td></tr>
+  </tbody><tfoot><tr><th colspan="4" class="right">Итого без НДС</th><th class="amount">185 000,00 <span class="sym"></span></th><th></th></tr><tr><th colspan="4" class="right">НДС 20%</th><th class="amount">37 000,00 <span class="sym"></span></th><th></th></tr><tr><th colspan="4" class="right">Итого к оплате</th><th class="amount">222 000,00 <span class="sym"></span></th><th></th></tr></tfoot></table>
   <p>Настоящий акт подтверждает выполнение работ за указанный период. Документ сформирован как demo HTML-артефакт для печати.</p>
   <div class="grid"><div><p><strong>Исполнитель</strong></p><div class="signature"></div></div><div><p><strong>Заказчик</strong></p><div class="signature"></div></div></div>
-</main></body>
+</main><script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script></body>
 </html>

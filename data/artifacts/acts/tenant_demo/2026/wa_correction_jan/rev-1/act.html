@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Акт A-2026-001-К1</title><link rel="stylesheet" href="/print.css" /></head>
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Акт A-2026-001-К1</title><link rel="stylesheet" href="/print.css" /><script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script></head>
 <body><main>
   <div class="topbar no-print"><div><h1>Корректировочный акт № A-2026-001-К1</h1><p class="muted">Статус: signed · Версия: rev-1 · Шаблон: tpl-2026.02-c1</p></div><div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div></div>
   <div class="grid"><div><p><strong>Исполнитель:</strong> Pacus Demo</p><p><strong>Заказчик:</strong> АО Бета Сервис</p><p><strong>Основание:</strong> корректировка к A-2026-001</p></div><div><p><strong>Дата акта:</strong> 05.02.2026</p><p><strong>Период:</strong> 01.01.2026 — 31.01.2026</p><p><strong>Валюта:</strong> RUB</p></div></div>
   <table><thead><tr><th>#</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>НДС</th></tr></thead><tbody>
-    <tr><td>1</td><td>Корректировка по январскому акту</td><td>1</td><td class="amount">12 000,00 ₽</td><td class="amount">12 000,00 ₽</td><td class="amount">2 400,00 ₽</td></tr>
-  </tbody><tfoot><tr><th colspan="4" class="right">Итого без НДС</th><th class="amount">12 000,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">НДС 20%</th><th class="amount">2 400,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">Итого к оплате</th><th class="amount">14 400,00 ₽</th><th></th></tr></tfoot></table>
+    <tr><td>1</td><td>Корректировка по январскому акту</td><td>1</td><td class="amount">12 000,00 <span class="sym"></span></td><td class="amount">12 000,00 <span class="sym"></span></td><td class="amount">2 400,00 <span class="sym"></span></td></tr>
+  </tbody><tfoot><tr><th colspan="4" class="right">Итого без НДС</th><th class="amount">12 000,00 <span class="sym"></span></th><th></th></tr><tr><th colspan="4" class="right">НДС 20%</th><th class="amount">2 400,00 <span class="sym"></span></th><th></th></tr><tr><th colspan="4" class="right">Итого к оплате</th><th class="amount">14 400,00 <span class="sym"></span></th><th></th></tr></tfoot></table>
   <p>Документ фиксирует корректировку к исходному акту и хранится как отдельный immutable HTML-артефакт.</p>
   <div class="grid"><div><p><strong>Исполнитель</strong></p><div class="signature"></div></div><div><p><strong>Заказчик</strong></p><div class="signature"></div></div></div>
-</main></body>
+</main><script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script></body>
 </html>

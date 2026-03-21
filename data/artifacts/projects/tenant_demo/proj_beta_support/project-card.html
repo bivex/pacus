@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Проект BETA-SUP-2026</title><style>
+@page { size: A4; margin: 16mm 14mm 18mm; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
+main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+h1, h2, h3, p { margin: 0 0 10px; }
+h1 { font-size: 24px; }
+h2 { font-size: 16px; margin-top: 18px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
+th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
+th { background: #f9fafb; text-align: left; }
+.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
+.muted { color: #6b7280; }
+.amount { text-align: right; white-space: nowrap; }
+.right { text-align: right; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
+.actions { display: flex; gap: 10px; }
+@media print {
+  body { background: #fff; }
+  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
+  .no-print { display: none !important; }
+  thead { display: table-header-group; }
+  tr, img { break-inside: avoid; }
+}
+</style><script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script></head>
+<body><main>
+  <div class="topbar no-print">
+    <div>
+      <h1>Проект BETA-SUP-2026 — Техническая поддержка платформы</h1>
+      <p class="muted">Статус: <strong>completed</strong> · Tenant: Pacus Demo · Контрагент: АО Бета Сервис</p>
+    </div>
+    <div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div>
+  </div>
+
+  <h1>Проект BETA-SUP-2026</h1>
+  <p>Техническая поддержка платформы</p>
+
+  <div class="grid">
+    <div>
+      <p><strong>Tenant:</strong> Pacus Demo</p>
+      <p><strong>Контрагент:</strong> АО Бета Сервис</p>
+      <p><strong>Статус:</strong> completed</p>
+    </div>
+    <div>
+      <p><strong>Начало:</strong> 01.01.2026</p>
+      <p><strong>Завершение:</strong> 01.03.2026</p>
+      <p><strong>Создан:</strong> 08.03.2026 · user_demo_operator</p>
+    </div>
+  </div>
+  <p class="muted">Сопровождение и мониторинг платформы в 2026 году</p>
+
+  <h2>История статусов</h2>
+  <table>
+    <thead><tr><th>Дата</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
+    <tbody>
+      <tr><td>08.03.2026 09:06</td><td class="muted">—</td><td><strong>active</strong></td><td>user_demo_operator</td><td>Проект открыт</td></tr>
+      <tr><td>08.03.2026 09:06</td><td>active</td><td><strong>completed</strong></td><td>user_demo_operator</td><td>Все акты закрыты, поддержка завершена</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Акты работ по проекту</h2>
+  <table>
+    <thead><tr><th>Номер акта</th><th>Дата акта</th><th>Период</th><th>Статус</th><th>Итого</th><th>Печать</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>A-2026-001</td>
+        <td>31.01.2026</td>
+        <td>01.01.2026 — 31.01.2026</td>
+        <td>corrected</td>
+        <td class="amount">180 000,00 <span class="sym"></span></td>
+        <td><a href="/acts/tenant_demo/2026/wa_original_jan/rev-1/act.html">HTML</a> · <a href="/acts/tenant_demo/2026/wa_original_jan/audit/audit.html">Аудит</a></td>
+      </tr>
+      <tr>
+        <td>A-2026-001-К1</td>
+        <td>05.02.2026</td>
+        <td>01.01.2026 — 31.01.2026</td>
+        <td>signed</td>
+        <td class="amount">14 400,00 <span class="sym"></span></td>
+        <td><a href="/acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html">HTML</a></td>
+      </tr>
+      <tr>
+        <td>A-2026-002</td>
+        <td>28.02.2026</td>
+        <td>01.02.2026 — 28.02.2026</td>
+        <td>sent</td>
+        <td class="amount">108 000,00 <span class="sym"></span></td>
+        <td><a href="/acts/tenant_demo/2026/wa_sent_feb/rev-1/act.html">HTML</a></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr><th colspan="4" class="right">Всего актов: 3 (подписанных: 1, скорректированных: 1, отправленных: 1)</th><th class="amount" colspan="2">302 400,00 <span class="sym"></span></th></tr>
+    </tfoot>
+  </table>
+
+  <p class="muted">Документ сформирован: 08.03.2026 · Pacus Demo</p>
+</main><script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script></body>
+</html>
