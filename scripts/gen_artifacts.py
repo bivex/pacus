@@ -57,45 +57,47 @@ SYMC = '<span class="sym-code"></span>'
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+def rel(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file's directory to to_file."""
+    return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
+
+def act_html_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
+    return out_dir / "acts" / tenant_id / act_date[:4] / act_id / "rev-1" / "act.html"
+
+def act_audit_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
+    return out_dir / "acts" / tenant_id / act_date[:4] / act_id / "audit" / "audit.html"
+
+def project_card_path(out_dir: Path, tenant_id: str, proj_id: str) -> Path:
+    return out_dir / "projects" / tenant_id / proj_id / "project-card.html"
+
 def fmt_date(iso: str | None) -> str:
-    """'2026-01-31' → '31.01.2026', None → '—'"""
     if not iso:
         return "—"
-    d = iso[:10]
     try:
-        y, m, day = d.split("-")
-        return f"{day}.{m}.{y}"
+        y, m, d = iso[:10].split("-")
+        return f"{d}.{m}.{y}"
     except Exception:
         return iso
 
 def fmt_dt(iso: str | None) -> str:
-    """'2026-01-31T12:00:00Z' → '31.01.2026 12:00'"""
     if not iso:
         return "—"
     try:
-        date_part = fmt_date(iso[:10])
-        time_part = iso[11:16]
-        return f"{date_part} {time_part}"
+        return f"{fmt_date(iso[:10])} {iso[11:16]}"
     except Exception:
         return iso
 
 def fmt_amount(minor: int | None) -> str:
-    """18000000 → '180 000,00'"""
     if minor is None:
         return "—"
     rubles = minor / 100
     integer = int(rubles)
     frac = round((rubles - integer) * 100)
-    # thousands separator
-    s = f"{integer:,}".replace(",", "\u202f")  # narrow no-break space
+    s = f"{integer:,}".replace(",", "\u202f")
     return f"{s},{frac:02d}"
 
 def dash(v) -> str:
     return v if v else "—"
-
-def status_arrow(from_s, to_s) -> str:
-    f = f"<span class='muted'>—</span>" if not from_s else from_s
-    return f"{f} → <strong>{to_s}</strong>"
 
 def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -104,21 +106,24 @@ def write_file(path: Path, content: str):
 # ---------------------------------------------------------------------------
 # Project card
 # ---------------------------------------------------------------------------
-def render_project_card(proj: dict, history: list, acts: list, tenant_name: str) -> str:
-    code    = proj["code"]
-    name    = proj["name"]
-    status  = proj["status"]
-    cp_name = proj["counterparty_name"]
-    started = fmt_date(proj["started_on"])
-    ended   = fmt_date(proj["finished_on"])
-    desc    = proj["description"] or ""
+def render_project_card(proj: dict, history: list, acts: list,
+                        self_path: Path, out_dir: Path) -> str:
+    code       = proj["code"]
+    name       = proj["name"]
+    status     = proj["status"]
+    cp_name    = proj["counterparty_name"]
+    tenant_name = proj["tenant_name"]
+    started    = fmt_date(proj["started_on"])
+    ended      = fmt_date(proj["finished_on"])
+    desc       = proj["description"] or ""
     created_by = proj["created_by"]
     created_at = fmt_date(proj["created_at"])
 
-    # Status history rows
+    index_href = rel(self_path, out_dir / "index.html")
+
     hist_rows = ""
     for h in history:
-        from_s = f"<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
+        from_s = "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
         hist_rows += (
             f"<tr>"
             f"<td>{fmt_dt(h['changed_at'])}</td>"
@@ -129,16 +134,14 @@ def render_project_card(proj: dict, history: list, acts: list, tenant_name: str)
             f"</tr>\n"
         )
 
-    # Acts rows
     act_rows = ""
     grand_total = 0
     for a in acts:
         amount = a["grand_total_amount_minor"] or 0
         grand_total += amount
-        html_path = a["html_path"] or ""
-        audit_path = f"/acts/{a['tenant_id']}/{a['act_date'][:4]}/{a['act_id']}/audit/audit.html"
-        links = f'<a href="/{html_path}">HTML</a>'
-        links += f' · <a href="{audit_path}">Аудит</a>'
+        html_href  = rel(self_path, act_html_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]))
+        audit_href = rel(self_path, act_audit_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]))
+        links = f'<a href="{html_href}">HTML</a> · <a href="{audit_href}">Аудит</a>'
         act_rows += (
             f"<tr>"
             f"<td>{a['act_number']}</td>"
@@ -150,8 +153,8 @@ def render_project_card(proj: dict, history: list, acts: list, tenant_name: str)
             f"</tr>\n"
         )
 
-    total_str = fmt_amount(grand_total)
     n_acts = len(acts)
+    acts_label = "акт" if n_acts == 1 else "актов"
 
     return f"""\
 <!DOCTYPE html>
@@ -170,7 +173,7 @@ def render_project_card(proj: dict, history: list, acts: list, tenant_name: str)
       <h1>Проект {code} — {name}</h1>
       <p class="muted">Статус: <strong>{status}</strong> · {tenant_name} · {cp_name}</p>
     </div>
-    <div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div>
+    <div class="actions"><a href="{index_href}">К списку</a><button onclick="window.print()">Печать</button></div>
   </div>
 
   <h1>Проект {code}</h1>
@@ -204,8 +207,8 @@ def render_project_card(proj: dict, history: list, acts: list, tenant_name: str)
 {act_rows}    </tbody>
     <tfoot>
       <tr>
-        <th colspan="4" class="right">Итого по проекту ({n_acts} {'акт' if n_acts == 1 else 'актов'})</th>
-        <th class="amount">{total_str} {SYM}</th>
+        <th colspan="4" class="right">Итого по проекту ({n_acts} {acts_label})</th>
+        <th class="amount">{fmt_amount(grand_total)} {SYM}</th>
         <th></th>
       </tr>
     </tfoot>
@@ -221,20 +224,24 @@ def render_project_card(proj: dict, history: list, acts: list, tenant_name: str)
 # ---------------------------------------------------------------------------
 # Act audit trail
 # ---------------------------------------------------------------------------
-def render_act_audit(act: dict, history: list, revisions: list, correction: dict | None) -> str:
-    act_number = act["act_number"]
-    status     = act["status"]
-    cp_name    = act["counterparty_name"]
-    contract   = act["contract_number"]
-    proj_code  = act["project_code"] or "—"
-    proj_name  = act["project_name"] or ""
-    proj_id    = act["project_id"]
-    tenant_id  = act["tenant_id"]
-    act_date   = fmt_date(act["act_date"])
-    period     = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
+def render_act_audit(act: dict, history: list, revisions: list,
+                     correction: dict | None,
+                     self_path: Path, out_dir: Path) -> str:
+    act_number  = act["act_number"]
+    status      = act["status"]
+    cp_name     = act["counterparty_name"]
+    contract    = act["contract_number"]
+    proj_code   = act["project_code"] or "—"
+    proj_name   = act["project_name"] or ""
+    proj_id     = act["project_id"]
+    tenant_id   = act["tenant_id"]
     tenant_name = act["tenant_name"]
+    act_date    = fmt_date(act["act_date"])
+    period      = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
 
-    # Status history rows
+    index_href   = rel(self_path, out_dir / "index.html")
+    own_act_href = rel(self_path, act_html_path(out_dir, tenant_id, act["act_id"], act["act_date"]))
+
     hist_rows = ""
     for h in history:
         from_s = "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
@@ -248,11 +255,13 @@ def render_act_audit(act: dict, history: list, revisions: list, correction: dict
             f"</tr>\n"
         )
 
-    # Revision rows
     rev_rows = ""
     for r in revisions:
-        immut = "<strong>да</strong>" if r["is_immutable"] else "нет"
-        html_link = f'<a href="/{r["html_path"]}">HTML</a>' if r["html_path"] else "—"
+        immut    = "<strong>да</strong>" if r["is_immutable"] else "нет"
+        html_link = "—"
+        if r["html_path"]:
+            target = out_dir / r["html_path"]
+            html_link = f'<a href="{rel(self_path, target)}">HTML</a>'
         rev_rows += (
             f"<tr>"
             f"<td>{r['revision_no']}</td>"
@@ -266,19 +275,18 @@ def render_act_audit(act: dict, history: list, revisions: list, correction: dict
             f"</tr>\n"
         )
 
-    # Related links
     related_rows = ""
     if correction:
-        corr_path = f"/acts/{tenant_id}/{correction['act_date'][:4]}/{correction['act_id']}/rev-1/act.html"
+        href = rel(self_path, act_html_path(out_dir, tenant_id, correction["act_id"], correction["act_date"]))
         related_rows += (
             f"<tr><td>Корректировочный акт</td><td>{correction['act_number']}</td>"
-            f"<td>{correction['status']}</td><td><a href='{corr_path}'>Открыть</a></td></tr>\n"
+            f"<td>{correction['status']}</td><td><a href='{href}'>Открыть</a></td></tr>\n"
         )
     if proj_id:
-        proj_card = f"/projects/{tenant_id}/{proj_id}/project-card.html"
+        href = rel(self_path, project_card_path(out_dir, tenant_id, proj_id))
         related_rows += (
             f"<tr><td>Карточка проекта</td><td>{proj_code}</td>"
-            f"<td>{proj_name}</td><td><a href='{proj_card}'>Открыть</a></td></tr>\n"
+            f"<td>{proj_name}</td><td><a href='{href}'>Открыть</a></td></tr>\n"
         )
 
     related_section = ""
@@ -290,6 +298,8 @@ def render_act_audit(act: dict, history: list, revisions: list, correction: dict
     <tbody>
 {related_rows}    </tbody>
   </table>"""
+
+    proj_line = f"<p><strong>Проект:</strong> {proj_code} — {proj_name}</p>" if proj_id else ""
 
     return f"""\
 <!DOCTYPE html>
@@ -309,8 +319,8 @@ def render_act_audit(act: dict, history: list, revisions: list, correction: dict
       <p class="muted">Статус: {status} · {cp_name} · Проект: {proj_code}</p>
     </div>
     <div class="actions">
-      <a href="/acts/{tenant_id}/{act['act_date'][:4]}/{act['act_id']}/rev-1/act.html">Акт</a>
-      <a href="/">К списку</a>
+      <a href="{own_act_href}">Акт</a>
+      <a href="{index_href}">К списку</a>
       <button onclick="window.print()">Печать</button>
     </div>
   </div>
@@ -322,7 +332,7 @@ def render_act_audit(act: dict, history: list, revisions: list, correction: dict
       <p><strong>Исполнитель:</strong> {tenant_name}</p>
       <p><strong>Заказчик:</strong> {cp_name}</p>
       <p><strong>Договор:</strong> {contract}</p>
-      {"<p><strong>Проект:</strong> " + proj_code + " — " + proj_name + "</p>" if proj_id else ""}
+      {proj_line}
     </div>
     <div>
       <p><strong>Дата акта:</strong> {act_date}</p>
@@ -395,10 +405,10 @@ def generate(db_path: Path, out_dir: Path):
             ORDER BY wa.period_from, wa.act_date
         """, (proj["id"],)).fetchall()
 
-        html = render_project_card(proj, history, [dict(a) for a in acts], proj["tenant_name"])
-        out_path = out_dir / "projects" / proj["tenant_id"] / proj["id"] / "project-card.html"
-        write_file(out_path, html)
-        print(f"  project  {out_path.relative_to(out_dir)}")
+        self_path = project_card_path(out_dir, proj["tenant_id"], proj["id"])
+        html = render_project_card(proj, history, [dict(a) for a in acts], self_path, out_dir)
+        write_file(self_path, html)
+        print(f"  project  {self_path.relative_to(out_dir)}")
 
     # ---- Act audit trails ----
     acts = conn.execute("""
@@ -418,11 +428,7 @@ def generate(db_path: Path, out_dir: Path):
         ORDER BY wa.tenant_id, wa.act_date
     """).fetchall()
 
-    # Build correction lookup: source_act_id → correction act row
-    corrections = {}
-    for a in acts:
-        if a["source_act_id"]:
-            corrections[a["source_act_id"]] = dict(a)
+    corrections = {a["source_act_id"]: dict(a) for a in acts if a["source_act_id"]}
 
     for act in acts:
         act = dict(act)
@@ -444,13 +450,11 @@ def generate(db_path: Path, out_dir: Path):
             ORDER BY r.revision_no
         """, (act["act_id"],)).fetchall()
 
-        correction = corrections.get(act["act_id"])
-
-        html = render_act_audit(act, history, [dict(r) for r in revisions], correction)
-        year = act["act_date"][:4]
-        out_path = out_dir / "acts" / act["tenant_id"] / year / act["act_id"] / "audit" / "audit.html"
-        write_file(out_path, html)
-        print(f"  audit    {out_path.relative_to(out_dir)}")
+        self_path = act_audit_path(out_dir, act["tenant_id"], act["act_id"], act["act_date"])
+        html = render_act_audit(act, history, [dict(r) for r in revisions],
+                                corrections.get(act["act_id"]), self_path, out_dir)
+        write_file(self_path, html)
+        print(f"  audit    {self_path.relative_to(out_dir)}")
 
     # ---- index.html ----
     all_projects = conn.execute("""
@@ -468,17 +472,26 @@ def generate(db_path: Path, out_dir: Path):
         ORDER BY wa.tenant_id, wa.act_date
     """).fetchall()
 
+    index_path = out_dir / "index.html"
+
     proj_rows = ""
     for p in all_projects:
-        card = f"/projects/{p['tenant_id']}/{p['id']}/project-card.html"
-        proj_rows += f"<tr><td>{p['code']} — {p['name']}</td><td>{p['cp_name']}</td><td>{p['status']}</td><td><a href='{card}'>Карточка</a></td></tr>\n        "
+        card_href = rel(index_path, project_card_path(out_dir, p["tenant_id"], p["id"]))
+        proj_rows += (
+            f"        <tr><td>{p['code']} — {p['name']}</td>"
+            f"<td>{p['cp_name']}</td><td>{p['status']}</td>"
+            f"<td><a href='{card_href}'>Карточка</a></td></tr>\n"
+        )
 
     act_rows_idx = ""
     for a in all_acts:
-        year = a["act_date"][:4]
-        html_link = f"<a href='/{a['html_path']}'>HTML</a>" if a["html_path"] else "—"
-        audit_link = f"<a href='/acts/{a['tenant_id']}/{year}/{a['id']}/audit/audit.html'>Аудит</a>"
-        act_rows_idx += f"<tr><td>{a['act_number']}</td><td>{a['status']}</td><td>{html_link}</td><td>{audit_link}</td></tr>\n        "
+        html_href  = rel(index_path, act_html_path(out_dir, a["tenant_id"], a["id"], a["act_date"]))
+        audit_href = rel(index_path, act_audit_path(out_dir, a["tenant_id"], a["id"], a["act_date"]))
+        html_link  = f"<a href='{html_href}'>HTML</a>" if a["html_path"] else "—"
+        act_rows_idx += (
+            f"        <tr><td>{a['act_number']}</td><td>{a['status']}</td>"
+            f"<td>{html_link}</td><td><a href='{audit_href}'>Аудит</a></td></tr>\n"
+        )
 
     index_html = f"""\
 <!DOCTYPE html>
@@ -503,14 +516,14 @@ def generate(db_path: Path, out_dir: Path):
     <table>
       <thead><tr><th>Проект</th><th>Контрагент</th><th>Статус</th><th>Ссылка</th></tr></thead>
       <tbody>
-        {proj_rows}</tbody>
+{proj_rows}      </tbody>
     </table>
 
     <h2>Акты работ</h2>
     <table>
       <thead><tr><th>Акт</th><th>Статус</th><th>Печать</th><th>Аудит</th></tr></thead>
       <tbody>
-        {act_rows_idx}</tbody>
+{act_rows_idx}      </tbody>
     </table>
 
     <p class="muted">Базовый URL print server: <strong>http://localhost:4000</strong></p>
@@ -518,8 +531,7 @@ def generate(db_path: Path, out_dir: Path):
 </body>
 </html>
 """
-    index_path = out_dir / "index.html"
-    index_path.write_text(index_html, encoding="utf-8")
+    write_file(index_path, index_html)
     print(f"  index    index.html")
 
     conn.close()
@@ -533,8 +545,8 @@ if __name__ == "__main__":
     parser.add_argument("--out", default=str(DEFAULT_OUT), help="Output directory (artifacts root)")
     args = parser.parse_args()
 
-    db_path  = Path(args.db)
-    out_dir  = Path(args.out)
+    db_path = Path(args.db)
+    out_dir = Path(args.out)
 
     if not db_path.exists():
         print(f"DB not found: {db_path}", file=sys.stderr)
