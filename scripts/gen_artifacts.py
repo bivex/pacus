@@ -70,6 +70,9 @@ def act_audit_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) ->
 def project_card_path(out_dir: Path, tenant_id: str, proj_id: str) -> Path:
     return out_dir / "projects" / tenant_id / proj_id / "project-card.html"
 
+def journal_entry_path(out_dir: Path, tenant_id: str, proj_id: str, entry_id: str) -> Path:
+    return out_dir / "projects" / tenant_id / proj_id / "journal" / f"{entry_id}.html"
+
 def fmt_date(iso: str | None) -> str:
     if not iso:
         return "—"
@@ -107,6 +110,7 @@ def write_file(path: Path, content: str):
 # Project card
 # ---------------------------------------------------------------------------
 def render_project_card(proj: dict, history: list, acts: list,
+                        journal: list, journal_acts: dict,
                         self_path: Path, out_dir: Path) -> str:
     code       = proj["code"]
     name       = proj["name"]
@@ -155,6 +159,50 @@ def render_project_card(proj: dict, history: list, acts: list,
 
     n_acts = len(acts)
     acts_label = "акт" if n_acts == 1 else "актов"
+
+    KIND_LABEL = {
+        "decision":  "Решение",
+        "result":    "Результат",
+        "note":      "Заметка",
+        "milestone": "Веха",
+    }
+
+    journal_rows = ""
+    for entry in journal:
+        linked = journal_acts.get(entry["id"], [])
+        if linked:
+            parts = []
+            for a in linked:
+                href = rel(self_path, act_html_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
+                parts.append(f'<a href="{href}">{a["act_number"]}</a>')
+            act_links = ", ".join(parts)
+        else:
+            act_links = "—"
+
+        detail_parts = []
+        if entry.get("decision_made"):
+            detail_parts.append(f"<em>Решение:</em> {entry['decision_made']}")
+        if entry.get("outcome"):
+            detail_parts.append(f"<em>Итог:</em> {entry['outcome']}")
+        if entry.get("body"):
+            detail_parts.append(entry["body"])
+        detail_html = "<br>".join(detail_parts) if detail_parts else ""
+
+        entry_href = rel(self_path, journal_entry_path(
+            out_dir, proj["tenant_id"], proj["id"], entry["id"]))
+        title_cell = f'<a href="{entry_href}"><strong>{entry["title"]}</strong></a>'
+        if detail_html:
+            title_cell += f"<br><span class='muted'>{detail_html}</span>"
+
+        journal_rows += (
+            f"<tr>"
+            f"<td>{fmt_date(entry['entry_date'])}</td>"
+            f"<td>{KIND_LABEL.get(entry['kind'], entry['kind'])}</td>"
+            f"<td>{title_cell}</td>"
+            f"<td>{act_links}</td>"
+            f"<td class='muted'>{dash(entry['recorded_by'])}</td>"
+            f"</tr>\n"
+        )
 
     return f"""\
 <!DOCTYPE html>
@@ -214,9 +262,122 @@ def render_project_card(proj: dict, history: list, acts: list,
     </tfoot>
   </table>
 
+  <h2>Журнал решений и событий</h2>
+  <table>
+    <thead><tr><th>Дата</th><th>Тип</th><th>Событие / Решение</th><th>Акты</th><th>Записал</th></tr></thead>
+    <tbody>
+{journal_rows}    </tbody>
+  </table>
+
   <p class="muted">Документ сформирован автоматически из БД · {tenant_name}</p>
 </main>
 {CURRENCY_BODY}
+</body>
+</html>
+"""
+
+# ---------------------------------------------------------------------------
+# Journal entry detail page
+# ---------------------------------------------------------------------------
+KIND_LABEL = {
+    "decision":  "Решение",
+    "result":    "Результат",
+    "note":      "Заметка",
+    "milestone": "Веха",
+}
+
+def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
+                         self_path: Path, out_dir: Path) -> str:
+    card_href  = rel(self_path, project_card_path(out_dir, proj["tenant_id"], proj["id"]))
+    index_href = rel(self_path, out_dir / "index.html")
+    kind_label = KIND_LABEL.get(entry["kind"], entry["kind"])
+
+    # Linked acts table
+    act_rows = ""
+    for a in linked_acts:
+        html_href  = rel(self_path, act_html_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
+        audit_href = rel(self_path, act_audit_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
+        act_rows += (
+            f"<tr>"
+            f"<td><a href='{html_href}'>{a['act_number']}</a></td>"
+            f"<td>{fmt_date(a['act_date'])}</td>"
+            f"<td>{a['act_status']}</td>"
+            f"<td><a href='{audit_href}'>Аудит</a></td>"
+            f"</tr>\n"
+        )
+
+    acts_section = ""
+    if act_rows:
+        acts_section = f"""\
+  <h2>Связанные акты</h2>
+  <table>
+    <thead><tr><th>Акт</th><th>Дата</th><th>Статус</th><th>Аудит</th></tr></thead>
+    <tbody>
+{act_rows}    </tbody>
+  </table>"""
+
+    def field_row(label: str, value: str | None) -> str:
+        if not value:
+            return ""
+        return f"<tr><th style='width:28%'>{label}</th><td>{value}</td></tr>\n"
+
+    detail_rows = (
+        field_row("Тип записи", kind_label)
+        + field_row("Дата события", fmt_date(entry["entry_date"]))
+        + field_row("Проект", f'<a href="{card_href}">{proj["code"]} — {proj["name"]}</a>')
+        + field_row("Записал", entry.get("recorded_by"))
+        + field_row("Записано", fmt_dt(entry.get("recorded_at")))
+    )
+
+    body_section = ""
+    if entry.get("body"):
+        body_section = f"<h2>Описание</h2><p>{entry['body']}</p>"
+
+    decision_section = ""
+    if entry.get("decision_made"):
+        decision_section = f"<h2>Принятое решение</h2><p>{entry['decision_made']}</p>"
+
+    outcome_section = ""
+    if entry.get("outcome"):
+        outcome_section = f"<h2>Результат / Итог</h2><p>{entry['outcome']}</p>"
+
+    return f"""\
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{kind_label}: {entry['title']}</title>
+{INLINE_CSS}
+</head>
+<body>
+<main>
+  <div class="topbar no-print">
+    <div>
+      <h1>{kind_label}: {entry['title']}</h1>
+      <p class="muted">{fmt_date(entry['entry_date'])} · Проект {proj['code']}</p>
+    </div>
+    <div class="actions">
+      <a href="{card_href}">К проекту</a>
+      <a href="{index_href}">К списку</a>
+      <button onclick="window.print()">Печать</button>
+    </div>
+  </div>
+
+  <h1>{entry['title']}</h1>
+
+  <table>
+    <tbody>
+{detail_rows}    </tbody>
+  </table>
+
+{body_section}
+{decision_section}
+{outcome_section}
+{acts_section}
+
+  <p class="muted">Запись журнала проекта · {proj['tenant_name']}</p>
+</main>
 </body>
 </html>
 """
@@ -405,10 +566,38 @@ def generate(db_path: Path, out_dir: Path):
             ORDER BY wa.period_from, wa.act_date
         """, (proj["id"],)).fetchall()
 
+        journal = conn.execute("""
+            SELECT id, entry_date, kind, title, body, decision_made, outcome,
+                   recorded_by, recorded_at
+            FROM project_journal
+            WHERE project_id = ?
+            ORDER BY entry_date ASC, recorded_at ASC
+        """, (proj["id"],)).fetchall()
+
+        journal_acts = {}
+        for entry in journal:
+            linked = conn.execute("""
+                SELECT wa.id AS act_id, wa.act_number, wa.act_date, wa.status AS act_status
+                FROM project_journal_act ja
+                JOIN work_act wa ON wa.id = ja.act_id
+                WHERE ja.journal_id = ?
+                ORDER BY wa.period_from, wa.act_date
+            """, (entry["id"],)).fetchall()
+            journal_acts[entry["id"]] = [dict(a) for a in linked]
+        journal = [dict(e) for e in journal]
+
         self_path = project_card_path(out_dir, proj["tenant_id"], proj["id"])
-        html = render_project_card(proj, history, [dict(a) for a in acts], self_path, out_dir)
+        html = render_project_card(proj, history, [dict(a) for a in acts],
+                                   journal, journal_acts, self_path, out_dir)
         write_file(self_path, html)
         print(f"  project  {self_path.relative_to(out_dir)}")
+
+        for entry in journal:
+            e_path = journal_entry_path(out_dir, proj["tenant_id"], proj["id"], entry["id"])
+            e_html = render_journal_entry(entry, proj, journal_acts.get(entry["id"], []),
+                                          e_path, out_dir)
+            write_file(e_path, e_html)
+            print(f"  journal  {e_path.relative_to(out_dir)}")
 
     # ---- Act audit trails ----
     acts = conn.execute("""
