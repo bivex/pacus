@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Проект ALFA-DEV-2026</title><style>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Проект ALFA-DEV-2026</title>
+<style>
 @page { size: A4; margin: 16mm 14mm 18mm; }
 * { box-sizing: border-box; }
 body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
@@ -15,6 +19,7 @@ th { background: #f9fafb; text-align: left; }
 .muted { color: #6b7280; }
 .amount { text-align: right; white-space: nowrap; }
 .right { text-align: right; }
+.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
 .actions { display: flex; gap: 10px; }
@@ -25,12 +30,15 @@ th { background: #f9fafb; text-align: left; }
   thead { display: table-header-group; }
   tr, img { break-inside: avoid; }
 }
-</style><script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script></head>
-<body><main>
+</style>
+<script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
+</head>
+<body>
+<main>
   <div class="topbar no-print">
     <div>
       <h1>Проект ALFA-DEV-2026 — Разработка платформы актов</h1>
-      <p class="muted">Статус: <strong>active</strong> · Tenant: Pacus Demo · Контрагент: ООО Альфа Инжиниринг</p>
+      <p class="muted">Статус: <strong>active</strong> · Демо арендатор / Pacus Demo · ООО Альфа Инжиниринг</p>
     </div>
     <div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div>
   </div>
@@ -40,7 +48,7 @@ th { background: #f9fafb; text-align: left; }
 
   <div class="grid">
     <div>
-      <p><strong>Tenant:</strong> Pacus Demo</p>
+      <p><strong>Организация:</strong> Демо арендатор / Pacus Demo</p>
       <p><strong>Контрагент:</strong> ООО Альфа Инжиниринг</p>
       <p><strong>Статус:</strong> active</p>
     </div>
@@ -50,42 +58,34 @@ th { background: #f9fafb; text-align: left; }
       <p><strong>Создан:</strong> 08.03.2026 · user_demo_manager</p>
     </div>
   </div>
-  <p class="muted">Проект по разработке backend-модуля и интеграции печатных форм</p>
+  <p class='muted'>Проект по разработке backend-модуля и интеграции печатных форм</p>
 
   <h2>История статусов</h2>
   <table>
-    <thead><tr><th>Дата</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
+    <thead><tr><th>Дата и время</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
     <tbody>
-      <tr><td>08.03.2026 09:05</td><td class="muted">—</td><td><strong>active</strong></td><td>user_demo_manager</td><td>Проект открыт</td></tr>
+<tr><td>08.03.2026 09:05</td><td><span class='muted'>—</span></td><td><strong>active</strong></td><td>user_demo_manager</td><td>Проект открыт</td></tr>
     </tbody>
   </table>
 
   <h2>Акты работ по проекту</h2>
   <table>
-    <thead><tr><th>Номер акта</th><th>Дата акта</th><th>Период</th><th>Статус</th><th>Итого</th><th>Печать</th></tr></thead>
+    <thead><tr><th>Номер акта</th><th>Дата</th><th>Период</th><th>Статус</th><th>Итого</th><th>Ссылки</th></tr></thead>
     <tbody>
-      <tr>
-        <td>A-2026-003</td>
-        <td>10.03.2026</td>
-        <td>01.03.2026 — 10.03.2026</td>
-        <td>draft</td>
-        <td class="amount">222 000,00 <span class="sym"></span></td>
-        <td><a href="/acts/tenant_demo/2026/wa_draft_mar/rev-1/act.html">HTML</a></td>
-      </tr>
-      <tr>
-        <td>A-2026-004</td>
-        <td>03.04.2026</td>
-        <td>01.04.2026 — 03.04.2026</td>
-        <td>cancelled</td>
-        <td class="amount">48 000,00 <span class="sym"></span></td>
-        <td><a href="/acts/tenant_demo/2026/wa_cancelled_apr/rev-1/act.html">HTML</a></td>
-      </tr>
+<tr><td>A-2026-003</td><td>10.03.2026</td><td>01.03.2026 — 10.03.2026</td><td>draft</td><td class='amount'>222 000,00 <span class="sym"></span></td><td><a href="/acts/tenant_demo/2026/wa_draft_mar/rev-1/act.html">HTML</a> · <a href="/acts/tenant_demo/2026/wa_draft_mar/audit/audit.html">Аудит</a></td></tr>
+<tr><td>A-2026-004</td><td>03.04.2026</td><td>01.04.2026 — 03.04.2026</td><td>cancelled</td><td class='amount'>48 000,00 <span class="sym"></span></td><td><a href="/acts/tenant_demo/2026/wa_cancelled_apr/rev-1/act.html">HTML</a> · <a href="/acts/tenant_demo/2026/wa_cancelled_apr/audit/audit.html">Аудит</a></td></tr>
     </tbody>
     <tfoot>
-      <tr><th colspan="4" class="right">Всего актов: 2 (активных: 1, отменённых: 1)</th><th class="amount" colspan="2">— <span class="sym"></span></th></tr>
+      <tr>
+        <th colspan="4" class="right">Итого по проекту (2 актов)</th>
+        <th class="amount">270 000,00 <span class="sym"></span></th>
+        <th></th>
+      </tr>
     </tfoot>
   </table>
 
-  <p class="muted">Документ сформирован: 08.03.2026 · Pacus Demo</p>
-</main><script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script></body>
+  <p class="muted">Документ сформирован автоматически из БД · Демо арендатор / Pacus Demo</p>
+</main>
+<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
+</body>
 </html>

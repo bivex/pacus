@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Аудит акта A-2026-001</title>
+<title>Аудит акта A-2026-002</title>
 <style>
 @page { size: A4; margin: 16mm 14mm 18mm; }
 * { box-sizing: border-box; }
@@ -37,17 +37,17 @@ th { background: #f9fafb; text-align: left; }
 <main>
   <div class="topbar no-print">
     <div>
-      <h1>Аудит акта A-2026-001</h1>
-      <p class="muted">Статус: corrected · АО Бета Сервис · Проект: BETA-SUP-2026</p>
+      <h1>Аудит акта A-2026-002</h1>
+      <p class="muted">Статус: sent · АО Бета Сервис · Проект: BETA-SUP-2026</p>
     </div>
     <div class="actions">
-      <a href="/acts/tenant_demo/2026/wa_original_jan/rev-1/act.html">Акт</a>
+      <a href="/acts/tenant_demo/2026/wa_sent_feb/rev-1/act.html">Акт</a>
       <a href="/">К списку</a>
       <button onclick="window.print()">Печать</button>
     </div>
   </div>
 
-  <h1>Аудит: Акт A-2026-001</h1>
+  <h1>Аудит: Акт A-2026-002</h1>
 
   <div class="grid">
     <div>
@@ -57,9 +57,9 @@ th { background: #f9fafb; text-align: left; }
       <p><strong>Проект:</strong> BETA-SUP-2026 — Техническая поддержка платформы</p>
     </div>
     <div>
-      <p><strong>Дата акта:</strong> 31.01.2026</p>
-      <p><strong>Период:</strong> 01.01.2026 — 31.01.2026</p>
-      <p><strong>Текущий статус:</strong> corrected</p>
+      <p><strong>Дата акта:</strong> 28.02.2026</p>
+      <p><strong>Период:</strong> 01.02.2026 — 28.02.2026</p>
+      <p><strong>Текущий статус:</strong> sent</p>
     </div>
   </div>
 
@@ -67,11 +67,9 @@ th { background: #f9fafb; text-align: left; }
   <table>
     <thead><tr><th>Дата и время</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
     <tbody>
-<tr><td>31.01.2026 12:00</td><td><span class='muted'>—</span></td><td><strong>draft</strong></td><td>user_demo_operator</td><td>Создан исходный акт</td></tr>
-<tr><td>31.01.2026 12:10</td><td>draft</td><td><strong>generated</strong></td><td>user_demo_operator</td><td>Подготовлен к отправке</td></tr>
-<tr><td>31.01.2026 12:15</td><td>generated</td><td><strong>sent</strong></td><td>user_demo_operator</td><td>Отправлен клиенту</td></tr>
-<tr><td>01.02.2026 09:00</td><td>sent</td><td><strong>signed</strong></td><td>user_demo_accountant</td><td>Получен подписанный экземпляр</td></tr>
-<tr><td>05.02.2026 10:00</td><td>signed</td><td><strong>corrected</strong></td><td>user_demo_accountant</td><td>Создан корректировочный акт</td></tr>
+<tr><td>28.02.2026 17:00</td><td><span class='muted'>—</span></td><td><strong>draft</strong></td><td>user_demo_operator</td><td>Создан акт за февраль</td></tr>
+<tr><td>28.02.2026 17:05</td><td>draft</td><td><strong>generated</strong></td><td>user_demo_operator</td><td>Сформирован HTML</td></tr>
+<tr><td>28.02.2026 17:10</td><td>generated</td><td><strong>sent</strong></td><td>user_demo_operator</td><td>Отправлено клиенту по email</td></tr>
     </tbody>
   </table>
 
@@ -79,7 +77,7 @@ th { background: #f9fafb; text-align: left; }
   <table>
     <thead><tr><th>№</th><th>Вид</th><th>Шаблон</th><th>Создана</th><th>Создал</th><th>Комментарий</th><th>Иммут.</th><th>Артефакт</th></tr></thead>
     <tbody>
-<tr><td>1</td><td>final</td><td>tpl-2026.01</td><td>08.03.2026 09:22</td><td>user_demo_operator</td><td>Исходный подписанный акт</td><td><strong>да</strong></td><td><a href="/acts/tenant_demo/2026/wa_original_jan/rev-1/act.html">HTML</a></td></tr>
+<tr><td>1</td><td>final</td><td>tpl-2026.02</td><td>08.03.2026 09:21</td><td>user_demo_operator</td><td>Версия отправлена контрагенту</td><td>нет</td><td><a href="/acts/tenant_demo/2026/wa_sent_feb/rev-1/act.html">HTML</a></td></tr>
     </tbody>
   </table>
 
@@ -87,7 +85,6 @@ th { background: #f9fafb; text-align: left; }
   <table>
     <thead><tr><th>Тип</th><th>Номер / Код</th><th>Статус / Название</th><th>Ссылка</th></tr></thead>
     <tbody>
-<tr><td>Корректировочный акт</td><td>A-2026-001-К1</td><td>signed</td><td><a href='/acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html'>Открыть</a></td></tr>
 <tr><td>Карточка проекта</td><td>BETA-SUP-2026</td><td>Техническая поддержка платформы</td><td><a href='/projects/tenant_demo/proj_beta_support/project-card.html'>Открыть</a></td></tr>
     </tbody>
   </table>
