@@ -4,6 +4,18 @@
 
 ---
 
+## Screenshots
+
+| Dashboard | Project card |
+|-----------|-------------|
+| ![Dashboard](data/screenshots/index.png) | ![Project card](data/screenshots/project-alfa.png) |
+
+| Act audit trail | Journal entry |
+|-----------------|---------------|
+| ![Act audit](data/screenshots/act-audit.png) | ![Journal entry](data/screenshots/journal-entry.png) |
+
+---
+
 ## Architecture
 
 ```
