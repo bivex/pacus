@@ -79,6 +79,12 @@ def rel(from_file: Path, to_file: Path) -> str:
     return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
 
 
+def rel_to_file(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file to to_file (accounts for full path)."""
+    # Compute relative path from the file's directory
+    return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
+
+
 def act_html_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
     return out_dir / "acts" / tenant_id / act_date[:4] / act_id / "rev-1" / "act.html"
 
@@ -320,9 +326,9 @@ def render_project_card(
   </table>
 
   <p class="muted">Документ сформирован автоматически из БД · {tenant_name}<br>
-  <a href="{rel(self_path, out_dir / "contact.html")}" aria-label="Контактная информация">Контакты</a> ·
-  <a href="{rel(self_path, out_dir / "privacy.html")}" aria-label="Политика конфиденциальности">Приватность</a> ·
-  <a href="{rel(self_path, out_dir / "feedback.html")}" aria-label="Отправить отзыв">Обратная связь</a></p>
+  <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
+  <a href="/privacy.html" aria-label="Политика конфиденциальности">Приватность</a> ·
+  <a href="/feedback.html" aria-label="Отправить отзыв">Обратная связь</a></p>
 </main>
 {CURRENCY_BODY}
 </body>
