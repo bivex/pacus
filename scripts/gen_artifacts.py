@@ -75,6 +75,11 @@ SYMC = '<span class="sym-code"></span>'
 # Helpers
 # ---------------------------------------------------------------------------
 def rel(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file's directory to to_file."""
+    return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
+
+
+def rel_to_file(from_file: Path, to_file: Path) -> str:
     """Relative path from from_file to to_file (accounts for full path)."""
     return os.path.relpath(to_file, from_file).replace("\\", "/")
 
