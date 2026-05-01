@@ -1,3 +1,13 @@
+-- ===========================================
+-- work_acts_schema.sql
+-- Version: 1.0
+-- Effective Date: 2026-05-01
+-- Description: Schema for work acts management system
+-- Includes: tenant, counterparty, contract, work_act, work_act_item,
+--          work_act_revision, document_artifact, audit_event,
+--          integration_inbox_work_act, and related views
+-- ===========================================
+
 PRAGMA foreign_keys = ON;
 PRAGMA journal_mode = WAL;
 PRAGMA busy_timeout = 5000;

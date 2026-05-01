@@ -9,11 +9,12 @@ Usage:
 
 import sqlite3, os, sys, argparse
 from pathlib import Path
+from typing import Optional
 
 # ---------------------------------------------------------------------------
 # Defaults
 # ---------------------------------------------------------------------------
-DEFAULT_DB  = Path(__file__).parent.parent / "data/sqlite/work_acts_demo.sqlite"
+DEFAULT_DB = Path(__file__).parent.parent / "data/sqlite/work_acts_demo.sqlite"
 DEFAULT_OUT = Path(__file__).parent.parent / "data/artifacts"
 
 # ---------------------------------------------------------------------------
@@ -51,8 +52,9 @@ th { background: #f9fafb; text-align: left; }
 CURRENCY_HEAD = "<script>const CURRENCY = '$'; // \u2190 \u043c\u0435\u043d\u044f\u0439 \u0437\u0434\u0435\u0441\u044c: $, \u20ac, \u20bd, \u00a3 ...</script>"
 CURRENCY_BODY = '<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","\u20ac":"EUR","\u20bd":"RUB","\u00a3":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>'
 
-SYM  = '<span class="sym"></span>'
+SYM = '<span class="sym"></span>'
 SYMC = '<span class="sym-code"></span>'
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -61,19 +63,26 @@ def rel(from_file: Path, to_file: Path) -> str:
     """Relative path from from_file's directory to to_file."""
     return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
 
+
 def act_html_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
     return out_dir / "acts" / tenant_id / act_date[:4] / act_id / "rev-1" / "act.html"
+
 
 def act_audit_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
     return out_dir / "acts" / tenant_id / act_date[:4] / act_id / "audit" / "audit.html"
 
+
 def project_card_path(out_dir: Path, tenant_id: str, proj_id: str) -> Path:
     return out_dir / "projects" / tenant_id / proj_id / "project-card.html"
 
-def journal_entry_path(out_dir: Path, tenant_id: str, proj_id: str, entry_id: str) -> Path:
+
+def journal_entry_path(
+    out_dir: Path, tenant_id: str, proj_id: str, entry_id: str
+) -> Path:
     return out_dir / "projects" / tenant_id / proj_id / "journal" / f"{entry_id}.html"
 
-def fmt_date(iso: str | None) -> str:
+
+def fmt_date(iso: Optional[str]) -> str:
     if not iso:
         return "—"
     try:
@@ -82,7 +91,8 @@ def fmt_date(iso: str | None) -> str:
     except Exception:
         return iso
 
-def fmt_dt(iso: str | None) -> str:
+
+def fmt_dt(iso: Optional[str]) -> str:
     if not iso:
         return "—"
     try:
@@ -90,7 +100,8 @@ def fmt_dt(iso: str | None) -> str:
     except Exception:
         return iso
 
-def fmt_amount(minor: int | None) -> str:
+
+def fmt_amount(minor: Optional[int]) -> str:
     if minor is None:
         return "—"
     rubles = minor / 100
@@ -99,27 +110,36 @@ def fmt_amount(minor: int | None) -> str:
     s = f"{integer:,}".replace(",", "\u202f")
     return f"{s},{frac:02d}"
 
+
 def dash(v) -> str:
     return v if v else "—"
+
 
 def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
 
+
 # ---------------------------------------------------------------------------
 # Project card
 # ---------------------------------------------------------------------------
-def render_project_card(proj: dict, history: list, acts: list,
-                        journal: list, journal_acts: dict,
-                        self_path: Path, out_dir: Path) -> str:
-    code       = proj["code"]
-    name       = proj["name"]
-    status     = proj["status"]
-    cp_name    = proj["counterparty_name"]
+def render_project_card(
+    proj: dict,
+    history: list,
+    acts: list,
+    journal: list,
+    journal_acts: dict,
+    self_path: Path,
+    out_dir: Path,
+) -> str:
+    code = proj["code"]
+    name = proj["name"]
+    status = proj["status"]
+    cp_name = proj["counterparty_name"]
     tenant_name = proj["tenant_name"]
-    started    = fmt_date(proj["started_on"])
-    ended      = fmt_date(proj["finished_on"])
-    desc       = proj["description"] or ""
+    started = fmt_date(proj["started_on"])
+    ended = fmt_date(proj["finished_on"])
+    desc = proj["description"] or ""
     created_by = proj["created_by"]
     created_at = fmt_date(proj["created_at"])
 
@@ -127,7 +147,9 @@ def render_project_card(proj: dict, history: list, acts: list,
 
     hist_rows = ""
     for h in history:
-        from_s = "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
+        from_s = (
+            "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
+        )
         hist_rows += (
             f"<tr>"
             f"<td>{fmt_dt(h['changed_at'])}</td>"
@@ -143,8 +165,14 @@ def render_project_card(proj: dict, history: list, acts: list,
     for a in acts:
         amount = a["grand_total_amount_minor"] or 0
         grand_total += amount
-        html_href  = rel(self_path, act_html_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]))
-        audit_href = rel(self_path, act_audit_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]))
+        html_href = rel(
+            self_path,
+            act_html_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]),
+        )
+        audit_href = rel(
+            self_path,
+            act_audit_path(out_dir, a["tenant_id"], a["act_id"], a["act_date"]),
+        )
         links = f'<a href="{html_href}">HTML</a> · <a href="{audit_href}">Аудит</a>'
         act_rows += (
             f"<tr>"
@@ -161,9 +189,9 @@ def render_project_card(proj: dict, history: list, acts: list,
     acts_label = "акт" if n_acts == 1 else "актов"
 
     KIND_LABEL = {
-        "decision":  "Решение",
-        "result":    "Результат",
-        "note":      "Заметка",
+        "decision": "Решение",
+        "result": "Результат",
+        "note": "Заметка",
         "milestone": "Веха",
     }
 
@@ -173,7 +201,12 @@ def render_project_card(proj: dict, history: list, acts: list,
         if linked:
             parts = []
             for a in linked:
-                href = rel(self_path, act_html_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
+                href = rel(
+                    self_path,
+                    act_html_path(
+                        out_dir, proj["tenant_id"], a["act_id"], a["act_date"]
+                    ),
+                )
                 parts.append(f'<a href="{href}">{a["act_number"]}</a>')
             act_links = ", ".join(parts)
         else:
@@ -188,8 +221,10 @@ def render_project_card(proj: dict, history: list, acts: list,
             detail_parts.append(entry["body"])
         detail_html = "<br>".join(detail_parts) if detail_parts else ""
 
-        entry_href = rel(self_path, journal_entry_path(
-            out_dir, proj["tenant_id"], proj["id"], entry["id"]))
+        entry_href = rel(
+            self_path,
+            journal_entry_path(out_dir, proj["tenant_id"], proj["id"], entry["id"]),
+        )
         title_cell = f'<a href="{entry_href}"><strong>{entry["title"]}</strong></a>'
         if detail_html:
             title_cell += f"<br><span class='muted'>{detail_html}</span>"
@@ -276,27 +311,38 @@ def render_project_card(proj: dict, history: list, acts: list,
 </html>
 """
 
+
 # ---------------------------------------------------------------------------
 # Journal entry detail page
 # ---------------------------------------------------------------------------
 KIND_LABEL = {
-    "decision":  "Решение",
-    "result":    "Результат",
-    "note":      "Заметка",
+    "decision": "Решение",
+    "result": "Результат",
+    "note": "Заметка",
     "milestone": "Веха",
 }
 
-def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
-                         self_path: Path, out_dir: Path) -> str:
-    card_href  = rel(self_path, project_card_path(out_dir, proj["tenant_id"], proj["id"]))
+
+def render_journal_entry(
+    entry: dict, proj: dict, linked_acts: list, self_path: Path, out_dir: Path
+) -> str:
+    card_href = rel(
+        self_path, project_card_path(out_dir, proj["tenant_id"], proj["id"])
+    )
     index_href = rel(self_path, out_dir / "index.html")
     kind_label = KIND_LABEL.get(entry["kind"], entry["kind"])
 
     # Linked acts table
     act_rows = ""
     for a in linked_acts:
-        html_href  = rel(self_path, act_html_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
-        audit_href = rel(self_path, act_audit_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]))
+        html_href = rel(
+            self_path,
+            act_html_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]),
+        )
+        audit_href = rel(
+            self_path,
+            act_audit_path(out_dir, proj["tenant_id"], a["act_id"], a["act_date"]),
+        )
         act_rows += (
             f"<tr>"
             f"<td><a href='{html_href}'>{a['act_number']}</a></td>"
@@ -316,7 +362,7 @@ def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
 {act_rows}    </tbody>
   </table>"""
 
-    def field_row(label: str, value: str | None) -> str:
+    def field_row(label: str, value: Optional[str]) -> str:
         if not value:
             return ""
         return f"<tr><th style='width:28%'>{label}</th><td>{value}</td></tr>\n"
@@ -324,7 +370,9 @@ def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
     detail_rows = (
         field_row("Тип записи", kind_label)
         + field_row("Дата события", fmt_date(entry["entry_date"]))
-        + field_row("Проект", f'<a href="{card_href}">{proj["code"]} — {proj["name"]}</a>')
+        + field_row(
+            "Проект", f'<a href="{card_href}">{proj["code"]} — {proj["name"]}</a>'
+        )
         + field_row("Записал", entry.get("recorded_by"))
         + field_row("Записано", fmt_dt(entry.get("recorded_at")))
     )
@@ -347,15 +395,15 @@ def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{kind_label}: {entry['title']}</title>
+<title>{kind_label}: {entry["title"]}</title>
 {INLINE_CSS}
 </head>
 <body>
 <main>
   <div class="topbar no-print">
     <div>
-      <h1>{kind_label}: {entry['title']}</h1>
-      <p class="muted">{fmt_date(entry['entry_date'])} · Проект {proj['code']}</p>
+      <h1>{kind_label}: {entry["title"]}</h1>
+      <p class="muted">{fmt_date(entry["entry_date"])} · Проект {proj["code"]}</p>
     </div>
     <div class="actions">
       <a href="{card_href}">К проекту</a>
@@ -364,7 +412,7 @@ def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
     </div>
   </div>
 
-  <h1>{entry['title']}</h1>
+  <h1>{entry["title"]}</h1>
 
   <table>
     <tbody>
@@ -376,36 +424,46 @@ def render_journal_entry(entry: dict, proj: dict, linked_acts: list,
 {outcome_section}
 {acts_section}
 
-  <p class="muted">Запись журнала проекта · {proj['tenant_name']}</p>
+  <p class="muted">Запись журнала проекта · {proj["tenant_name"]}</p>
 </main>
 </body>
 </html>
 """
 
+
 # ---------------------------------------------------------------------------
 # Act audit trail
 # ---------------------------------------------------------------------------
-def render_act_audit(act: dict, history: list, revisions: list,
-                     correction: dict | None,
-                     self_path: Path, out_dir: Path) -> str:
-    act_number  = act["act_number"]
-    status      = act["status"]
-    cp_name     = act["counterparty_name"]
-    contract    = act["contract_number"]
-    proj_code   = act["project_code"] or "—"
-    proj_name   = act["project_name"] or ""
-    proj_id     = act["project_id"]
-    tenant_id   = act["tenant_id"]
+def render_act_audit(
+    act: dict,
+    history: list,
+    revisions: list,
+    correction: Optional[dict],
+    self_path: Path,
+    out_dir: Path,
+) -> str:
+    act_number = act["act_number"]
+    status = act["status"]
+    cp_name = act["counterparty_name"]
+    contract = act["contract_number"]
+    proj_code = act["project_code"] or "—"
+    proj_name = act["project_name"] or ""
+    proj_id = act["project_id"]
+    tenant_id = act["tenant_id"]
     tenant_name = act["tenant_name"]
-    act_date    = fmt_date(act["act_date"])
-    period      = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
+    act_date = fmt_date(act["act_date"])
+    period = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
 
-    index_href   = rel(self_path, out_dir / "index.html")
-    own_act_href = rel(self_path, act_html_path(out_dir, tenant_id, act["act_id"], act["act_date"]))
+    index_href = rel(self_path, out_dir / "index.html")
+    own_act_href = rel(
+        self_path, act_html_path(out_dir, tenant_id, act["act_id"], act["act_date"])
+    )
 
     hist_rows = ""
     for h in history:
-        from_s = "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
+        from_s = (
+            "<span class='muted'>—</span>" if not h["from_status"] else h["from_status"]
+        )
         hist_rows += (
             f"<tr>"
             f"<td>{fmt_dt(h['changed_at'])}</td>"
@@ -418,7 +476,7 @@ def render_act_audit(act: dict, history: list, revisions: list,
 
     rev_rows = ""
     for r in revisions:
-        immut    = "<strong>да</strong>" if r["is_immutable"] else "нет"
+        immut = "<strong>да</strong>" if r["is_immutable"] else "нет"
         html_link = "—"
         if r["html_path"]:
             target = out_dir / r["html_path"]
@@ -438,7 +496,12 @@ def render_act_audit(act: dict, history: list, revisions: list,
 
     related_rows = ""
     if correction:
-        href = rel(self_path, act_html_path(out_dir, tenant_id, correction["act_id"], correction["act_date"]))
+        href = rel(
+            self_path,
+            act_html_path(
+                out_dir, tenant_id, correction["act_id"], correction["act_date"]
+            ),
+        )
         related_rows += (
             f"<tr><td>Корректировочный акт</td><td>{correction['act_number']}</td>"
             f"<td>{correction['status']}</td><td><a href='{href}'>Открыть</a></td></tr>\n"
@@ -460,7 +523,9 @@ def render_act_audit(act: dict, history: list, revisions: list,
 {related_rows}    </tbody>
   </table>"""
 
-    proj_line = f"<p><strong>Проект:</strong> {proj_code} — {proj_name}</p>" if proj_id else ""
+    proj_line = (
+        f"<p><strong>Проект:</strong> {proj_code} — {proj_name}</p>" if proj_id else ""
+    )
 
     return f"""\
 <!DOCTYPE html>
@@ -524,6 +589,7 @@ def render_act_audit(act: dict, history: list, revisions: list,
 </html>
 """
 
+
 # ---------------------------------------------------------------------------
 # Main: query DB and generate files
 # ---------------------------------------------------------------------------
@@ -547,14 +613,18 @@ def generate(db_path: Path, out_dir: Path):
     for proj in projects:
         proj = dict(proj)
 
-        history = conn.execute("""
+        history = conn.execute(
+            """
             SELECT from_status, to_status, changed_by, changed_at, reason
             FROM project_status_history
             WHERE project_id = ?
             ORDER BY changed_at
-        """, (proj["id"],)).fetchall()
+        """,
+            (proj["id"],),
+        ).fetchall()
 
-        acts = conn.execute("""
+        acts = conn.execute(
+            """
             SELECT wa.id AS act_id, wa.tenant_id, wa.act_number, wa.act_date,
                    wa.period_from, wa.period_to, wa.status AS act_status,
                    wa.grand_total_amount_minor,
@@ -564,38 +634,56 @@ def generate(db_path: Path, out_dir: Path):
             LEFT JOIN document_artifact da ON da.id = rev.html_artifact_id
             WHERE wa.project_id = ?
             ORDER BY wa.period_from, wa.act_date
-        """, (proj["id"],)).fetchall()
+        """,
+            (proj["id"],),
+        ).fetchall()
 
-        journal = conn.execute("""
+        journal = conn.execute(
+            """
             SELECT id, entry_date, kind, title, body, decision_made, outcome,
                    recorded_by, recorded_at
             FROM project_journal
             WHERE project_id = ?
             ORDER BY entry_date ASC, recorded_at ASC
-        """, (proj["id"],)).fetchall()
+        """,
+            (proj["id"],),
+        ).fetchall()
 
         journal_acts = {}
         for entry in journal:
-            linked = conn.execute("""
+            linked = conn.execute(
+                """
                 SELECT wa.id AS act_id, wa.act_number, wa.act_date, wa.status AS act_status
                 FROM project_journal_act ja
                 JOIN work_act wa ON wa.id = ja.act_id
                 WHERE ja.journal_id = ?
                 ORDER BY wa.period_from, wa.act_date
-            """, (entry["id"],)).fetchall()
+            """,
+                (entry["id"],),
+            ).fetchall()
             journal_acts[entry["id"]] = [dict(a) for a in linked]
         journal = [dict(e) for e in journal]
 
         self_path = project_card_path(out_dir, proj["tenant_id"], proj["id"])
-        html = render_project_card(proj, history, [dict(a) for a in acts],
-                                   journal, journal_acts, self_path, out_dir)
+        html = render_project_card(
+            proj,
+            history,
+            [dict(a) for a in acts],
+            journal,
+            journal_acts,
+            self_path,
+            out_dir,
+        )
         write_file(self_path, html)
         print(f"  project  {self_path.relative_to(out_dir)}")
 
         for entry in journal:
-            e_path = journal_entry_path(out_dir, proj["tenant_id"], proj["id"], entry["id"])
-            e_html = render_journal_entry(entry, proj, journal_acts.get(entry["id"], []),
-                                          e_path, out_dir)
+            e_path = journal_entry_path(
+                out_dir, proj["tenant_id"], proj["id"], entry["id"]
+            )
+            e_html = render_journal_entry(
+                entry, proj, journal_acts.get(entry["id"], []), e_path, out_dir
+            )
             write_file(e_path, e_html)
             print(f"  journal  {e_path.relative_to(out_dir)}")
 
@@ -622,14 +710,18 @@ def generate(db_path: Path, out_dir: Path):
     for act in acts:
         act = dict(act)
 
-        history = conn.execute("""
+        history = conn.execute(
+            """
             SELECT from_status, to_status, changed_by, changed_at, reason
             FROM work_act_status_history
             WHERE act_id = ?
             ORDER BY changed_at
-        """, (act["act_id"],)).fetchall()
+        """,
+            (act["act_id"],),
+        ).fetchall()
 
-        revisions = conn.execute("""
+        revisions = conn.execute(
+            """
             SELECT r.revision_no, r.revision_kind, r.template_version,
                    r.created_by, r.created_at, r.comment, r.is_immutable,
                    da.storage_path AS html_path
@@ -637,11 +729,21 @@ def generate(db_path: Path, out_dir: Path):
             LEFT JOIN document_artifact da ON da.id = r.html_artifact_id
             WHERE r.act_id = ?
             ORDER BY r.revision_no
-        """, (act["act_id"],)).fetchall()
+        """,
+            (act["act_id"],),
+        ).fetchall()
 
-        self_path = act_audit_path(out_dir, act["tenant_id"], act["act_id"], act["act_date"])
-        html = render_act_audit(act, history, [dict(r) for r in revisions],
-                                corrections.get(act["act_id"]), self_path, out_dir)
+        self_path = act_audit_path(
+            out_dir, act["tenant_id"], act["act_id"], act["act_date"]
+        )
+        html = render_act_audit(
+            act,
+            history,
+            [dict(r) for r in revisions],
+            corrections.get(act["act_id"]),
+            self_path,
+            out_dir,
+        )
         write_file(self_path, html)
         print(f"  audit    {self_path.relative_to(out_dir)}")
 
@@ -674,9 +776,13 @@ def generate(db_path: Path, out_dir: Path):
 
     act_rows_idx = ""
     for a in all_acts:
-        html_href  = rel(index_path, act_html_path(out_dir, a["tenant_id"], a["id"], a["act_date"]))
-        audit_href = rel(index_path, act_audit_path(out_dir, a["tenant_id"], a["id"], a["act_date"]))
-        html_link  = f"<a href='{html_href}'>HTML</a>" if a["html_path"] else "—"
+        html_href = rel(
+            index_path, act_html_path(out_dir, a["tenant_id"], a["id"], a["act_date"])
+        )
+        audit_href = rel(
+            index_path, act_audit_path(out_dir, a["tenant_id"], a["id"], a["act_date"])
+        )
+        html_link = f"<a href='{html_href}'>HTML</a>" if a["html_path"] else "—"
         act_rows_idx += (
             f"        <tr><td>{a['act_number']}</td><td>{a['status']}</td>"
             f"<td>{html_link}</td><td><a href='{audit_href}'>Аудит</a></td></tr>\n"
@@ -725,13 +831,18 @@ def generate(db_path: Path, out_dir: Path):
 
     conn.close()
 
+
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generate HTML artifacts from SQLite DB")
-    parser.add_argument("--db",  default=str(DEFAULT_DB),  help="Path to SQLite database")
-    parser.add_argument("--out", default=str(DEFAULT_OUT), help="Output directory (artifacts root)")
+    parser = argparse.ArgumentParser(
+        description="Generate HTML artifacts from SQLite DB"
+    )
+    parser.add_argument("--db", default=str(DEFAULT_DB), help="Path to SQLite database")
+    parser.add_argument(
+        "--out", default=str(DEFAULT_OUT), help="Output directory (artifacts root)"
+    )
     args = parser.parse_args()
 
     db_path = Path(args.db)

@@ -1,3 +1,10 @@
+-- ===========================================
+-- project_journal_schema.sql
+-- Version: 1.0
+-- Effective Date: 2026-05-01
+-- Description: Schema for project journal (decisions, milestones, notes)
+-- ===========================================
+
 PRAGMA foreign_keys = ON;
 
 BEGIN TRANSACTION;

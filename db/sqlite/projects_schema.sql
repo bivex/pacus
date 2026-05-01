@@ -1,3 +1,12 @@
+-- ===========================================
+-- projects_schema.sql
+-- Version: 1.0
+-- Effective Date: 2026-05-01
+-- Description: Schema for project management system
+-- Includes: project, project_status_history, project_journal,
+--          project_journal_act, and related views
+-- ===========================================
+
 PRAGMA foreign_keys = ON;
 
 BEGIN TRANSACTION;
