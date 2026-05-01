@@ -581,7 +581,7 @@ def render_act_audit(
     <div>
       <p><strong>Дата акта:</strong> {act_date}</p>
       <p><strong>Период:</strong> {period}</p>
-      <p><strong>Текущий статус:</strong> {status}</p>
+      <p><strong>Текущий статус:</strong> <span class="status-label status-{status}">{status}</span></p>
     </div>
   </div>
 
