@@ -40,6 +40,18 @@ th { background: #f9fafb; text-align: left; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
 .actions { display: flex; gap: 10px; }
+/* Screen reader only content (ISO 9241-171) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 /* Zebra striping for visual scanning (ISO 9241-12) */
 tbody tr:nth-child(even) { background: #f9fafb; }
 /* Keyboard focus indicators (ISO 9241-171) */
@@ -296,15 +308,19 @@ def render_project_card(
   </div>
   {"<p class='muted'>" + desc + "</p>" if desc else ""}
 
-  <h2>История статусов</h2>
-  <table aria-label="История изменения статусов акта">
+   <h2>История статусов</h2>
+   <table aria-label="История изменения статусов акта">
+     <caption class="sr-only">История изменения статусов акта</caption>
+     <caption class="sr-only">История изменения статусов акта</caption>
     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
     <tbody>
 {hist_rows}    </tbody>
   </table>
 
-  <h2>Акты работ по проекту</h2>
-  <table aria-label="Список актов работ по проекту">
+   <h2>Акты работ по проекту</h2>
+   <table aria-label="Список актов работ по проекту">
+     <caption class="sr-only">Список актов работ по проекту</caption>
+     <caption class="sr-only">Список актов работ по проекту</caption>
     <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
     <tbody>
 {act_rows}    </tbody>
@@ -317,12 +333,61 @@ def render_project_card(
     </tfoot>
   </table>
 
-  <h2>Журнал решений и событий</h2>
-  <table aria-label="Журнал решений и событий проекта">
+   <h2>Журнал решений и событий</h2>
+   <table aria-label="Журнал решений и событий проекта">
+     <caption class="sr-only">Журнал решений и событий проекта</caption>
+     <caption class="sr-only">Журнал решений и событий проекта</caption>
     <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Событие / Решение</th><th scope="col">Акты</th><th scope="col">Записал</th></tr></thead>
     <tbody>
 {journal_rows}    </tbody>
   </table>
+
+  <div class="no-print" style="margin-top: 24px; padding: 12px; background: #f9fafb; border-radius: 8px;">
+    <h3>Поиск по сайту</h3>
+    <p><input type="text" id="search-input" placeholder="Введите поисковый запрос..." style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;"></p>
+    <div id="search-results" style="margin-top: 12px;"></div>
+  </div>
+
+  <script>
+    // Simple client-side search (ISO 9241-151 8.5.2)
+    document.getElementById('search-input').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      const resultsDiv = document.getElementById('search-results');
+      
+      if (query.length < 2) {
+        resultsDiv.innerHTML = '';
+        return;
+      }
+      
+      const pageTitle = document.title.toLowerCase();
+      const pageContent = document.body.innerText.toLowerCase();
+      
+      let matches = [];
+      if (pageTitle.includes(query)) {
+        matches.push({type: 'Заголовок', text: document.title});
+      }
+      
+      // Search in tables
+      const tables = document.querySelectorAll('table');
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          if (text.includes(query)) {
+            matches.push({type: 'Таблица', text: row.innerText.substring(0, 100) + '...'});
+          }
+        });
+      });
+      
+      if (matches.length > 0) {
+        resultsDiv.innerHTML = '<h4>Найдено (' + matches.length + '):</h4><ul>' + 
+          matches.map(m => '<li><strong>' + m.type + ':</strong> ' + m.text + '</li>').join('') + 
+          '</ul>';
+      } else {
+        resultsDiv.innerHTML = '<p>Ничего не найдено.</p>';
+      }
+    });
+  </script>
 
   <p class="muted">Документ сформирован автоматически из БД · {tenant_name}<br>
   <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
@@ -379,7 +444,8 @@ def render_journal_entry(
     if act_rows:
         acts_section = f"""\
   <h2>Связанные акты</h2>
-  <table>
+  <table aria-label="Связанные акты записи журнала">
+    <caption class="sr-only">Связанные акты записи журнала</caption>
     <thead><tr><th scope="col">Акт</th><th scope="col">Дата</th><th scope="col">Статус</th><th scope="col">Аудит</th></tr></thead>
     <tbody>
 {act_rows}    </tbody>

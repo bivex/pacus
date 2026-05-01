@@ -23,6 +23,18 @@ th { background: #f9fafb; text-align: left; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
 .actions { display: flex; gap: 10px; }
+/* Screen reader only content (ISO 9241-171) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 /* Zebra striping for visual scanning (ISO 9241-12) */
 tbody tr:nth-child(even) { background: #f9fafb; }
 /* Keyboard focus indicators (ISO 9241-171) */
@@ -75,7 +87,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offs
 
 <h2>Результат / Итог</h2><p>Базовый акт A-2026-001 подписан 01.02.2026, корректировочный A-2026-001-К1 — 05.02.2026. Итоговая сумма за январь: 165 600 ₽ с НДС (после корректировки). Оплата ожидается до 28.02.2026 в соответствии с условиями договора SUP-2026-04. Прецедент с задержкой запуска зафиксирован — в будущих актах дата начала периода будет синхронизироваться с датой приёмки.</p>
   <h2>Связанные акты</h2>
-  <table>
+  <table aria-label="Связанные акты записи журнала">
+    <caption class="sr-only">Связанные акты записи журнала</caption>
     <thead><tr><th scope="col">Акт</th><th scope="col">Дата</th><th scope="col">Статус</th><th scope="col">Аудит</th></tr></thead>
     <tbody>
 <tr><td><a href='/acts/tenant_demo/2026/wa_original_jan/rev-1/act.html'>A-2026-001</a></td><td>31.01.2026</td><td>corrected</td><td><a href='/acts/tenant_demo/2026/wa_original_jan/audit/audit.html'>Аудит</a></td></tr>

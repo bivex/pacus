@@ -23,6 +23,18 @@ th { background: #f9fafb; text-align: left; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
 .actions { display: flex; gap: 10px; }
+/* Screen reader only content (ISO 9241-171) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 /* Zebra striping for visual scanning (ISO 9241-12) */
 tbody tr:nth-child(even) { background: #f9fafb; }
 /* Keyboard focus indicators (ISO 9241-171) */
@@ -73,8 +85,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offs
   </div>
   <p class='muted'>Сопровождение и мониторинг платформы в 2026 году</p>
 
-  <h2>История статусов</h2>
-  <table aria-label="История изменения статусов акта">
+   <h2>История статусов</h2>
+   <table aria-label="История изменения статусов акта">
+     <caption class="sr-only">История изменения статусов акта</caption>
+     <caption class="sr-only">История изменения статусов акта</caption>
     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
     <tbody>
 <tr><td>08.03.2026 09:06</td><td><span class='muted'>—</span></td><td><strong>active</strong></td><td>user_demo_operator</td><td>Проект открыт</td></tr>
@@ -82,8 +96,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offs
     </tbody>
   </table>
 
-  <h2>Акты работ по проекту</h2>
-  <table aria-label="Список актов работ по проекту">
+   <h2>Акты работ по проекту</h2>
+   <table aria-label="Список актов работ по проекту">
+     <caption class="sr-only">Список актов работ по проекту</caption>
+     <caption class="sr-only">Список актов работ по проекту</caption>
     <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
     <tbody>
 <tr><td>A-2026-001</td><td>31.01.2026</td><td>01.01.2026 — 31.01.2026</td><td>corrected</td><td class='amount'>180 000,00 <span class="sym"></span></td><td><a href="/acts/tenant_demo/2026/wa_original_jan/rev-1/act.html">HTML</a> · <a href="/acts/tenant_demo/2026/wa_original_jan/audit/audit.html">Аудит</a></td></tr>
@@ -99,8 +115,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offs
     </tfoot>
   </table>
 
-  <h2>Журнал решений и событий</h2>
-  <table aria-label="Журнал решений и событий проекта">
+   <h2>Журнал решений и событий</h2>
+   <table aria-label="Журнал решений и событий проекта">
+     <caption class="sr-only">Журнал решений и событий проекта</caption>
+     <caption class="sr-only">Журнал решений и событий проекта</caption>
     <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Событие / Решение</th><th scope="col">Акты</th><th scope="col">Записал</th></tr></thead>
     <tbody>
 <tr><td>05.01.2026</td><td>Решение</td><td><a href="/projects/tenant_demo/proj_beta_support/journal/pj_beta_1.html"><strong>Согласован формат ежемесячной отчётности</strong></a><br><span class='muted'><em>Решение:</em> Акты оформляются ежемесячно единым документом с разбивкой по позициям. Корректировочные акты выпускаются только при расхождении суммы более 5% от плановой или при изменении перечня услуг. Срок подписания — не позднее 10-го числа месяца, следующего за отчётным. Электронный скан подписанного акта принимается как основание для проведения оплаты до получения оригинала.<br>Проведена вводная встреча с представителями АО «Бета Сервис»: финансовый директор, главный бухгалтер и менеджер проекта. Обсуждены: порядок закрытия актов, допустимые форматы документов (бумажный оригинал / скан подписанного экземпляра / ЭЦП), предельные сроки подписания и порядок выпуска корректировочных актов. Контрагент запросил раздельные акты по видам услуг (сопровождение отдельно, администрирование отдельно), однако по итогам переговоров принято решение об объединённом формате с постатейной детализацией внутри единого документа.</span></td><td>—</td><td class='muted'>user_demo_operator</td></tr>

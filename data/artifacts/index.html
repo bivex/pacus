@@ -23,6 +23,18 @@ th { background: #f9fafb; text-align: left; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
 .actions { display: flex; gap: 10px; }
+/* Screen reader only content (ISO 9241-171) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 /* Zebra striping for visual scanning (ISO 9241-12) */
 tbody tr:nth-child(even) { background: #f9fafb; }
 /* Keyboard focus indicators (ISO 9241-171) */
