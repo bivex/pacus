@@ -311,8 +311,7 @@ def render_project_card(
    <h2>История статусов</h2>
    <table aria-label="История изменения статусов акта">
      <caption class="sr-only">История изменения статусов акта</caption>
-     <caption class="sr-only">История изменения статусов акта</caption>
-    <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
+     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
     <tbody>
 {hist_rows}    </tbody>
   </table>
@@ -320,8 +319,7 @@ def render_project_card(
    <h2>Акты работ по проекту</h2>
    <table aria-label="Список актов работ по проекту">
      <caption class="sr-only">Список актов работ по проекту</caption>
-     <caption class="sr-only">Список актов работ по проекту</caption>
-    <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
+     <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
     <tbody>
 {act_rows}    </tbody>
     <tfoot>
@@ -393,6 +391,17 @@ def render_project_card(
   <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
   <a href="/privacy.html" aria-label="Политика конфиденциальности">Приватность</a> ·
   <a href="/feedback.html" aria-label="Отправить отзыв">Обратная связь</a></p>
+  
+  <noscript>
+    <style>
+      .no-print { display: none !important; }
+      noscript { display: block; padding: 16px; background: #fff3cd; color: #856404; margin: 16px; border-radius: 8px; }
+    </style>
+    <div>
+      <strong>Внимание:</strong> Для полной функциональности сайта требуется JavaScript. 
+      Включите JavaScript в настройках браузера или обновитесь до современного браузера.
+    </div>
+  </noscript>
 </main>
 {CURRENCY_BODY}
 </body>
