@@ -4,33 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Проект ALFA-DEV-2026</title>
-<style>
-@page { size: A4; margin: 16mm 14mm 18mm; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
-main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-h1, h2, h3, p { margin: 0 0 10px; }
-h1 { font-size: 24px; }
-h2 { font-size: 16px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
-th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
-th { background: #f9fafb; text-align: left; }
-.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.amount { text-align: right; white-space: nowrap; }
-.right { text-align: right; }
-.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
-.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
-.actions { display: flex; gap: 10px; }
-@media print {
-  body { background: #fff; }
-  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
-  .no-print { display: none !important; }
-  thead { display: table-header-group; }
-  tr, img { break-inside: avoid; }
-}
-</style>
+<link rel="stylesheet" href="/style.css" />
+<script>if(!document.querySelector('link[href="/style.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='/style.css';document.head.appendChild(l);}</script>
 <script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
 </head>
 <body>
@@ -38,9 +13,9 @@ th { background: #f9fafb; text-align: left; }
   <div class="topbar no-print">
     <div>
       <h1>Проект ALFA-DEV-2026 — Разработка платформы актов</h1>
-      <p class="muted">Статус: <strong>active</strong> · Демо арендатор / Pacus Demo · ООО Альфа Инжиниринг</p>
+      <p class="muted">Статус: <span class="status-label status-active">active</span> · Демо арендатор / Pacus Demo · ООО Альфа Инжиниринг</p>
     </div>
-    <div class="actions"><a href="../../../index.html">К списку</a><button onclick="window.print()">Печать</button></div>
+    <div class="actions"><a href="../../../index.html" aria-label="Вернуться к списку проектов">К списку</a><button onclick="window.print()" aria-label="Печать страницы">Печать</button></div>
   </div>
 
   <h1>Проект ALFA-DEV-2026</h1>
@@ -50,7 +25,7 @@ th { background: #f9fafb; text-align: left; }
     <div>
       <p><strong>Организация:</strong> Демо арендатор / Pacus Demo</p>
       <p><strong>Контрагент:</strong> ООО Альфа Инжиниринг</p>
-      <p><strong>Статус:</strong> active</p>
+      <p><strong>Статус:</strong> <span class="status-label status-active">active</span></p>
     </div>
     <div>
       <p><strong>Начало:</strong> 01.01.2026</p>
@@ -61,16 +36,16 @@ th { background: #f9fafb; text-align: left; }
   <p class='muted'>Проект по разработке backend-модуля и интеграции печатных форм</p>
 
   <h2>История статусов</h2>
-  <table>
-    <thead><tr><th>Дата и время</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
+  <table aria-label="История изменения статусов акта">
+    <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
     <tbody>
 <tr><td>08.03.2026 09:05</td><td><span class='muted'>—</span></td><td><strong>active</strong></td><td>user_demo_manager</td><td>Проект открыт</td></tr>
     </tbody>
   </table>
 
   <h2>Акты работ по проекту</h2>
-  <table>
-    <thead><tr><th>Номер акта</th><th>Дата</th><th>Период</th><th>Статус</th><th>Итого</th><th>Ссылки</th></tr></thead>
+  <table aria-label="Список актов работ по проекту">
+    <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
     <tbody>
 <tr><td>A-2026-003</td><td>10.03.2026</td><td>01.03.2026 — 10.03.2026</td><td>draft</td><td class='amount'>222 000,00 <span class="sym"></span></td><td><a href="../../../acts/tenant_demo/2026/wa_draft_mar/rev-1/act.html">HTML</a> · <a href="../../../acts/tenant_demo/2026/wa_draft_mar/audit/audit.html">Аудит</a></td></tr>
 <tr><td>A-2026-004</td><td>03.04.2026</td><td>01.04.2026 — 03.04.2026</td><td>cancelled</td><td class='amount'>48 000,00 <span class="sym"></span></td><td><a href="../../../acts/tenant_demo/2026/wa_cancelled_apr/rev-1/act.html">HTML</a> · <a href="../../../acts/tenant_demo/2026/wa_cancelled_apr/audit/audit.html">Аудит</a></td></tr>
@@ -85,8 +60,8 @@ th { background: #f9fafb; text-align: left; }
   </table>
 
   <h2>Журнал решений и событий</h2>
-  <table>
-    <thead><tr><th>Дата</th><th>Тип</th><th>Событие / Решение</th><th>Акты</th><th>Записал</th></tr></thead>
+  <table aria-label="Журнал решений и событий проекта">
+    <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Событие / Решение</th><th scope="col">Акты</th><th scope="col">Записал</th></tr></thead>
     <tbody>
 <tr><td>10.01.2026</td><td>Решение</td><td><a href="journal/pj_alfa_1.html"><strong>Выбор архитектуры системы актов</strong></a><br><span class='muted'><em>Решение:</em> Архитектура: SQLite как транзакционное хранилище с FSM-триггерами, NocoDB как операторский интерфейс без написания кода, Python-скрипты для импорта из внешних систем и генерации HTML-артефактов. Все денежные суммы хранятся в минорных единицах (копейки). Иммутабельность подписанных ревизий обеспечивается на уровне БД. Статусы актов и проектов контролируют триггеры — приложение не может обойти FSM.<br>На совместной встрече команды разработки и представителей ООО «Альфа Инжиниринг» рассмотрены три варианта реализации: (1) full-stack веб-приложение с PostgreSQL и отдельным API-слоем; (2) serverless с облачным хранилищем документов; (3) SQLite + NocoDB + статические HTML-артефакты. Оценивались скорость внедрения, стоимость эксплуатации и требования к инфраструктуре. Вариант 3 признан оптимальным: разворачивается локально, не требует серверной инфраструктуры, допускает постепенную миграцию на полноценный бэкенд при масштабировании.</span></td><td>—</td><td class='muted'>user_demo_manager</td></tr>
 <tr><td>10.03.2026</td><td>Результат</td><td><a href="journal/pj_alfa_2.html"><strong>Черновик акта за март передан на согласование</strong></a><br><span class='muted'><em>Итог:</em> Акт A-2026-003 находится в статусе draft. Ожидаются замечания контрагента по формулировке позиции 2: возможна детализация на подпозиции «вёрстка шаблона» и «интеграция с генератором».<br>Сформирован черновик акта за период 01–10 марта 2026 г. В акт включены две позиции: (1) разработка backend-модуля актов — 120 000 ₽; (2) интеграция печатной HTML-формы — 65 000 ₽. Итого без НДС: 185 000 ₽, НДС 20%: 37 000 ₽, итого к оплате: 222 000 ₽. Документ передан финансовому директору ООО «Альфа Инжиниринг» для проверки номенклатуры и соответствия фактически выполненному объёму. Срок ответа — 5 рабочих дней.</span></td><td><a href="../../../acts/tenant_demo/2026/wa_draft_mar/rev-1/act.html">A-2026-003</a></td><td class='muted'>user_demo_manager</td></tr>
@@ -95,7 +70,10 @@ th { background: #f9fafb; text-align: left; }
     </tbody>
   </table>
 
-  <p class="muted">Документ сформирован автоматически из БД · Демо арендатор / Pacus Demo</p>
+  <p class="muted">Документ сформирован автоматически из БД · Демо арендатор / Pacus Demo<br>
+  <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
+  <a href="/privacy.html" aria-label="Политика конфиденциальности">Приватность</a> ·
+  <a href="/feedback.html" aria-label="Отправить отзыв">Обратная связь</a></p>
 </main>
 <script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
 </body>

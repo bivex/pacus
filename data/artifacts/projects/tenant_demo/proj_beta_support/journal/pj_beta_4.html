@@ -4,33 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Веха: Проект завершён — все обязательства исполнены</title>
-<style>
-@page { size: A4; margin: 16mm 14mm 18mm; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
-main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-h1, h2, h3, p { margin: 0 0 10px; }
-h1 { font-size: 24px; }
-h2 { font-size: 16px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
-th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
-th { background: #f9fafb; text-align: left; }
-.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.amount { text-align: right; white-space: nowrap; }
-.right { text-align: right; }
-.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
-.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
-.actions { display: flex; gap: 10px; }
-@media print {
-  body { background: #fff; }
-  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
-  .no-print { display: none !important; }
-  thead { display: table-header-group; }
-  tr, img { break-inside: avoid; }
-}
-</style>
+<link rel="stylesheet" href="/style.css" />
+<script>if(!document.querySelector('link[href="/style.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='/style.css';document.head.appendChild(l);}</script>
 </head>
 <body>
 <main>
@@ -40,9 +15,9 @@ th { background: #f9fafb; text-align: left; }
       <p class="muted">01.03.2026 · Проект BETA-SUP-2026</p>
     </div>
     <div class="actions">
-      <a href="../project-card.html">К проекту</a>
-      <a href="../../../../index.html">К списку</a>
-      <button onclick="window.print()">Печать</button>
+      <a href="../project-card.html" aria-label="Вернуться к карточке проекта">К проекту</a>
+      <a href="../../../../index.html" aria-label="Вернуться к списку проектов">К списку</a>
+      <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
     </div>
   </div>
 
@@ -63,7 +38,7 @@ th { background: #f9fafb; text-align: left; }
 <h2>Результат / Итог</h2><p>Итого по проекту BETA-SUP-2026: 3 акта на общую сумму 302 400 ₽ с НДС (180 000 + 14 400 корректировка + 108 000). Все обязательства по договору SUP-2026-04 выполнены в полном объёме и в согласованные сроки. Поддержка прекращена по соглашению сторон с 01.03.2026. Повторное обращение от контрагента планируется в Q3 2026 — новый проект.</p>
   <h2>Связанные акты</h2>
   <table>
-    <thead><tr><th>Акт</th><th>Дата</th><th>Статус</th><th>Аудит</th></tr></thead>
+    <thead><tr><th scope="col">Акт</th><th scope="col">Дата</th><th scope="col">Статус</th><th scope="col">Аудит</th></tr></thead>
     <tbody>
 <tr><td><a href='../../../../acts/tenant_demo/2026/wa_original_jan/rev-1/act.html'>A-2026-001</a></td><td>31.01.2026</td><td>corrected</td><td><a href='../../../../acts/tenant_demo/2026/wa_original_jan/audit/audit.html'>Аудит</a></td></tr>
 <tr><td><a href='../../../../acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html'>A-2026-001-К1</a></td><td>05.02.2026</td><td>signed</td><td><a href='../../../../acts/tenant_demo/2026/wa_correction_jan/audit/audit.html'>Аудит</a></td></tr>
