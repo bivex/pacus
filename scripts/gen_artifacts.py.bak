@@ -75,13 +75,19 @@ SYMC = '<span class="sym-code"></span>'
 # Helpers
 # ---------------------------------------------------------------------------
 def rel(from_file: Path, to_file: Path) -> str:
-    """Absolute path from server root (out_dir)."""
-    # Convert to absolute path string without out_dir prefix
-    path_str = str(to_file).replace("\\", "/")
-    out_dir_str = str(out_dir).replace("\\", "/")
-    if path_str.startswith(out_dir_str):
-        return "/" + path_str[len(out_dir_str) :].lstrip("/")
-    return "/" + path_str.lstrip("/")
+    """Relative path from from_file's directory to to_file."""
+    return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
+
+
+def rel_to_file(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file to to_file (accounts for full path)."""
+    return os.path.relpath(to_file, from_file).replace("\\", "/")
+
+
+def rel_to_file(from_file: Path, to_file: Path) -> str:
+    """Relative path from from_file to to_file (accounts for full path)."""
+    # Compute relative path from the file's directory
+    return os.path.relpath(to_file, from_file.parent).replace("\\", "/")
 
 
 def act_html_path(out_dir: Path, tenant_id: str, act_id: str, act_date: str) -> Path:
@@ -163,7 +169,7 @@ def render_project_card(
     created_by = proj["created_by"]
     created_at = fmt_date(proj["created_at"])
 
-    index_href = rel(self_path, out_dir / "index.html")
+    index_href = "/index.html"
 
     hist_rows = ""
     for h in history:
@@ -352,7 +358,7 @@ def render_journal_entry(
     card_href = rel(
         self_path, project_card_path(out_dir, proj["tenant_id"], proj["id"])
     )
-    index_href = rel(self_path, out_dir / "index.html")
+    index_href = "/index.html"
     kind_label = KIND_LABEL.get(entry["kind"], entry["kind"])
 
     # Linked acts table
@@ -477,7 +483,7 @@ def render_act_audit(
     act_date = fmt_date(act["act_date"])
     period = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
 
-    index_href = rel(self_path, out_dir / "index.html")
+    index_href = "/index.html"
     own_act_href = rel(
         self_path, act_html_path(out_dir, tenant_id, act["act_id"], act["act_date"])
     )
