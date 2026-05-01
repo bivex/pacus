@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Обратная связь — pacus</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<main>
+  <div class="topbar no-print">
+    <div><h1>Обратная связь</h1></div>
+    <div class="actions"><a href="/index.html" aria-label="К списку проектов">К списку</a></div>
+  </div>
+  
+  <h1>Обратная связь</h1>
+  
+  <div class="grid">
+    <div>
+      <h2>Напишите нам</h2>
+      <p>Мы ценим ваше мнение! Пожалуйста, отправьте нам отзыв или сообщение об ошибке.</p>
+      <p>Email: <a href="mailto:feedback@pacust.example.com">feedback@pacust.example.com</a></p>
+    </div>
+    
+    <div>
+      <h2>Часто задаваемые вопросы</h2>
+      <table aria-label="FAQ — Часто задаваемые вопросы">
+        <thead><tr><th scope="col">Вопрос</th><th scope="col">Ответ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Как добавить новый проект?</strong></td><td>Отправьте запрос на <a href="mailto:owner@pacust.example.com">owner@pacust.example.com</a></td></tr>
+          <tr><td><strong>Как исправить ошибку в акте?</strong></td><td>Используйте флаг <code>--retry-errors</code> при повторном импорте</td></tr>
+          <tr><td><strong>Как изменить валюту отображения?</strong></td><td>Используйте переключатель валюты в верхней панели</td></tr>
+          <tr><td><strong>Не печатается документ?</strong></td><td>Убедитесь, что установлен Adobe Reader или используйте Ctrl+P</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <h2>Форма обратной связи</h2>
+  <p>Так как это демо-версия, форма имитирует отправку. В реальной системе здесь будет форма с полями:</p>
+  <ul>
+    <li><strong>Тип сообщения:</strong> Ошибка / Предложение / Вопрос</li>
+    <li><strong>Тема:</strong> Краткое описание</li>
+    <li><strong>Описание:</strong> Подробный текст сообщения</li>
+    <li><strong>Email для связи:</strong> Ваш email (необязательно)</li>
+    <li><strong>Прикрепить файл:</strong> Скриншот или документ (необязательно)</li>
+  </ul>
+  <p><em>Пример комады для отправки:</em> <code>mailto:feedback@pacust.example.com?subject=Bug%20Report&body=Description</code></p>
+  
+  <p class="muted">Документ сформирован автоматически · pacus</p>
+</main>
+</body>
+</html>

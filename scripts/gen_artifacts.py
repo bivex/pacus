@@ -21,33 +21,10 @@ DEFAULT_OUT = Path(__file__).parent.parent / "data/artifacts"
 # Shared HTML fragments
 # ---------------------------------------------------------------------------
 INLINE_CSS = """\
-<style>
-@page { size: A4; margin: 16mm 14mm 18mm; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
-main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-h1, h2, h3, p { margin: 0 0 10px; }
-h1 { font-size: 24px; }
-h2 { font-size: 16px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
-th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
-th { background: #f9fafb; text-align: left; }
-.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.amount { text-align: right; white-space: nowrap; }
-.right { text-align: right; }
-.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
-.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
-.actions { display: flex; gap: 10px; }
-@media print {
-  body { background: #fff; }
-  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
-  .no-print { display: none !important; }
-  thead { display: table-header-group; }
-  tr, img { break-inside: avoid; }
-}
-</style>"""
+<link rel="stylesheet" href="/style.css" />
+<script>if(!document.querySelector('link[href="/style.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='/style.css';document.head.appendChild(l);}</script>"""
+CURRENCY_HEAD = "<script>const CURRENCY = '$'; // \u043c\u0435\u043d\u044f \u0437\u0430\u0439\u0442\u0430: $, \u20ac, \u20bd, \u00a3 ..."
+CURRENCY_BODY = '<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","\u20ac":"EUR","\u20bd":"RUB","\u00a3":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>'
 
 CURRENCY_HEAD = "<script>const CURRENCY = '$'; // \u2190 \u043c\u0435\u043d\u044f\u0439 \u0437\u0434\u0435\u0441\u044c: $, \u20ac, \u20bd, \u00a3 ...</script>"
 CURRENCY_BODY = '<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","\u20ac":"EUR","\u20bd":"RUB","\u00a3":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>'
@@ -254,9 +231,9 @@ def render_project_card(
   <div class="topbar no-print">
     <div>
       <h1>Проект {code} — {name}</h1>
-      <p class="muted">Статус: <strong>{status}</strong> · {tenant_name} · {cp_name}</p>
+      <p class="muted">Статус: <span class="status-label status-{status}">{status}</span> · {tenant_name} · {cp_name}</p>
     </div>
-    <div class="actions"><a href="{index_href}">К списку</a><button onclick="window.print()">Печать</button></div>
+    <div class="actions"><a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a><button onclick="window.print()" aria-label="Печать страницы">Печать</button></div>
   </div>
 
   <h1>Проект {code}</h1>
@@ -266,7 +243,7 @@ def render_project_card(
     <div>
       <p><strong>Организация:</strong> {tenant_name}</p>
       <p><strong>Контрагент:</strong> {cp_name}</p>
-      <p><strong>Статус:</strong> {status}</p>
+      <p><strong>Статус:</strong> <span class="status-label status-{status}">{status}</span></p>
     </div>
     <div>
       <p><strong>Начало:</strong> {started}</p>
@@ -277,15 +254,15 @@ def render_project_card(
   {"<p class='muted'>" + desc + "</p>" if desc else ""}
 
   <h2>История статусов</h2>
-  <table>
-    <thead><tr><th>Дата и время</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
+  <table aria-label="История изменения статусов акта">
+    <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
     <tbody>
 {hist_rows}    </tbody>
   </table>
 
   <h2>Акты работ по проекту</h2>
-  <table>
-    <thead><tr><th>Номер акта</th><th>Дата</th><th>Период</th><th>Статус</th><th>Итого</th><th>Ссылки</th></tr></thead>
+  <table aria-label="Список актов работ по проекту">
+    <thead><tr><th scope="col">Номер акта</th><th scope="col">Дата</th><th scope="col">Период</th><th scope="col">Статус</th><th scope="col">Итого</th><th scope="col">Ссылки</th></tr></thead>
     <tbody>
 {act_rows}    </tbody>
     <tfoot>
@@ -298,13 +275,16 @@ def render_project_card(
   </table>
 
   <h2>Журнал решений и событий</h2>
-  <table>
-    <thead><tr><th>Дата</th><th>Тип</th><th>Событие / Решение</th><th>Акты</th><th>Записал</th></tr></thead>
+  <table aria-label="Журнал решений и событий проекта">
+    <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Событие / Решение</th><th scope="col">Акты</th><th scope="col">Записал</th></tr></thead>
     <tbody>
 {journal_rows}    </tbody>
   </table>
 
-  <p class="muted">Документ сформирован автоматически из БД · {tenant_name}</p>
+  <p class="muted">Документ сформирован автоматически из БД · {tenant_name}<br>
+  <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
+  <a href="/privacy.html" aria-label="Политика конфиденциальности">Приватность</a> ·
+  <a href="/feedback.html" aria-label="Отправить отзыв">Обратная связь</a></p>
 </main>
 {CURRENCY_BODY}
 </body>
@@ -357,7 +337,7 @@ def render_journal_entry(
         acts_section = f"""\
   <h2>Связанные акты</h2>
   <table>
-    <thead><tr><th>Акт</th><th>Дата</th><th>Статус</th><th>Аудит</th></tr></thead>
+    <thead><tr><th scope="col">Акт</th><th scope="col">Дата</th><th scope="col">Статус</th><th scope="col">Аудит</th></tr></thead>
     <tbody>
 {act_rows}    </tbody>
   </table>"""
@@ -406,9 +386,9 @@ def render_journal_entry(
       <p class="muted">{fmt_date(entry["entry_date"])} · Проект {proj["code"]}</p>
     </div>
     <div class="actions">
-      <a href="{card_href}">К проекту</a>
-      <a href="{index_href}">К списку</a>
-      <button onclick="window.print()">Печать</button>
+      <a href="{card_href}" aria-label="Вернуться к карточке проекта">К проекту</a>
+      <a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a>
+      <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
     </div>
   </div>
 
