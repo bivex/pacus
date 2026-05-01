@@ -320,9 +320,9 @@ def render_project_card(
   </table>
 
   <p class="muted">Документ сформирован автоматически из БД · {tenant_name}<br>
-  <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
-  <a href="/privacy.html" aria-label="Политика конфиденциальности">Приватность</a> ·
-  <a href="/feedback.html" aria-label="Отправить отзыв">Обратная связь</a></p>
+  <a href="{rel(self_path, out_dir / "contact.html")}" aria-label="Контактная информация">Контакты</a> ·
+  <a href="{rel(self_path, out_dir / "privacy.html")}" aria-label="Политика конфиденциальности">Приватность</a> ·
+  <a href="{rel(self_path, out_dir / "feedback.html")}" aria-label="Отправить отзыв">Обратная связь</a></p>
 </main>
 {CURRENCY_BODY}
 </body>
