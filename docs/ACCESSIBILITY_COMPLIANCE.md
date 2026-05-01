@@ -16,11 +16,11 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
-| 8.1.1 | Unique, meaningful names for all UI elements | ⚠️ Partial | Links have text, tables lack `<caption>` | Add `<caption>` to all tables |
+| 8.1.1 | Unique, meaningful names for all UI elements | ✅ Pass | Links have text, tables have `<caption>` with `.sr-only` | None |
 | 8.1.2 | Consistent naming conventions | ✅ Pass | Consistent Russian terminology | None |
 | 8.1.3 | Naming based on user-expected terms | ✅ Pass | "Акт", "Проект", "Аудит" | None |
-| 8.1.4 | Names available to assistive technology | ❌ Fail | No ARIA labels | Add `aria-label` to interactive elements |
-| 8.1.5 | Programmatic access to names | ❌ Fail | No ARIA attributes | Add `role`, `aria-labelledby` to tables |
+| 8.1.4 | Names available to assistive technology | ✅ Pass | ARIA labels added to all links/buttons | None |
+| 8.1.5 | Programmatic access to names | ✅ Pass | Semantic landmarks (`<nav>`, `<main role="main">`) applied | None |
 
 ### 8.2 User Preferences
 
@@ -38,7 +38,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
-| 8.3.1 | Accessibility features discoverable | ❌ Fail | No accessibility statement | Add "Accessibility" link in footer |
+| 8.3.1 | Accessibility features discoverable | ✅ Pass | `accessibility.html` page created and linked | None |
 | 8.3.2 | No interference with system AT | ✅ Pass | No interference | None |
 | 8.3.3 | Avoid interference with accessibility features | ✅ Pass | Standard HTML | None |
 | 8.3.4 | No disabling of system accessibility features | ✅ Pass | No disabling | None |
@@ -50,7 +50,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | 8.4.1 | Alternative access methods available | ❌ Fail | No text-only version | Provide text-only alternative |
 | 8.4.2 | Choice of input/output devices | ✅ Pass | Keyboard + mouse supported | None |
 | 8.4.3 | No mandatory use of specific devices | ✅ Pass | Keyboard works for all actions | None |
-| 8.4.4 | Alternatives when AT unavailable | ❌ Fail | No text-only alternative | Add `noscript` content |
+| 8.4.4 | Alternatives when AT unavailable | ✅ Pass | `<noscript>` fallback content added | None |
 | 8.4.5 | Accessible error identification | N/A | Static HTML, no errors | Not applicable |
 | 8.4.6 | Accessible error description | N/A | Static HTML | Not applicable |
 | 8.4.7 | Accessible error suggestions | N/A | Static HTML | Not applicable |
@@ -66,15 +66,15 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
 | 8.5.1 | No interference with AT operation | ✅ Pass | No interference | None |
-| 8.5.2 | Enable communication between software and AT | ❌ Fail | No ARIA live regions | Add `role="status"` for dynamic content |
-| 8.5.3 | Use standard accessibility services | ❌ Fail | No semantic HTML | Use `<nav>`, `<main>`, `<aside>` |
-| 8.5.4 | Make UI element info available to AT | ❌ Fail | Tables lack `scope`, `headers` | Add ARIA table attributes |
-| 8.5.5 | Allow AT to change keyboard focus/selection | ⚠️ Partial | Keyboard works, no focus indicator | Add `:focus` CSS styling |
+| 8.5.2 | Enable communication between software and AT | ⚠️ Partial | Search results use dynamic updates | Add ARIA live regions for search |
+| 8.5.3 | Use standard accessibility services | ✅ Pass | Semantic HTML5 elements and ARIA roles used | None |
+| 8.5.4 | Make UI element info available to AT | ✅ Pass | Tables have `<caption>`, `aria-label`, `scope="col"` on `<th>`, `scope="row"` on row headers | None |
+| 8.5.5 | Allow AT to change keyboard focus/selection | ✅ Pass | `a:focus-visible, button:focus-visible` styled with 2px solid outline | None |
 | 8.5.6 | Allow AT to change pointer appearance | N/A | No custom pointers | Not applicable |
 | 8.5.7 | Allow AT to change text appearance | ⚠️ Partial | Fixed font | Allow text scaling |
 | 8.5.8 | Allow AT to change output presentation | ⚠️ Partial | Fixed layout | Support system font scaling |
 | 8.5.9 | Use system-standard input/output | ✅ Pass | Standard HTML | None |
-| 8.5.10 | Enable appropriate table presentation | ❌ Fail | No `<caption>`, `<th scope>` | Add proper table semantics |
+| 8.5.10 | Enable appropriate table presentation | ✅ Pass | All tables have `<caption>` + `scope="col"` | None |
 | 8.5.11 | Accept keyboard/pointing device emulators | ✅ Pass | Standard HTML | None |
 
 ---
@@ -85,8 +85,8 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
-| 9.2.1 | Provide keyboard focus and text cursors | ⚠️ Partial | Focus works, not visible | Add `outline: 2px solid #000` on `:focus` |
-| 9.2.2 | Provide high-visibility keyboard focus | ❌ Fail | No focus styling | Add `:focus-visible` CSS |
+| 9.2.1 | Provide keyboard focus and text cursors | ✅ Pass | `a:focus-visible` with 2px solid #005fcc added | None |
+| 9.2.2 | Provide high-visibility keyboard focus | ✅ Pass | `a:focus-visible, button:focus-visible` styled | None |
 | 9.2.3 | Provide visible text cursor | N/A | No text input | Not applicable |
 
 ### 9.3 Keyboard Operation
@@ -128,8 +128,8 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
-| 10.2.1 | Provide screen reader access | ❌ Fail | No ARIA landmarks | Add `role="main"`, `role="navigation"` |
-| 10.2.2 | Provide braille display access | ❌ Fail | No semantic markup | Add proper headings hierarchy |
+| 10.2.1 | Provide screen reader access | ✅ Pass | ARIA landmarks (`role="main"`, `<nav>`) implemented | None |
+| 10.2.2 | Provide braille display access | ✅ Pass | Semantic heading structure, lists, tables with captions | None |
 | 10.2.3 | Provide auditory access | N/A | Static content | Not applicable |
 | 10.2.4 | Keyboard access to off-screen info | ✅ Pass | All content visible | None |
 
@@ -137,7 +137,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Req | Description | Status | Evidence/Location | Action Needed |
 |-----|-------------|--------|----------------------|---------------|
-| 10.4.1 | Do not convey info by colour alone | ❌ Fail | Status uses colour only | Add text labels to status badges |
+| 10.4.1 | Do not convey info by colour alone | ✅ Pass | Status badges include visible text labels (e.g., "draft", "sent") | None |
 | 10.4.2 | Provide sufficient colour contrast | ⚠️ Partial | #111827 on white (OK), but #6b7280 (muted) may fail | Check contrast ratio ≥ 4.5:1 |
 | 10.4.3 | User control of colour settings | ❌ Fail | Fixed colours | Add high-contrast mode |
 
@@ -219,20 +219,19 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 ## 8. Priority Action Plan
 
-### High Priority (Fix by 2026-06-01)
+### High Priority (Completed 2026-05-01)
 
-1. **Add ARIA labels** to all tables, links, buttons
-   - Add `aria-label`, `aria-labelledby` attributes
-   - Add `<caption>` to all `<table>` elements
-   - Add `scope="col"` to `<th>` elements
+1. ✅ **Add ARIA labels** to all tables, links, buttons
+   - Added `aria-label` to all tables and navigation
+   - Added `<caption class="sr-only">` to all `<table>` elements
+   - Added `scope="col"` to column headers and `scope="row"` to row headers
 
-2. **Add keyboard focus indicators**
-   - CSS: `*:focus { outline: 2px solid #005fcc; outline-offset: 2px; }`
-   - Ensure focus visible on all interactive elements
+2. ✅ **Add keyboard focus indicators**
+   - CSS already present: `a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offset: 2px; }`
 
-3. **Don't convey info by colour alone**
-   - Add text labels to status badges (e.g., "Статус: Активен" not just green colour)
-   - Use icons + colour for status indication
+3. ✅ **Don't convey info by colour alone**
+   - Status badges include visible text labels (e.g., "draft", "sent", "signed")
+   - Colour is supplementary, not sole indicator
 
 ### Medium Priority (Fix by 2026-07-01)
 

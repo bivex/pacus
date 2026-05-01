@@ -20,59 +20,7 @@ DEFAULT_OUT = Path(__file__).parent.parent / "data/artifacts"
 # ---------------------------------------------------------------------------
 # Shared HTML fragments
 # ---------------------------------------------------------------------------
-INLINE_CSS = """\
-<style>
-@page { size: A4; margin: 16mm 14mm 18mm; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
-main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-h1, h2, h3, p { margin: 0 0 10px; }
-h1 { font-size: 24px; }
-h2 { font-size: 16px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
-th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
-th { background: #f9fafb; text-align: left; }
-.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.amount { text-align: right; white-space: nowrap; }
-.right { text-align: right; }
-.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
-.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
-.actions { display: flex; gap: 10px; }
-/* Screen reader only content (ISO 9241-171) */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-/* Zebra striping for visual scanning (ISO 9241-12) */
-tbody tr:nth-child(even) { background: #f9fafb; }
-/* Keyboard focus indicators (ISO 9241-171) */
-a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offset: 2px; }
-/* Status text labels (ISO 9241-171 - not colour alone) */
-.status-label { font-size: 12px; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
-.status-draft { background: #fef3c7; color: #92400e; }
-.status-generated { background: #dbeafe; color: #1e40af; }
-.status-sent { background: #fce7f3; color: #9a3412; }
-.status-signed { background: #dcfce7; color: #166534; }
-.status-cancelled { background: #fee2e2; color: #991b1b; }
-.status-corrected { background: #f3e8ff; color: #5b21b6; }
-@media print {
-  body { background: #fff; }
-  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
-  .no-print { display: none !important; }
-  thead { display: table-header-group; }
-  tr, img { break-inside: avoid; }
-  .status-label { background: transparent !important; color: #000 !important; border: 1px solid #000; }
-}
-</style>"""
+INLINE_CSS = '<link rel="stylesheet" href="/style.css">'
 CURRENCY_HEAD = "<script>const CURRENCY = '$'; // \u043c\u0435\u043d\u044f \u0437\u0430\u0439\u0442\u0430: $, \u20ac, \u20bd, \u00a3 ..."
 CURRENCY_BODY = '<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","\u20ac":"EUR","\u20bd":"RUB","\u00a3":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>'
 
@@ -283,13 +231,15 @@ def render_project_card(
 </head>
 <body>
 <main>
-  <div class="topbar no-print">
-    <div>
-      <h1>Проект {code} — {name}</h1>
-      <p class="muted">Статус: <span class="status-label status-{status}">{status}</span> · {tenant_name} · {cp_name}</p>
-    </div>
-    <div class="actions"><a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a><button onclick="window.print()" aria-label="Печать страницы">Печать</button></div>
-  </div>
+   <nav aria-label="Основная навигация">
+   <div class="topbar no-print">
+     <div>
+       <h1>Проект {code} — {name}</h1>
+       <p class="muted">Статус: <span class="status-label status-{status}">{status}</span> · {tenant_name} · {cp_name}</p>
+     </div>
+     <div class="actions"><a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a><button onclick="window.print()" aria-label="Печать страницы">Печать</button></div>
+   </div>
+   </nav>
 
   <h1>Проект {code}</h1>
   <p>{name}</p>
@@ -332,9 +282,8 @@ def render_project_card(
   </table>
 
    <h2>Журнал решений и событий</h2>
-   <table aria-label="Журнал решений и событий проекта">
-     <caption class="sr-only">Журнал решений и событий проекта</caption>
-     <caption class="sr-only">Журнал решений и событий проекта</caption>
+    <table aria-label="Журнал решений и событий проекта">
+      <caption class="sr-only">Журнал решений и событий проекта</caption>
     <thead><tr><th scope="col">Дата</th><th scope="col">Тип</th><th scope="col">Событие / Решение</th><th scope="col">Акты</th><th scope="col">Записал</th></tr></thead>
     <tbody>
 {journal_rows}    </tbody>
@@ -463,7 +412,7 @@ def render_journal_entry(
     def field_row(label: str, value: Optional[str]) -> str:
         if not value:
             return ""
-        return f"<tr><th style='width:28%'>{label}</th><td>{value}</td></tr>\n"
+        return f"<tr><th scope='row' style='width:28%'>{label}</th><td>{value}</td></tr>\n"
 
     detail_rows = (
         field_row("Тип записи", kind_label)
@@ -494,28 +443,31 @@ def render_journal_entry(
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{kind_label}: {entry["title"]}</title>
-{INLINE_CSS}
-</head>
-<body>
-<main>
-  <div class="topbar no-print">
-    <div>
-      <h1>{kind_label}: {entry["title"]}</h1>
-      <p class="muted">{fmt_date(entry["entry_date"])} · Проект {proj["code"]}</p>
-    </div>
-    <div class="actions">
-      <a href="{card_href}" aria-label="Вернуться к карточке проекта">К проекту</a>
-      <a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a>
-      <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
-    </div>
-  </div>
+ {INLINE_CSS}
+ </head>
+ <body>
+ <main role="main">
+    <nav aria-label="Основная навигация">
+    <div class="topbar no-print">
+     <div>
+       <h1>{kind_label}: {entry["title"]}</h1>
+       <p class="muted">{fmt_date(entry["entry_date"])} · Проект {proj["code"]}</p>
+     </div>
+     <div class="actions">
+       <a href="{card_href}" aria-label="Вернуться к карточке проекта">К проекту</a>
+       <a href="{index_href}" aria-label="Вернуться к списку проектов">К списку</a>
+       <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
+     </div>
+   </div>
+   </nav>
 
   <h1>{entry["title"]}</h1>
 
-  <table>
-    <tbody>
-{detail_rows}    </tbody>
-  </table>
+   <table aria-label="Детали записи журнала">
+     <caption class="sr-only">Детали записи журнала</caption>
+     <tbody>
+ {detail_rows}    </tbody>
+   </table>
 
 {body_section}
 {decision_section}
@@ -615,8 +567,9 @@ def render_act_audit(
     if related_rows:
         related_section = f"""
   <h2>Связанные документы</h2>
-  <table>
-    <thead><tr><th>Тип</th><th>Номер / Код</th><th>Статус / Название</th><th>Ссылка</th></tr></thead>
+  <table aria-label="Связанные документы акта">
+    <caption class="sr-only">Связанные документы акта</caption>
+    <thead><tr><th scope="col">Тип</th><th scope="col">Номер / Код</th><th scope="col">Статус / Название</th><th scope="col">Ссылка</th></tr></thead>
     <tbody>
 {related_rows}    </tbody>
   </table>"""
@@ -636,7 +589,8 @@ def render_act_audit(
 {CURRENCY_HEAD}
 </head>
 <body>
-<main>
+<main role="main">
+  <nav aria-label="Основная навигация">
   <div class="topbar no-print">
     <div>
       <h1>Аудит акта {act_number}</h1>
@@ -646,10 +600,11 @@ def render_act_audit(
       <a href="{own_act_href}">Акт</a>
       <a href="{index_href}">К списку</a>
       <button onclick="window.print()">Печать</button>
-    </div>
-  </div>
+     </div>
+   </div>
+   </nav>
 
-  <h1>Аудит: Акт {act_number}</h1>
+   <h1>Аудит: Акт {act_number}</h1>
 
   <div class="grid">
     <div>
@@ -665,19 +620,21 @@ def render_act_audit(
     </div>
   </div>
 
-  <h2>Хронология статусов</h2>
-  <table>
-    <thead><tr><th>Дата и время</th><th>Из</th><th>В</th><th>Пользователь</th><th>Причина</th></tr></thead>
-    <tbody>
-{hist_rows}    </tbody>
-  </table>
+   <h2>Хронология статусов</h2>
+   <table aria-label="Хронология изменения статусов акта">
+     <caption class="sr-only">Хронология изменения статусов акта</caption>
+     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
+     <tbody>
+ {hist_rows}    </tbody>
+   </table>
 
-  <h2>Ревизии документа</h2>
-  <table>
-    <thead><tr><th>№</th><th>Вид</th><th>Шаблон</th><th>Создана</th><th>Создал</th><th>Комментарий</th><th>Иммут.</th><th>Артефакт</th></tr></thead>
-    <tbody>
-{rev_rows}    </tbody>
-  </table>
+   <h2>Ревизии документа</h2>
+   <table aria-label="Ревизии документа акта">
+     <caption class="sr-only">Ревизии документа акта</caption>
+     <thead><tr><th scope="col">№</th><th scope="col">Вид</th><th scope="col">Шаблон</th><th scope="col">Создана</th><th scope="col">Создал</th><th scope="col">Комментарий</th><th scope="col">Иммут.</th><th scope="col">Артефакт</th></tr></thead>
+     <tbody>
+ {rev_rows}    </tbody>
+   </table>
 {related_section}
 
   <p class="muted">Аудит-трейл сформирован автоматически из БД · {tenant_name}</p>
@@ -896,7 +853,7 @@ def generate(db_path: Path, out_dir: Path):
   {INLINE_CSS}
 </head>
 <body>
-  <main>
+<main role="main">
     <div class="topbar no-print">
       <div>
         <h1>Print Center — Work Acts Demo</h1>
