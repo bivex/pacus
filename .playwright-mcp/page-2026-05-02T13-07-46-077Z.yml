@@ -1,0 +1,203 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link "Проекты" [ref=e23] [cursor=pointer]:
+        - /url: /projects
+      - generic [ref=e24]: 
+      - generic [ref=e25]: BETA-SUP-2026
+    - generic:
+      - heading " BETA-SUP-2026 — Техническая поддержка платформы" [level=2] [ref=e27]:
+        - generic [ref=e28]: 
+        - text: BETA-SUP-2026 — Техническая поддержка платформы
+      - link " Редактировать" [ref=e30] [cursor=pointer]:
+        - /url: /projects/proj_beta_support/edit
+        - generic [ref=e31]: 
+        - text: Редактировать
+    - generic [ref=e33]:
+      - generic [ref=e35]:
+        - generic [ref=e37]: Контрагент
+        - generic [ref=e38]:
+          - generic [ref=e39]: Начат
+          - generic [ref=e40]: 01.01.2026
+        - generic [ref=e41]:
+          - generic [ref=e42]: Статус
+          - generic [ref=e44]: Завершён
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]: "3"
+          - generic [ref=e49]: Актов
+        - generic [ref=e50]:
+          - generic [ref=e51]: "1"
+          - generic [ref=e52]: Подписано
+        - generic [ref=e53]:
+          - generic [ref=e54]: 14 400,00
+          - generic [ref=e55]: Сум signed
+    - generic [ref=e56]:
+      - heading " Акты проекта 3" [level=3] [ref=e58]:
+        - generic [ref=e59]: 
+        - text: Акты проекта
+        - generic [ref=e60]: "3"
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e64]: Скорректирован
+          - generic [ref=e65]: 
+          - generic [ref=e66]:
+            - link "A-2026-001" [ref=e67] [cursor=pointer]:
+              - /url: /acts/
+            - generic [ref=e68]: 31.01.2026 · 180 000,00 · 01.01.2026 → 31.01.2026
+        - generic [ref=e69]:
+          - generic [ref=e71]: Подписан
+          - generic [ref=e72]: 
+          - generic [ref=e73]:
+            - link "A-2026-001-К1" [ref=e74] [cursor=pointer]:
+              - /url: /acts/
+            - generic [ref=e75]: 05.02.2026 · 14 400,00 · 01.01.2026 → 31.01.2026
+        - generic [ref=e76]:
+          - generic [ref=e78]: Отправлен
+          - generic [ref=e79]: 
+          - generic [ref=e80]:
+            - link "A-2026-002" [ref=e81] [cursor=pointer]:
+              - /url: /acts/
+            - generic [ref=e82]: 28.02.2026 · 108 000,00 · 01.02.2026 → 28.02.2026
+    - generic [ref=e83]:
+      - generic [ref=e85]:
+        - generic [ref=e86]:
+          - heading " Журнал" [level=3] [ref=e87]:
+            - generic [ref=e88]: 
+            - text: Журнал
+          - link " Добавить запись" [ref=e89] [cursor=pointer]:
+            - /url: /projects/proj_beta_support/journal/new
+            - generic [ref=e90]: 
+            - text: Добавить запись
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - generic [ref=e94]: 
+            - generic [ref=e95]:
+              - generic [ref=e96]:
+                - text: xxxx
+                - generic [ref=e97]: 16.05.2026
+              - generic [ref=e99]:
+                - generic [ref=e100]: 
+                - text: Meeting
+          - generic [ref=e101]:
+            - generic [ref=e103]: 
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - text: Test email
+                - generic [ref=e106]: 02.05.2026
+              - generic [ref=e108]:
+                - generic [ref=e109]: 
+                - text: Email
+          - generic [ref=e110]:
+            - generic [ref=e112]: 
+            - generic [ref=e113]:
+              - generic [ref=e114]:
+                - text: Test call
+                - generic [ref=e115]: 02.05.2026
+              - generic [ref=e117]:
+                - generic [ref=e118]: 
+                - text: Call
+          - generic [ref=e119]:
+            - generic [ref=e121]: 
+            - generic [ref=e122]:
+              - generic [ref=e123]:
+                - text: Test meeting
+                - generic [ref=e124]: 02.05.2026
+              - generic [ref=e126]:
+                - generic [ref=e127]: 
+                - text: Meeting
+          - generic [ref=e128]:
+            - generic [ref=e130]: 
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - text: было то что
+                - generic [ref=e133]: 01.05.2026
+              - generic [ref=e135]:
+                - generic [ref=e136]: 
+                - text: Decision
+          - generic [ref=e137]:
+            - generic [ref=e139]: 
+            - generic [ref=e140]:
+              - generic [ref=e141]:
+                - text: Проект завершён — все обязательства исполнены
+                - generic [ref=e142]: 01.03.2026
+              - generic [ref=e144]:
+                - generic [ref=e145]: 
+                - text: Milestone
+          - generic [ref=e149]:
+            - generic [ref=e150]:
+              - text: Февральский акт сформирован и отправлен контрагенту
+              - generic [ref=e151]: 28.02.2026
+            - generic [ref=e153]:
+              - generic [ref=e154]: 
+              - text: Result
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - text: Январские акты подписаны — закрыт первый расчётный период
+              - generic [ref=e160]: 05.02.2026
+            - generic [ref=e162]:
+              - generic [ref=e163]: 
+              - text: Result
+          - generic [ref=e164]:
+            - generic [ref=e166]: 
+            - generic [ref=e167]:
+              - generic [ref=e168]:
+                - text: Согласован формат ежемесячной отчётности
+                - generic [ref=e169]: 05.01.2026
+              - generic [ref=e171]:
+                - generic [ref=e172]: 
+                - text: Decision
+      - generic [ref=e174]:
+        - heading " История статусов" [level=3] [ref=e175]:
+          - generic [ref=e176]: 
+          - text: История статусов
+        - table [ref=e177]:
+          - rowgroup [ref=e178]:
+            - row "Дата Из В Причина" [ref=e179]:
+              - columnheader "Дата" [ref=e180]
+              - columnheader "Из" [ref=e181]
+              - columnheader "В" [ref=e182]
+              - columnheader "Причина" [ref=e183]
+          - rowgroup [ref=e184]:
+            - row "08.03.2026 09:06 Активный Завершён Все акты закрыты, поддержка завершена" [ref=e185]:
+              - cell "08.03.2026 09:06" [ref=e186]
+              - cell "Активный" [ref=e187]:
+                - generic [ref=e188]: Активный
+              - cell "Завершён" [ref=e189]:
+                - generic [ref=e190]: Завершён
+              - cell "Все акты закрыты, поддержка завершена" [ref=e191]
+            - row "08.03.2026 09:06 — Активный Проект открыт" [ref=e192]:
+              - cell "08.03.2026 09:06" [ref=e193]
+              - cell "—" [ref=e194]:
+                - generic [ref=e195]: —
+              - cell "Активный" [ref=e196]:
+                - generic [ref=e197]: Активный
+              - cell "Проект открыт" [ref=e198]

@@ -1,0 +1,2 @@
+[      82ms] ReferenceError: $ is not defined
+    at http://127.0.0.1:5001/projects/proj_beta_support/journal/new:203:1

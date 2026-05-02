@@ -1,61 +1,137 @@
 {% extends "base.html" %}
 {% block title %}{{ _('Запись в журнал') }} — {{ project.code }}{% endblock %}
 
-{% block content %}
-<h2 class="ui header">
-  {{ _('Запись в журнал') }}
-  <div class="sub header">{{ _('Проект') }}: {{ project.code }}</div>
-</h2>
+{% block head %}
+<style>
+  .kind-btn { border-radius: 8px; transition: all 0.15s ease; }
+  .kind-btn:hover { background: #f0f7ff !important; transform: translateX(4px); }
+  .kind-btn.active { background: linear-gradient(135deg, #2185d0 0%, #1678c2 100%) !important; color: white !important; box-shadow: 0 2px 8px rgba(33,133,208,0.3); }
+</style>
+{% endblock %}
 
-<form class="ui form" method="post">
-  <div class="ui segment">
-    <div class="two fields">
-      <div class="field">
-        <label>{{ _('Дата') }} *</label>
-        <input type="date" name="entry_date">
+{% block content %}
+<div class="ui breadcrumb" style="margin-bottom: 1em;">
+  <a class="section" href="/projects/{{ project.id }}">{{ project.code }}</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ _('Запись в журнал') }}</div>
+</div>
+
+<div class="ui stackable grid">
+  <div class="twelve wide column">
+    <h2 class="ui header" style="color: #1b1c1d;">
+      <i class="book icon orange"></i>
+      {{ _('Новая запись в журнале проекта') }}
+    </h2>
+  </div>
+  <div class="four wide right aligned column">
+    <a href="/projects/{{ project.id }}" class="ui button">{{ _('Отмена') }}</a>
+  </div>
+</div>
+
+<form class="ui form" method="post" id="journal-form">
+  <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); padding: 2em; margin-top: 1.5em;">
+    <!-- Type selector -->
+    <div class="field">
+      <label style="font-size: 1.1em; font-weight: 600; color: #444; margin-bottom: 0.8em;">
+        <i class="folder icon"></i> {{ _('Тип записи') }} *
+      </label>
+      <div class="ui three column grid">
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="meeting" onclick="$('#kind').val('meeting'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="users icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Встреча') }}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="call" onclick="$('#kind').val('call'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="phone icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Звонок') }}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="email" onclick="$('#kind').val('email'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="envelope icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Письмо') }}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="note" onclick="$('#kind').val('note'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="sticky note icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Заметка') }}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="milestone" onclick="$('#kind').val('milestone'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="flag icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Веха') }}</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="ui fluid selection button kind-btn" data-value="decision" onclick="$('#kind').val('decision'); $(this).addClass('active').siblings().removeClass('active');">
+            <i class="gavel icon"></i>
+            <div class="ui tiny header" style="margin: 0;">{{ _('Решение') }}</div>
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <label>{{ _('Тип') }} *</label>
-        <select class="ui dropdown" name="kind">
-          <option value="meeting">{{ _('Встреча') }}</option>
-          <option value="call">{{ _('Звонок') }}</option>
-          <option value="email">{{ _('Письмо') }}</option>
-          <option value="note">{{ _('Заметка') }}</option>
-          <option value="milestone">{{ _('Веха') }}</option>
-          <option value="decision">{{ _('Решение') }}</option>
-        </select>
-      </div>
+      <input type="hidden" name="kind" id="kind" value="" required>
     </div>
+
+    <div class="ui divider"></div>
+
+    <!-- Main fields -->
+    <div class="field">
+      <label>{{ _('Дата записи') }} *</label>
+      <input type="date" name="entry_date" value="{{ now_date }}" required>
+    </div>
+
     <div class="field">
       <label>{{ _('Заголовок') }} *</label>
-      <input type="text" name="title" placeholder="{{ _('Краткое описание события') }}">
+      <input type="text" name="title" placeholder="{{ _('Краткое описание события') }}" required>
     </div>
+
     <div class="field">
       <label>{{ _('Содержание') }}</label>
-      <textarea name="body" rows="4"></textarea>
+      <textarea name="body" rows="4" placeholder="{{ _('Подробное описание события, обсуждения или принятого решения') }}"></textarea>
     </div>
+
     <div class="two fields">
       <div class="field">
         <label>{{ _('Принятое решение') }}</label>
-        <input type="text" name="decision_made">
+        <input type="text" name="decision_made" placeholder="{{ _('Краткое резюме решения') }}">
       </div>
       <div class="field">
         <label>{{ _('Результат') }}</label>
-        <input type="text" name="outcome">
+        <input type="text" name="outcome" placeholder="{{ _('Итог или следующий шаг') }}">
       </div>
     </div>
+
     {% if linked_acts %}
     <div class="field">
       <label>{{ _('Связанные акты') }}</label>
-      <select class="ui dropdown" name="linked_act_ids" multiple="">
+      <select class="ui fluid search dropdown" name="linked_act_ids" multiple>
         {% for a in linked_acts %}
-        <option value="{{ a.id }}">{{ a.act_number }}</option>
+        <option value="{{ a.id }}">{{ a.act_number }} — {{ a.counterparty_name }}</option>
         {% endfor %}
       </select>
     </div>
     {% endif %}
   </div>
-  <button class="ui primary button" type="submit">{{ _('Добавить запись') }}</button>
-  <a href="/projects/{{ project.id }}" class="ui button">{{ _('Отмена') }}</a>
+
+  <div class="ui buttons">
+    <button class="ui large primary button" type="submit">
+      <i class="plus icon"></i> {{ _('Добавить запись') }}
+    </button>
+    <a href="/projects/{{ project.id }}" class="ui large button">{{ _('Отмена') }}</a>
+  </div>
 </form>
+
+<script>
+$(document).ready(function() {
+  $('.ui.dropdown').dropdown();
+  // Select first kind by default if none selected
+  if (!$('#kind').val()) {
+    $('.kind-btn').first().addClass('active').click();
+  }
+});
+</script>
 {% endblock %}

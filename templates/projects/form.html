@@ -1,40 +1,119 @@
 {% extends "base.html" %}
 {% block title %}{{ _('Новый проект') }}{% endblock %}
 
-{% block content %}
-<h2 class="ui header">{{ _('Новый проект') }}</h2>
+{% block head %}
+<style>
+  .promo-icon { font-size: 3em; color: #21ba45; margin-bottom: 0.5em; }
+  .ui.steps .active.title { color: #2185d0; }
+</style>
+{% endblock %}
 
-<form class="ui form" method="post">
-  <div class="ui segment">
-    <div class="two fields">
-      <div class="field">
-        <label>{{ _('Контрагент') }} *</label>
-        <select class="ui search dropdown" name="counterparty_id">
-          <option value="">{{ _('Выберите...') }}</option>
-          {% for cp in counterparties %}
-          <option value="{{ cp.id }}">{{ cp.full_name }}</option>
-          {% endfor %}
-        </select>
+{% block content %}
+<div class="ui breadcrumb" style="margin-bottom: 1em;">
+  <a class="section" href="/projects">{{ _('Проекты') }}</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ _('Новый проект') }}</div>
+</div>
+
+<div class="ui stackable grid">
+  <div class="eight wide column">
+    <h2 class="ui header" style="color: #1b1c1d; margin-bottom: 1.5em;">
+      <i class="folder add outline icon teal"></i>
+      {{ _('Создать проект') }}
+    </h2>
+
+    <form class="ui form" method="post" id="project-form">
+      <div class="ui styled segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div class="two fields">
+          <div class="field{% if errors.counterparty_id %} error{% endif %}">
+            <label>{{ _('Контрагент') }} *</label>
+            <select class="ui search fluid dropdown" name="counterparty_id" id="counterparty_id" required>
+              <option value="">{{ _('Выберите контрагента...') }}</option>
+              {% for cp in counterparties %}
+              <option value="{{ cp.id }}" {% if cp.id == selected_counterparty %}selected{% endif %}>
+                {{ cp.full_name }}{% if cp.inn %} (ИНН {{ cp.inn }}){% endif %}
+              </option>
+              {% endfor %}
+            </select>
+            {% if errors.counterparty_id %}
+            <div class="ui red message">{{ errors.counterparty_id }}</div>
+            {% endif %}
+          </div>
+
+          <div class="field{% if errors.code %} error{% endif %}">
+            <label>{{ _('Код проекта') }} *</label>
+            <input type="text" name="code" placeholder="PROJ-2026-001" value="{{ data.code or '' }}" required>
+            <small style="color: #888; font-size: 0.85em;">Пример: PROJECT-2026-01</small>
+          </div>
+        </div>
+
+        <div class="field{% if errors.name %} error{% endif %}">
+          <label>{{ _('Название') }} *</label>
+          <input type="text" name="name" placeholder="{{ _('Разработка платформы актов') }}" value="{{ data.name or '' }}" required>
+        </div>
+
+        <div class="field">
+          <label>{{ _('Описание') }}</label>
+          <textarea name="description" rows="3" placeholder="{{ _('Краткое описание проекта') }}">{{ data.description or '' }}</textarea>
+        </div>
+
+        <div class="field{% if errors.started_on %} error{% endif %}">
+          <label>{{ _('Дата начала') }} *</label>
+          <input type="date" name="started_on" value="{{ data.started_on or '' }}" required>
+        </div>
       </div>
-      <div class="field">
-        <label>{{ _('Код проекта') }} *</label>
-        <input type="text" name="code" placeholder="ALPHA-DEV-2026">
+
+      <div class="ui clearing divider"></div>
+      <div class="ui buttons">
+        <button class="ui large primary button" type="submit">
+          <i class="check icon"></i> {{ _('Создать проект') }}
+        </button>
+        <a href="/projects" class="ui large button">{{ _('Отмена') }}</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Help side column -->
+  <div class="eight wide column">
+    <div class="ui segment" style="background: linear-gradient(135deg, #f0f9ff 0%, #e8f4ff 100%); border-radius: 10px; border-left: 4px solid #2185d0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 class="ui header" style="color: #1b1c1d;">
+        <i class="info circle icon blue"></i>
+        {{ _('О проектах') }}
+      </h3>
+      <div class="ui bulleted list" style="color: #555; line-height: 1.8;">
+        <div class="item">
+          <strong>{{ _('Код проекта') }}</strong> — {{ _('уникальный идентификатор, используемый в номерах актов и referenciaх') }}
+        </div>
+        <div class="item">
+          <strong>{{ _('Контрагент') }}</strong> — {{ _('владелец проекта (заказчик/подрядчик)') }}
+        </div>
+        <div class="item">
+          <strong>{{ _('Статусы') }}</strong> — {{ _('active (работа идёт), on_hold (приостановлен), completed (завершён), cancelled (отменён)') }}
+        </div>
+        <div class="item">
+          <strong>{{ _('Акты') }}</strong> — {{ _('привязываются к проекту и входят в его съёмку') }}
+        </div>
+        <div class="item">
+          <strong>{{ _('Журнал') }}</strong> — {{ _('записи о решениях и событиях проекта хранятся в отдельной таблице') }}
+        </div>
       </div>
     </div>
-    <div class="field">
-      <label>{{ _('Название') }} *</label>
-      <input type="text" name="name" placeholder="{{ _('Разработка платформы актов') }}">
-    </div>
-    <div class="field">
-      <label>{{ _('Описание') }}</label>
-      <textarea name="description" rows="3"></textarea>
-    </div>
-    <div class="field">
-      <label>{{ _('Дата начала') }} *</label>
-      <input type="date" name="started_on">
+
+    <div class="ui icon message" style="margin-top: 1.5em; border-radius: 10px;">
+      <i class="lightbulb icon yellow"></i>
+      <div class="content">
+        <div class="header">{{ _('Совет') }}</div>
+        <p>{{ _('Создавайте проект до создания актов — это упрощает группировку и отчётность') }}</p>
+      </div>
     </div>
   </div>
-  <button class="ui primary button" type="submit">{{ _('Создать проект') }}</button>
-  <a href="/projects" class="ui button">{{ _('Отмена') }}</a>
-</form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+  $('.ui.dropdown').dropdown();
+});
+</script>
 {% endblock %}

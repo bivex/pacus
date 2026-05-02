@@ -2,71 +2,209 @@
 {% block title %}Pacus — {{ _('Главная') }}{% endblock %}
 
 {% block content %}
-<h2 class="ui header">{{ _('Дашборд') }}</h2>
+<div class="ui vertical segment" style="padding: 0; background: transparent;">
+  <div class="ui stackable two column grid">
+    <!-- Statistic cards -->
+    <div class="column">
+      <div class="ui four small statistics" style="margin: 0;">
+        <div class="statistic">
+          <div class="value">{{ acts|length }}</div>
+          <div class="label">{{ _('Актов') }}</div>
+        </div>
+        <div class="statistic">
+          <div class="value">{{ acts|selectattr('status','eq','draft')|list|length }}</div>
+          <div class="label">{{ _('Черновиков') }}</div>
+        </div>
+        <div class="statistic">
+          <div class="value">{{ projects|length }}</div>
+          <div class="label">{{ _('Проектов') }}</div>
+        </div>
+        <div class="statistic">
+          <div class="value">{{ inbox_count }}</div>
+          <div class="label">{{ _('Входящих') }}</div>
+        </div>
+      </div>
+    </div>
 
-<div class="ui four statistics">
-  <div class="statistic">
-    <div class="value">{{ acts|length }}</div>
-    <div class="label">{{ _('Актов') }}</div>
-  </div>
-  <div class="statistic">
-    <div class="value">{{ acts|selectattr('status','eq','draft')|list|length }}</div>
-    <div class="label">{{ _('Черновиков') }}</div>
-  </div>
-  <div class="statistic">
-    <div class="value">{{ projects|length }}</div>
-    <div class="label">{{ _('Проектов') }}</div>
-  </div>
-  <div class="statistic">
-    <div class="value">{{ inbox_count }}</div>
-    <div class="label">{{ _('Входящих') }}</div>
+    <div class="right aligned column" style="padding-top: 0; padding-bottom: 0;">
+      <a href="/acts/new" class="ui large right labeled icon primary button">
+        <i class="plus icon"></i> {{ _('Создать акт') }}
+      </a>
+    </div>
   </div>
 </div>
 
 <div class="ui divider"></div>
 
-<div class="ui grid">
-  <div class="eight wide column">
-    <h3 class="ui header">{{ _('Последние акты') }}
-      <a href="/acts/new" class="ui right floated tiny primary button">{{ _('Новый акт') }}</a>
-    </h3>
-    <table class="ui compact striped table">
-      <thead>
-        <tr><th>{{ _('Номер') }}</th><th>{{ _('Контрагент') }}</th><th>{{ _('Дата') }}</th><th>{{ _('Сумма') }}</th><th>{{ _('Статус') }}</th></tr>
-      </thead>
-      <tbody>
-        {% for a in acts[:10] %}
-        <tr>
-          <td><a href="/acts/{{ a.id }}">{{ a.act_number }}</a></td>
-          <td>{{ a.counterparty_name }}</td>
-          <td>{{ a.act_date|fmt_date }}</td>
-          <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
-          <td><span class="ui mini label status-{{ a.status }}">{{ STATUS_LABELS.get(a.status, a.status) }}</span></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+<div class="ui stackable two column grid">
+  <!-- Recent Acts -->
+  <div class="column">
+    <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">
+      <div class="ui right floated small primary button" style="margin-top: -8px;">
+        <a href="/acts" style="color: white;">{{ _('Все акты') }}</a>
+      </div>
+      <h3 class="ui header">
+        <i class="file text icon orange"></i>
+        {{ _('Последние акты') }}
+      </h3>
+      <table class="ui very compact striped selectable table" style="border-radius: 8px;">
+        <thead>
+          <tr>
+            <th>{{ _('Номер') }}</th>
+            <th>{{ _('Контрагент') }}</th>
+            <th>{{ _('Дата') }}</th>
+            <th>{{ _('Сумма') }}</th>
+            <th>{{ _('Статус') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in acts[:8] %}
+          <tr>
+            <td>
+              <a href="/acts/{{ a.id }}" title="{{ _('Просмотреть акт') }}">
+                <strong>{{ a.act_number }}</strong>
+              </a>
+            </td>
+            <td>{{ a.counterparty_name|truncate(18) }}</td>
+            <td>{{ a.act_date|fmt_date }}</td>
+            <td class="collapsing">{{ a.grand_total_amount_minor|rubles }}</td>
+            <td class="collapsing">
+              {% set color = {
+                'draft': 'grey',
+                'generated': 'blue',
+                'sent': 'orange',
+                'signed': 'green',
+                'corrected': 'yellow'
+              }.get(a.status, 'grey') %}
+              <span class="ui {{ color }} tiny label">{{ STATUS_LABELS.get(a.status, a.status) }}</span>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="center aligned">{{ _('Нет актов') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="eight wide column">
-    <h3 class="ui header">{{ _('Проекты') }}
-      <a href="/projects/new" class="ui right floated tiny primary button">{{ _('Новый проект') }}</a>
-    </h3>
-    <table class="ui compact striped table">
-      <thead>
-        <tr><th>{{ _('Код') }}</th><th>{{ _('Название') }}</th><th>{{ _('Актов') }}</th><th>{{ _('Статус') }}</th></tr>
-      </thead>
-      <tbody>
-        {% for p in projects %}
-        <tr>
-          <td><a href="/projects/{{ p.id }}">{{ p.code }}</a></td>
-          <td>{{ p.name }}</td>
-          <td>{{ p.act_count }}</td>
-          <td><span class="ui mini label status-{{ p.status }}">{{ STATUS_LABELS.get(p.status, p.status) }}</span></td>
-        </tr>
+  <!-- Projects -->
+  <div class="column">
+    <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">
+      <div class="ui right floated small primary button" style="margin-top: -8px;">
+        <a href="/projects" style="color: white;">{{ _('Все проекты') }}</a>
+      </div>
+      <h3 class="ui header">
+        <i class="folder open icon teal"></i>
+        {{ _('Проекты') }}
+      </h3>
+      <div class="ui relaxed divided list" style="margin-top: 12px;">
+        {% for p in projects[:6] %}
+        <div class="item" style="padding: 8px 0; border-bottom: 1px solid #eee;">
+          <i class="large folder teal middle aligned icon"></i>
+          <div class="content">
+            <a class="header" href="/projects/{{ p.id }}">{{ p.code }}</a>
+            <div class="description">
+              {{ p.name }}
+            </div>
+            <div class="extra">
+              <span class="ui tiny {{ 'green' if p.act_count > 0 else 'grey' }} label">
+                <i class="file icon"></i> {{ p.act_count }} {{ _('актов') }}
+              </span>
+              {% set pcolor = {
+                'active': 'green',
+                'on_hold': 'yellow',
+                'completed': 'blue',
+                'cancelled': 'red'
+              }.get(p.status, 'grey') %}
+              <span class="ui tiny {{ pcolor }} label">{{ STATUS_LABELS.get(p.status, p.status) }}</span>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="item">
+          <div class="content">
+            {{ _('Нет проектов') }}
+          </div>
+        </div>
         {% endfor %}
-      </tbody>
-    </table>
+      </div>
+    </div>
   </div>
 </div>
+
+<div class="ui divider"></div>
+
+<!-- Quick Actions -->
+<div class="ui small stackable four cards">
+  <a class="card" href="/acts/new" style="border-radius: 10px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+    <div class="content">
+      <div class="right floated meta">
+        <i class="plus circle outline icon large teal"></i>
+      </div>
+      <div class="header">{{ _('Новый акт') }}</div>
+      <div class="description">{{ _('Создать акт выполнения работ') }}</div>
+    </div>
+  </a>
+  <a class="card" href="/projects/new" style="border-radius: 10px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+    <div class="content">
+      <div class="right floated meta">
+        <i class="folder add outline icon large blue"></i>
+      </div>
+      <div class="header">{{ _('Новый проект') }}</div>
+      <div class="description">{{ _('Создать проект для группировки актов') }}</div>
+    </div>
+  </a>
+  <a class="card" href="/journal" style="border-radius: 10px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+    <div class="content">
+      <div class="right floated meta">
+        <i class="book icon large orange"></i>
+      </div>
+      <div class="header">{{ _('Журнал') }}</div>
+      <div class="description">{{ _('Управление записями журнала проектов') }}</div>
+    </div>
+  </a>
+  <a class="card" href="/admin/regenerate" onclick="return confirm('{{ _('Регенерировать все HTML?') }}')" style="border-radius: 10px; border: 1px solid #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+    <div class="content">
+      <div class="right floated meta">
+        <i class="refresh icon large purple"></i>
+      </div>
+      <div class="header">{{ _('Обновить HTML') }}</div>
+      <div class="description">{{ _('Перегенерировать HTML-артефакты') }}</div>
+    </div>
+  </a>
+</div>
+
+{% if acts or projects %}
+<div class="ui divider"></div>
+<!-- Recent Activity -->
+<h3 class="ui header">
+  <i class="clock icon"></i>
+  {{ _('Недавняя активность') }}
+</h3>
+<div class="ui feed" style="margin-top: 1.5em;">
+  {% for a in acts[:3] %}
+  <div class="event">
+    <div class="label">
+      {% if a.status == 'draft' %}
+        <i class="grey file alternate icon"></i>
+      {% elif a.status == 'sent' %}
+        <i class="orange paper plane icon"></i>
+      {% elif a.status == 'signed' %}
+        <i class="green check circle icon"></i>
+      {% else %}
+        <i class="file icon"></i>
+      {% endif %}
+    </div>
+    <div class="content">
+      <div class="summary">
+        <a href="/acts/{{ a.id }}">{{ _('Акт') }} {{ a.act_number }}</a>
+        <div class="date">{{ a.act_date|fmt_date }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

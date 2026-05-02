@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Home" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Home
+    - link " Acts" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Acts
+    - link " Projects" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Projects
+    - link " Print" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Print
+    - link " Update HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Update HTML
+    - link "Русский" [ref=e18] [cursor=pointer]:
+      - /url: /lang/ru
+      - text: Русский
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link "Acts" [ref=e23] [cursor=pointer]:
+        - /url: /acts
+      - generic [ref=e24]: 
+      - generic [ref=e25]: New act
+    - generic [ref=e26]:
+      - heading " New act" [level=2] [ref=e28]:
+        - generic [ref=e29]: 
+        - text: New act
+      - link "Cancel" [ref=e31] [cursor=pointer]:
+        - /url: /acts
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading " Details" [level=4] [ref=e34]:
+          - generic [ref=e35]: 
+          - text: Details
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: Counterparty *
+            - generic [ref=e39] [cursor=pointer]:
+              - generic [ref=e40]: 
+              - textbox "Counterparty *" [ref=e41]
+              - generic [ref=e42]: Select a counterparty...
+          - generic [ref=e43]:
+            - generic [ref=e44]: Contract *
+            - generic [ref=e45] [cursor=pointer]:
+              - generic [ref=e46]: 
+              - generic [ref=e47]: Сначала выберите контрагента...
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: Project
+            - generic [ref=e51] [cursor=pointer]:
+              - generic [ref=e52]: 
+              - generic [ref=e53]: — none —
+          - generic [ref=e54]:
+            - generic [ref=e55]: Act number *
+            - textbox "A-2026-005" [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: Act date *
+            - textbox [ref=e60]: 2026-05-02
+          - generic [ref=e61]:
+            - generic [ref=e62]: Period from *
+            - textbox [ref=e63]: 2026-05-01
+          - generic [ref=e64]:
+            - generic [ref=e65]: Period to *
+            - textbox [ref=e66]: 2026-05-02
+      - generic [ref=e67]:
+        - heading " Items" [level=4] [ref=e68]:
+          - generic [ref=e69]: 
+          - text: Items
+        - table [ref=e70]:
+          - rowgroup [ref=e71]:
+            - row "Description Unit Qty Price (₽) VAT % Amount" [ref=e72]:
+              - columnheader "Description" [ref=e73]
+              - columnheader "Unit" [ref=e74]
+              - columnheader "Qty" [ref=e75]
+              - columnheader "Price (₽)" [ref=e76]
+              - columnheader "VAT %" [ref=e77]
+              - columnheader "Amount" [ref=e78]
+              - columnheader [ref=e79]
+          - rowgroup
+          - rowgroup [ref=e80]:
+            - 'row "Total with VAT: 0,00" [ref=e81]':
+              - columnheader "Total with VAT:" [ref=e82]:
+                - generic [ref=e83]: "Total with VAT:"
+              - columnheader "0,00" [ref=e84]
+              - columnheader [ref=e85]
+        - button " Add item" [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]: 
+          - text: Add item
+      - generic [ref=e89]:
+        - button " Create act" [ref=e90] [cursor=pointer]:
+          - generic [ref=e91]: 
+          - text: Create act
+        - link "Cancel" [ref=e92] [cursor=pointer]:
+          - /url: /acts

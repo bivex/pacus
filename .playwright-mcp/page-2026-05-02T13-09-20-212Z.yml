@@ -1,0 +1,143 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - heading " Проекты" [level=2] [ref=e25]:
+          - generic [ref=e26]: 
+          - text: Проекты
+        - generic [ref=e27]: Управление проектами и связь с актами
+      - link " Новый проект" [ref=e29] [cursor=pointer]:
+        - /url: /projects/new
+        - generic [ref=e30]: 
+        - text: Новый проект
+    - generic [ref=e32]:
+      - link " Все" [ref=e33] [cursor=pointer]:
+        - /url: /projects
+        - generic [ref=e34]: 
+        - text: Все
+      - link "Активный" [ref=e35] [cursor=pointer]:
+        - /url: /projects?status=active
+        - generic [ref=e37]: Активный
+      - link "Приостановлен" [ref=e38] [cursor=pointer]:
+        - /url: /projects?status=on_hold
+        - generic [ref=e40]: Приостановлен
+      - link "Завершён" [ref=e41] [cursor=pointer]:
+        - /url: /projects?status=completed
+        - generic [ref=e43]: Завершён
+      - link "Отменён" [ref=e44] [cursor=pointer]:
+        - /url: /projects?status=cancelled
+        - generic [ref=e46]: Отменён
+    - generic [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - link " TEST-PROJ-001" [ref=e51] [cursor=pointer]:
+            - /url: /projects/proj_32b85251ca94b07ecbb7
+            - generic [ref=e52]: 
+            - text: TEST-PROJ-001
+          - generic [ref=e53]: Test Project
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]: 
+              - generic [ref=e58]: ООО Альфа Инжиниринг
+            - generic [ref=e59]:
+              - generic [ref=e60]: 
+              - generic [ref=e61]: 01.05.2026
+            - generic [ref=e62]:
+              - generic [ref=e63]: 
+              - generic [ref=e64]: 0 актов
+        - generic [ref=e65]:
+          - generic [ref=e67]: Активный
+          - link "Открыть " [ref=e70] [cursor=pointer]:
+            - /url: /projects/proj_32b85251ca94b07ecbb7
+            - text: Открыть
+            - generic [ref=e71]: 
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - link " ALFA-DEV-2026" [ref=e75] [cursor=pointer]:
+            - /url: /projects/proj_alfa_dev
+            - generic [ref=e76]: 
+            - text: ALFA-DEV-2026
+          - generic [ref=e77]: Разработка платформы актов
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - generic [ref=e81]: 
+              - generic [ref=e82]: ООО Альфа Инжиниринг
+            - generic [ref=e83]:
+              - generic [ref=e84]: 
+              - generic [ref=e85]: 01.01.2026
+            - generic [ref=e86]:
+              - generic [ref=e87]: 
+              - link "3 актов" [ref=e89] [cursor=pointer]:
+                - /url: /projects/proj_alfa_dev#acts
+        - generic [ref=e90]:
+          - generic [ref=e92]: Активный
+          - link "Открыть " [ref=e95] [cursor=pointer]:
+            - /url: /projects/proj_alfa_dev
+            - text: Открыть
+            - generic [ref=e96]: 
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - link " BETA-SUP-2026" [ref=e100] [cursor=pointer]:
+            - /url: /projects/proj_beta_support
+            - generic [ref=e101]: 
+            - text: BETA-SUP-2026
+          - generic [ref=e102]: Техническая поддержка платформы
+          - generic [ref=e104]:
+            - generic [ref=e105]:
+              - generic [ref=e106]: 
+              - generic [ref=e107]: АО Бета Сервис
+            - generic [ref=e108]:
+              - generic [ref=e109]: 
+              - generic [ref=e110]: 01.01.2026
+            - generic [ref=e111]:
+              - generic [ref=e112]: 
+              - link "3 актов" [ref=e114] [cursor=pointer]:
+                - /url: /projects/proj_beta_support#acts
+              - generic [ref=e115]: 14 400,00
+        - generic [ref=e116]:
+          - generic [ref=e118]: Завершён
+          - link "Открыть " [ref=e121] [cursor=pointer]:
+            - /url: /projects/proj_beta_support
+            - text: Открыть
+            - generic [ref=e122]: 
+    - generic [ref=e124]:
+      - generic [ref=e125]:
+        - generic [ref=e126]: "3"
+        - generic [ref=e127]: Всего проектов
+      - generic [ref=e128]:
+        - generic [ref=e129]: "2"
+        - generic [ref=e130]: Активных
+      - generic [ref=e131]:
+        - generic [ref=e132]: "1"
+        - generic [ref=e133]: Завершено
+      - generic [ref=e134]:
+        - generic [ref=e135]: 14 400,00
+        - generic [ref=e136]: Общая подписаная сумма

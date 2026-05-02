@@ -2,159 +2,264 @@
 {% block title %}{{ _('Акт') }} {{ act.act_number }}{% endblock %}
 
 {% block content %}
-<div class="ui right floated buttons">
-  {% if act.status == 'draft' %}
-  <a href="/acts/{{ act.id }}/edit" class="ui button"><i class="edit icon"></i> {{ _('Редактировать') }}</a>
-  {% endif %}
-  {% if valid_transitions %}
-  <div class="ui floating dropdown button">
-    <i class="exchange icon"></i>
-    <span class="text">{{ _('Сменить статус') }}</span>
-    <div class="menu">
-      {% for ts in valid_transitions %}
-      <div class="item" data-status="{{ ts }}">{{ STATUS_LABELS.get(ts, ts) }}</div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-  <a href="/acts/{{ act.id }}/preview" class="ui button" target="_blank"><i class="print icon"></i> {{ _('Превью') }}</a>
+<div class="ui breadcrumb" style="margin-bottom: 1em;">
+  <a class="section" href="/acts">{{ _('Акты') }}</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ act.act_number }}</div>
 </div>
 
-<h2 class="ui header">
-  {{ _('Акт') }} {{ act.act_number }}
-  <span class="ui label status-{{ act.status }}">{{ STATUS_LABELS.get(act.status, act.status) }}</span>
-</h2>
-
-<div class="ui segment">
-  <div class="ui four column grid">
-    <div class="column">
-      <strong>{{ _('Контрагент') }}:</strong><br>{{ act.counterparty_name }}
-    </div>
-    <div class="column">
-      <strong>{{ _('Договор') }}:</strong><br>{{ act.contract_number }} {{ _('от') }} {{ act.contract_date|fmt_date }}
-    </div>
-    <div class="column">
-      <strong>{{ _('Дата акта') }}:</strong><br>{{ act.act_date|fmt_date }}
-    </div>
-    <div class="column">
-      <strong>{{ _('Период') }}:</strong><br>{{ act.period_from|fmt_date }} — {{ act.period_to|fmt_date }}
-    </div>
-  </div>
-  {% if act.project_code %}
-  <div class="ui divider"></div>
-  <strong>{{ _('Проект') }}:</strong> <a href="/projects/{{ act.project_id }}">{{ act.project_code }} — {{ act.project_name }}</a>
-  {% endif %}
-</div>
-
-<h3 class="ui header">{{ _('Позиции') }}</h3>
-<table class="ui celled striped table">
-  <thead>
-    <tr>
-      <th class="collapsing">№</th>
-      <th>{{ _('Описание') }}</th>
-      <th class="collapsing">{{ _('Ед.') }}</th>
-      <th class="right aligned collapsing">{{ _('Кол-во') }}</th>
-      <th class="right aligned collapsing">{{ _('Цена') }}</th>
-      <th class="right aligned collapsing">{{ _('Сумма') }}</th>
-      <th class="right aligned collapsing">{{ _('НДС') }}</th>
-      <th class="right aligned collapsing">{{ _('Сумма с НДС') }}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for it in items %}
-    <tr>
-      <td>{{ it.line_no }}</td>
-      <td>{{ it.description }}</td>
-      <td>{{ it.unit_code }}</td>
-      <td class="right aligned">{{ (it.quantity_milli / 1000)|round(3) }}</td>
-      <td class="right aligned amount">{{ it.price_minor|rubles }}</td>
-      <td class="right aligned amount">{{ it.amount_minor|rubles }}</td>
-      <td class="right aligned amount">{{ it.vat_amount_minor|rubles }}</td>
-      <td class="right aligned amount">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-  <tfoot>
-    <tr>
-      <th colspan="5" class="right aligned">{{ _('Итого') }}</th>
-      <th class="right aligned amount">{{ act.total_amount_minor|rubles }}</th>
-      <th class="right aligned amount">{{ act.total_vat_amount_minor|rubles }}</th>
-      <th class="right aligned amount">{{ act.grand_total_amount_minor|rubles }}</th>
-    </tr>
-  </tfoot>
-</table>
-
-<div class="ui two column grid">
-  <div class="column">
-    <h3 class="ui header">{{ _('История статусов') }}</h3>
-    <table class="ui very basic compact table">
-      <thead><tr><th>{{ _('Дата') }}</th><th>{{ _('Из') }}</th><th>{{ _('В') }}</th><th>{{ _('Причина') }}</th></tr></thead>
-      <tbody>
-        {% for h in history %}
-        <tr>
-          <td>{{ h.changed_at|fmt_dt }}</td>
-          <td><span class="ui mini label status-{{ h.from_status or 'draft' }}">{{ STATUS_LABELS.get(h.from_status or 'draft', '—') }}</span></td>
-          <td><span class="ui mini label status-{{ h.to_status }}">{{ STATUS_LABELS.get(h.to_status, h.to_status) }}</span></td>
-          <td>{{ h.reason or '' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {% if revisions %}
-  <div class="column">
-    <h3 class="ui header">{{ _('Ревизии') }}</h3>
-    <table class="ui very basic compact table">
-      <thead><tr><th>№</th><th>{{ _('Дата') }}</th><th>HTML</th></tr></thead>
-      <tbody>
-        {% for r in revisions %}
-        <tr>
-          <td>rev-{{ r.revision_no }}</td>
-          <td>{{ r.created_at|fmt_dt }}</td>
-          <td>
-            {% if r.storage_path %}
-            <a href="/artifacts/{{ r.storage_path }}" target="_blank"><i class="external icon"></i></a>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% endif %}
-</div>
-
-{# Status transition modal #}
-<div class="ui tiny modal" id="status-modal">
-  <div class="header">{{ _('Сменить статус') }}</div>
-  <div class="content">
-    <form class="ui form" id="status-form" method="post" action="/acts/{{ act.id }}/status">
-      <input type="hidden" name="to_status" id="modal-to-status">
-      <div class="field">
-        <label>{{ _('Причина (необязательно)') }}</label>
-        <textarea name="reason" rows="2"></textarea>
+<div class="ui stackable grid">
+  <!-- Left column: Header and actions -->
+  <div class="sixteen wide column">
+    <div class="ui clearing container" style="padding: 0; margin-bottom: 1.5em;">
+      <div class="ui left floated header" style="margin: 0;">
+        <h2 style="margin: 0; color: #1b1c1d;">
+          <i class="file alternate outline icon orange"></i>
+          {{ _('Акт') }} {{ act.act_number }}
+        </h2>
+        <div class="sub header" style="color: #666; margin-top: 0.3em;">
+          {{ act.counterparty_name }} · {{ act.act_date|fmt_date }}
+        </div>
       </div>
-    </form>
+
+      <div class="ui right floated buttons">
+        {% if act.status == 'draft' %}
+        <a href="/acts/{{ act.id }}/edit" class="ui yellow button" style="border-radius: 8px;">
+          <i class="edit icon"></i>
+          {{ _('Редактировать') }}
+        </a>
+        {% endif %}
+        {% if valid_transitions %}
+        <div class="ui floating icon dropdown button" style="border-radius: 8px;">
+          <i class="exchange icon"></i>
+          <div class="menu">
+            {% for ts in valid_transitions %}
+            <div class="item" data-url="/acts/{{ act.id }}/status?to={{ ts }}">
+              <i class="status-{{ ts }} icon"></i>
+              {{ STATUS_LABELS.get(ts, ts) }}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        <a href="/acts/{{ act.id }}/preview" class="ui primary button" target="_blank" style="border-radius: 8px;">
+          <i class="print icon"></i> {{ _('Превью') }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Status card -->
+    <div class="ui raised segment" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 10px; border: none; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 1.5em;">
+      <div class="ui grid" style="margin: 0;">
+        <div class="six wide column" style="padding: 1.5em 1em 1.5em 1.5em;">
+          <div class="ui orange header" style="font-size: 1.2em; margin: 0;">
+            <i class="file alternate icon"></i>
+            {{ _('Информация об акте') }}
+          </div>
+        </div>
+        <div class="ten wide column" style="padding: 1.5em 1.5em 1.5em 0; text-align: right;">
+          {% set stcolor = {
+            'draft': 'grey',
+            'generated': 'blue',
+            'sent': 'orange',
+            'signed': 'green',
+            'corrected': 'yellow'
+          }.get(act.status, 'grey') %}
+          <div class="ui {{ stcolor }} massive label" style="font-size: 1.5em; padding: 0.6em 1.5em; letter-spacing: 1px;">
+            <i class="status-{{ act.status }} icon"></i>
+            {{ STATUS_LABELS.get(act.status, act.status) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Details -->
+    <div class="ui four cards" style="margin-bottom: 2em;">
+      <div class="card" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #2185d0;">
+        <div class="content">
+          <div class="header">{{ _('Контрагент') }}</div>
+          <div class="description">{{ act.counterparty_name }}</div>
+        </div>
+      </div>
+      <div class="card" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #f2711c;">
+        <div class="content">
+          <div class="header">{{ _('Договор') }}</div>
+          <div class="description">{{ act.contract_number }}<br>{{ _('от') }} {{ act.contract_date|fmt_date }}</div>
+        </div>
+      </div>
+      <div class="card" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #21ba45;">
+        <div class="content">
+          <div class="header">{{ _('Период') }}</div>
+          <div class="description">{{ act.period_from|fmt_date }} — {{ act.period_to|fmt_date }}</div>
+        </div>
+      </div>
+      {% if act.project_code %}
+      <div class="card" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #a333c8;">
+        <div class="content">
+          <div class="header">{{ _('Проект') }}</div>
+          <div class="description">
+            <a href="/projects/{{ act.project_id }}">{{ act.project_code }}</a><br>
+            {{ act.project_name|truncate(25) }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
   </div>
-  <div class="actions">
-    <div class="ui cancel button">{{ _('Отмена') }}</div>
-    <div class="ui ok primary button">{{ _('Подтвердить') }}</div>
+
+  <!-- Items Table -->
+  <div class="sixteen wide column">
+    <div class="ui segment" style="border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.06); padding: 1.5em;">
+      <h3 class="ui header">
+        <i class="list ul icon"></i>
+        {{ _('Позиции') }}
+      </h3>
+      <table class="ui very compact celled selectable table" style="margin-top: 0.5em;">
+        <thead style="background: #f8f9fa;">
+          <tr>
+            <th class="collapsing">№</th>
+            <th>{{ _('Описание') }}</th>
+            <th class="collapsing">{{ _('Ед.') }}</th>
+            <th class="right aligned collapsing">{{ _('Кол-во') }}</th>
+            <th class="right aligned collapsing">{{ _('Цена (₽)') }}</th>
+            <th class="right aligned collapsing">{{ _('Сумма (₽)') }}</th>
+            <th class="right aligned collapsing">{{ _('НДС (₽)') }}</th>
+            <th class="right aligned amount">{{ _('Итого с НДС (₽)') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+          <tr>
+            <td class="collapsing">{{ it.line_no }}</td>
+            <td>{{ it.description }}</td>
+            <td class="collapsing">{{ it.unit_code }}</td>
+            <td class="right aligned">{{ (it.quantity_milli / 1000)|round(3) }}</td>
+            <td class="right aligned amount">{{ it.price_minor|rubles }}</td>
+            <td class="right aligned amount">{{ it.amount_minor|rubles }}</td>
+            <td class="right aligned amount">{{ it.vat_amount_minor|rubles }}</td>
+            <td class="right aligned amount" style="font-weight: 700;">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="full-width" style="font-size: 1.2em;">
+            <th colspan="5" class="right aligned" style="padding-top: 1em; padding-bottom: 1em; color: #666;">
+              <strong>{{ _('Итого') }}</strong>
+            </th>
+            <th class="right aligned amount" style="padding-top: 1em; padding-bottom: 1em; color: #2185d0;">{{ act.total_amount_minor|rubles }}</th>
+            <th class="right aligned amount" style="padding-top: 1em; padding-bottom: 1em;">{{ act.total_vat_amount_minor|rubles }}</th>
+            <th class="right aligned amount" style="padding-top: 1em; padding-bottom: 1em; font-weight: 800; font-size: 1.4em; color: #1b1c1d;">{{ act.grand_total_amount_minor|rubles }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Two-column bottom section -->
+  <div class="sixteen wide column">
+    <div class="ui stackable two column grid" style="margin-top: 1.5em;">
+      <!-- Status History -->
+      <div class="column">
+        <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <h3 class="ui header" style="color: #1b1c1d;">
+            <i class="history icon"></i>
+            {{ _('История статусов') }}
+          </h3>
+          <table class="ui very basic compact table">
+            <thead>
+              <tr>
+                <th>{{ _('Дата') }}</th>
+                <th>{{ _('Из') }}</th>
+                <th>{{ _('В') }}</th>
+                <th>{{ _('Причина') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for h in history %}
+              <tr>
+                <td style="white-space: nowrap;">{{ h.changed_at|fmt_dt }}</td>
+                <td>
+                  {% if h.from_status %}
+                  <span class="ui mini label status-{{ h.from_status }}">{{ STATUS_LABELS.get(h.from_status, h.from_status) }}</span>
+                  {% else %}
+                  <span class="ui grey mini label">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="ui mini label status-{{ h.to_status }}">{{ STATUS_LABELS.get(h.to_status, h.to_status) }}</span>
+                </td>
+                <td>{{ h.reason or '' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Revision History -->
+      <div class="column">
+        <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <h3 class="ui header" style="color: #1b1c1d;">
+            <i class="code branch icon"></i>
+            {{ _('Ревизии') }}
+          </h3>
+          <table class="ui very basic compact table">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>{{ _('Тип') }}</th>
+                <th>{{ _('Создана') }}</th>
+                <th>{{ _('Статус') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in revisions %}
+              <tr>
+                <td>{{ r.revision_no }}</td>
+                <td>{{ r.revision_kind }}</td>
+                <td>{{ r.created_at|fmt_dt }}</td>
+                <td>
+                  {% if r.is_immutable %}
+                  <span class="ui green tiny label"><i class="lock icon"></i> {{ _('Иммутабельна') }}</span>
+                  {% else %}
+                  <span class="ui yellow tiny label"><i class="edit icon"></i> {{ _('Черновик') }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui-dropdown@2.9.3/dist/scripts/dropdown.min.js"></script>
 <script>
-$('.ui.dropdown.button').dropdown({
-  action: function(text, value, el) {
-    var status = el.data('status');
-    $('#modal-to-status').val(status);
-    $('#status-modal').modal('show');
-  }
-});
-$('#status-modal .ok.button').on('click', function() {
-  $('#status-form').submit();
+$(document).ready(function() {
+  $('.ui.floating.dropdown.button').dropdown({
+    action: 'activate',
+    on: 'hover'
+  });
+
+  $('.ui.dropdown').dropdown();
+
+  $('.comment-form').form({
+    fields: {
+      reason: 'empty'
+    },
+    inline: true,
+    onSuccess: function(event, fields) {
+      event.preventDefault();
+      var $form = $(this);
+      $.post($form.attr('action'), $form.serialize())
+        .done(function() { location.reload(); })
+        .fail(function(xhr) { alert('Error: ' + xhr.responseText); });
+    }
+  });
 });
 </script>
 {% endblock %}

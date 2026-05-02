@@ -1,0 +1,93 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link "BETA-SUP-2026" [ref=e23] [cursor=pointer]:
+        - /url: /projects/proj_beta_support
+      - generic [ref=e24]: 
+      - generic [ref=e25]: Запись в журнал
+    - generic [ref=e26]:
+      - heading " Новая запись в журнале проекта" [level=2] [ref=e28]:
+        - generic [ref=e29]: 
+        - text: Новая запись в журнале проекта
+      - link "Отмена" [ref=e31] [cursor=pointer]:
+        - /url: /projects/proj_beta_support
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e36]: 
+            - text: Тип записи *
+          - generic [ref=e37]:
+            - generic [ref=e39] [cursor=pointer]:
+              - generic [ref=e40]: 
+              - generic [ref=e41]: Встреча
+            - generic [ref=e43] [cursor=pointer]:
+              - generic [ref=e44]: 
+              - generic [ref=e45]: Звонок
+            - generic [ref=e47] [cursor=pointer]:
+              - generic [ref=e48]: 
+              - generic [ref=e49]: Письмо
+            - generic [ref=e51] [cursor=pointer]:
+              - generic [ref=e52]: 
+              - generic [ref=e53]: Заметка
+            - generic [ref=e55] [cursor=pointer]:
+              - generic [ref=e56]: 
+              - generic [ref=e57]: Веха
+            - generic [ref=e59] [cursor=pointer]:
+              - generic [ref=e60]: 
+              - generic [ref=e61]: Решение
+        - generic [ref=e63]:
+          - generic [ref=e64]: Дата записи *
+          - textbox [ref=e65]
+        - generic [ref=e66]:
+          - generic [ref=e67]: Заголовок *
+          - textbox "Краткое описание события" [ref=e68]
+        - generic [ref=e69]:
+          - generic [ref=e70]: Содержание
+          - textbox "Подробное описание события, обсуждения или принятого решения" [ref=e71]
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]: Принятое решение
+            - textbox "Краткое резюме решения" [ref=e75]
+          - generic [ref=e76]:
+            - generic [ref=e77]: Результат
+            - textbox "Итог или следующий шаг" [ref=e78]
+        - generic [ref=e79]:
+          - generic [ref=e80]: Связанные акты
+          - generic [ref=e81]:
+            - generic [ref=e82] [cursor=pointer]: 
+            - textbox "Связанные акты" [ref=e83]
+      - generic [ref=e85]:
+        - button " Добавить запись" [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]: 
+          - text: Добавить запись
+        - link "Отмена" [ref=e88] [cursor=pointer]:
+          - /url: /projects/proj_beta_support

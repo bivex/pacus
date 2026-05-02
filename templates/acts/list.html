@@ -2,51 +2,122 @@
 {% block title %}Pacus — {{ _('Акты') }}{% endblock %}
 
 {% block content %}
-<h2 class="ui header">
-  {{ _('Акты') }}
-  <a href="/acts/new" class="ui right floated primary button"><i class="plus icon"></i> {{ _('Новый акт') }}</a>
-</h2>
+<div class="ui vertical segment" style="padding: 0; background: transparent;">
+  <div class="ui stackable five column grid">
+    <div class="ten wide column">
+      <h2 class="ui header" style="margin-bottom: 0.2em;">
+        <i class="file text icon orange"></i>
+        {{ _('Акты') }}
+      </h2>
+      <div class="sub header">{{ _('Управление актами выполнения работ') }}</div>
+    </div>
+    <div class="six wide right aligned column">
+      <a href="/acts/new" class="ui large primary button">
+        <i class="plus icon"></i> {{ _('Новый акт') }}
+      </a>
+    </div>
+  </div>
+</div>
 
-<div class="ui secondary menu">
-  <a class="item {% if not current_filter %}active{% endif %}" href="/acts">{{ _('Все') }}</a>
+<div class="ui divider"></div>
+
+<!-- Filter menu with icons -->
+<div class="ui horizontal forest card menu" style="background: transparent; border: none; box-shadow: none;">
+  <a class="item {% if not current_filter %}active teal{% endif %}" href="/acts">
+    <i class="grid layout icon"></i>
+    {{ _('Все') }}
+  </a>
   {% for s in statuses %}
-  <a class="item {% if current_filter == s %}active{% endif %}" href="/acts?status={{ s }}">
-    <span class="ui mini label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
+  <a class="item {% if current_filter == s %}active {% endif %}" href="/acts?status={{ s }}">
+    <i class="status-{{ s }} icon"></i>
+    <span class="ui tiny label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
   </a>
   {% endfor %}
 </div>
 
-<table class="ui celled striped table">
-  <thead>
-    <tr>
-      <th>{{ _('Номер') }}</th>
-      <th>{{ _('Контрагент') }}</th>
-      <th>{{ _('Договор') }}</th>
-      <th>{{ _('Дата акта') }}</th>
-      <th>{{ _('Период') }}</th>
-      <th class="amount">{{ _('Сумма') }}</th>
-      <th>{{ _('Статус') }}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for a in acts %}
-    <tr>
-      <td><a href="/acts/{{ a.id }}">{{ a.act_number }}</a></td>
-      <td>{{ a.counterparty_name }}</td>
-      <td>{{ a.contract_number }}</td>
-      <td>{{ a.act_date|fmt_date }}</td>
-      <td>{{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}</td>
-      <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
-      <td><span class="ui mini label status-{{ a.status }}">{{ STATUS_LABELS.get(a.status, a.status) }}</span></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-  <tfoot>
-    <tr>
-      <th colspan="5" class="right aligned">{{ _('Итого актов') }}: {{ acts|length }}</th>
-      <th class="amount">{{ acts|sum(attribute='grand_total_amount_minor')|rubles }}</th>
-      <th></th>
-    </tr>
-  </tfoot>
-</table>
+{% if acts %}
+<div class="ui relaxed divided卡片列表" style="margin-top: 2em;">
+  {% for a in acts %}
+  <div class="ui card" style="border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 1em; border: 1px solid #f0f0f0;">
+    <div class="content" style="padding: 1.25em 1.5em;">
+      <div class="header" style="font-size: 1.3em; margin-bottom: 0.3em;">
+        <a href="/acts/{{ a.id }}" style="color: #2185d0; text-decoration: none; font-weight: 700;">
+          #{{ a.act_number }}
+        </a>
+      </div>
+      <div class="meta" style="margin-bottom: 0.8em; font-size: 0.95em; color: #666;">
+        <span><i class="building icon"></i> {{ a.counterparty_name }}</span>
+        <span class="ui bullet"></span>
+        <span><i class="file text icon"></i> {{ a.contract_number }}</span>
+        <span class="ui bullet"></span>
+        <span><i class="calendar icon"></i> {{ a.act_date|fmt_date }}</span>
+      </div>
+      <div class="description" style="color: #555; line-height: 1.6;">
+        <div class="ui grid" style="margin: 0;">
+          <div class="eight wide column">
+            <small>
+              <strong>{{ _('Период') }}:</strong> {{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}
+            </small>
+          </div>
+          <div class="eight wide right aligned column">
+            <div class="ui orange large label" style="font-size: 1.1em; padding: 0.5em 1em;">
+              <i class="ruble sign icon"></i> {{ a.grand_total_amount_minor|rubles }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="extra content" style="background: #f8f9fa; padding: 0.8em 1.5em; border-top: 1px solid #eee; border-radius: 0 0 10px 10px;">
+      <div class="ui mini labels">
+        {% set st = {
+          'draft': ('gray', 'file alternate'),
+          'generated': ('blue', 'cog'),
+          'sent': ('orange', 'paper plane'),
+          'signed': ('green', 'check circle'),
+          'corrected': ('yellow', 'sync')
+        }.get(a.status, ('grey', 'question')) %}
+        <span class="ui {{ st[0] }} label">
+          <i class="{{ st[1] }} icon"></i>
+          {{ STATUS_LABELS.get(a.status, a.status) }}
+        </span>
+      </div>
+      <div class="right floated">
+        <a href="/acts/{{ a.id }}" class="ui tiny basic button" style="border-radius: 6px;">
+          {{ _('Просмотреть') }} <i class="right chevron icon"></i>
+        </a>
+        <a href="/acts/{{ a.id }}/edit" class="ui tiny basic button" style="border-radius: 6px;">
+          {{ _('Редактировать') }}
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Totals card -->
+<div class="ui raised very padded text container segment" style="background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); border-radius: 10px; margin-top: 2em; text-align: center; box-shadow: 0 3px 12px rgba(0,0,0,0.08);">
+  <div class="ui three statistics" style="margin: 0;">
+    <div class="statistic">
+      <div class="value">{{ acts|length }}</div>
+      <div class="label">{{ _('Всего актов') }}</div>
+    </div>
+    <div class="statistic">
+      <div class="value">{{ acts|selectattr('status','eq','signed')|list|length }}</div>
+      <div class="label">{{ _('Подписано') }}</div>
+    </div>
+    <div class="statistic">
+      <div class="value">{{ acts|sum(attribute='grand_total_amount_minor')|rubles }}</div>
+      <div class="label">{{ _('Общая сумма') }}</div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="ui placeholder segment" style="border-radius: 10px; min-height: 300px;">
+  <div class="ui icon header">
+    <i class="file alternate icon"></i>
+    {{ _('Акты отсутствуют') }}
+  </div>
+  <a href="/acts/new" class="ui large primary button">{{ _('Создать первый акт') }}</a>
+</div>
+{% endif %}
 {% endblock %}

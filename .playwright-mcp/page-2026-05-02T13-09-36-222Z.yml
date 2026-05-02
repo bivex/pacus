@@ -1,0 +1,211 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Home" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Home
+    - link " Acts" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Acts
+    - link " Projects" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Projects
+    - link " Print" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Print
+    - link " Update HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Update HTML
+    - link "Русский" [ref=e18] [cursor=pointer]:
+      - /url: /lang/ru
+      - text: Русский
+  - generic [ref=e21]:
+    - generic [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: "6"
+          - generic [ref=e28]: Acts
+        - generic [ref=e29]:
+          - generic [ref=e30]: "1"
+          - generic [ref=e31]: Drafts
+        - generic [ref=e32]:
+          - generic [ref=e33]: "3"
+          - generic [ref=e34]: Projects
+        - generic [ref=e35]:
+          - generic [ref=e36]: "1"
+          - generic [ref=e37]: Inbox
+      - link " Create act" [ref=e39] [cursor=pointer]:
+        - /url: /acts/new
+        - generic [ref=e40]: 
+        - text: Create act
+    - generic [ref=e42]:
+      - generic [ref=e44]:
+        - link "Все акты" [ref=e46] [cursor=pointer]:
+          - /url: /acts
+        - heading " Recent acts" [level=3] [ref=e47]:
+          - generic [ref=e48]: 
+          - text: Recent acts
+        - table [ref=e49]:
+          - rowgroup [ref=e50]:
+            - row "Number Counterparty Date Amount Status" [ref=e51]:
+              - columnheader "Number" [ref=e52]
+              - columnheader "Counterparty" [ref=e53]
+              - columnheader "Date" [ref=e54]
+              - columnheader "Amount" [ref=e55]
+              - columnheader "Status" [ref=e56]
+          - rowgroup [ref=e57]:
+            - row "A-TEST-002 ООО Альфа Инжиниринг 01.05.2026 12 000,00 Generated" [ref=e58] [cursor=pointer]:
+              - cell "A-TEST-002" [ref=e59]:
+                - link "A-TEST-002" [ref=e60]:
+                  - /url: /acts/wa_0113ec840dbd6833e2ed
+                  - strong [ref=e61]: A-TEST-002
+              - cell "ООО Альфа Инжиниринг" [ref=e62]
+              - cell "01.05.2026" [ref=e63]
+              - cell "12 000,00" [ref=e64]
+              - cell "Generated" [ref=e65]:
+                - generic [ref=e66]: Generated
+            - row "A-2026-004 ООО Альфа Инжиниринг 03.04.2026 48 000,00 Cancelled" [ref=e67] [cursor=pointer]:
+              - cell "A-2026-004" [ref=e68]:
+                - link "A-2026-004" [ref=e69]:
+                  - /url: /acts/wa_cancelled_apr
+                  - strong [ref=e70]: A-2026-004
+              - cell "ООО Альфа Инжиниринг" [ref=e71]
+              - cell "03.04.2026" [ref=e72]
+              - cell "48 000,00" [ref=e73]
+              - cell "Cancelled" [ref=e74]:
+                - generic [ref=e75]: Cancelled
+            - row "A-2026-003 ООО Альфа Инжиниринг 10.03.2026 222 000,00 Draft" [ref=e76] [cursor=pointer]:
+              - cell "A-2026-003" [ref=e77]:
+                - link "A-2026-003" [ref=e78]:
+                  - /url: /acts/wa_draft_mar
+                  - strong [ref=e79]: A-2026-003
+              - cell "ООО Альфа Инжиниринг" [ref=e80]
+              - cell "10.03.2026" [ref=e81]
+              - cell "222 000,00" [ref=e82]
+              - cell "Draft" [ref=e83]:
+                - generic [ref=e84]: Draft
+            - row "A-2026-002 АО Бета Сервис 28.02.2026 108 000,00 Sent" [ref=e85] [cursor=pointer]:
+              - cell "A-2026-002" [ref=e86]:
+                - link "A-2026-002" [ref=e87]:
+                  - /url: /acts/wa_sent_feb
+                  - strong [ref=e88]: A-2026-002
+              - cell "АО Бета Сервис" [ref=e89]
+              - cell "28.02.2026" [ref=e90]
+              - cell "108 000,00" [ref=e91]
+              - cell "Sent" [ref=e92]:
+                - generic [ref=e93]: Sent
+            - row "A-2026-001-К1 АО Бета Сервис 05.02.2026 14 400,00 Signed" [ref=e94] [cursor=pointer]:
+              - cell "A-2026-001-К1" [ref=e95]:
+                - link "A-2026-001-К1" [ref=e96]:
+                  - /url: /acts/wa_correction_jan
+                  - strong [ref=e97]: A-2026-001-К1
+              - cell "АО Бета Сервис" [ref=e98]
+              - cell "05.02.2026" [ref=e99]
+              - cell "14 400,00" [ref=e100]
+              - cell "Signed" [ref=e101]:
+                - generic [ref=e102]: Signed
+            - row "A-2026-001 АО Бета Сервис 31.01.2026 180 000,00 Corrected" [ref=e103] [cursor=pointer]:
+              - cell "A-2026-001" [ref=e104]:
+                - link "A-2026-001" [ref=e105]:
+                  - /url: /acts/wa_original_jan
+                  - strong [ref=e106]: A-2026-001
+              - cell "АО Бета Сервис" [ref=e107]
+              - cell "31.01.2026" [ref=e108]
+              - cell "180 000,00" [ref=e109]
+              - cell "Corrected" [ref=e110]:
+                - generic [ref=e111]: Corrected
+      - generic [ref=e113]:
+        - link "Все проекты" [ref=e115] [cursor=pointer]:
+          - /url: /projects
+        - heading " Projects" [level=3] [ref=e116]:
+          - generic [ref=e117]: 
+          - text: Projects
+        - generic [ref=e118]:
+          - generic [ref=e119]:
+            - generic [ref=e120]: 
+            - generic [ref=e121]:
+              - link "TEST-PROJ-001" [ref=e122] [cursor=pointer]:
+                - /url: /projects/proj_32b85251ca94b07ecbb7
+              - generic [ref=e123]: Test Project
+              - generic [ref=e124]:
+                - generic [ref=e125]:
+                  - generic [ref=e126]: 
+                  - text: 0 актов
+                - generic [ref=e127]: Active
+          - generic [ref=e128]:
+            - generic [ref=e129]: 
+            - generic [ref=e130]:
+              - link "ALFA-DEV-2026" [ref=e131] [cursor=pointer]:
+                - /url: /projects/proj_alfa_dev
+              - generic [ref=e132]: Разработка платформы актов
+              - generic [ref=e133]:
+                - generic [ref=e134]:
+                  - generic [ref=e135]: 
+                  - text: 3 актов
+                - generic [ref=e136]: Active
+          - generic [ref=e137]:
+            - generic [ref=e138]: 
+            - generic [ref=e139]:
+              - link "BETA-SUP-2026" [ref=e140] [cursor=pointer]:
+                - /url: /projects/proj_beta_support
+              - generic [ref=e141]: Техническая поддержка платформы
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - generic [ref=e144]: 
+                  - text: 3 актов
+                - generic [ref=e145]: Completed
+    - generic [ref=e147]:
+      - link " New act Создать акт выполнения работ" [ref=e148] [cursor=pointer]:
+        - /url: /acts/new
+        - generic [ref=e149]:
+          - generic [ref=e151]: 
+          - generic [ref=e152]: New act
+          - generic [ref=e153]: Создать акт выполнения работ
+      - link " New project Создать проект для группировки актов" [ref=e154] [cursor=pointer]:
+        - /url: /projects/new
+        - generic [ref=e155]:
+          - generic [ref=e157]: 
+          - generic [ref=e158]: New project
+          - generic [ref=e159]: Создать проект для группировки актов
+      - link " Journal Управление записями журнала проектов" [ref=e160] [cursor=pointer]:
+        - /url: /journal
+        - generic [ref=e161]:
+          - generic [ref=e163]: 
+          - generic [ref=e164]: Journal
+          - generic [ref=e165]: Управление записями журнала проектов
+      - link " Update HTML Перегенерировать HTML-артефакты" [ref=e166] [cursor=pointer]:
+        - /url: /admin/regenerate
+        - generic [ref=e167]:
+          - generic [ref=e169]: 
+          - generic [ref=e170]: Update HTML
+          - generic [ref=e171]: Перегенерировать HTML-артефакты
+    - heading " Недавняя активность" [level=3] [ref=e173]:
+      - generic [ref=e174]: 
+      - text: Недавняя активность
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - generic [ref=e178]: 
+        - generic [ref=e180]:
+          - link "Act A-TEST-002" [ref=e181] [cursor=pointer]:
+            - /url: /acts/wa_0113ec840dbd6833e2ed
+          - generic [ref=e182]: 01.05.2026
+      - generic [ref=e183]:
+        - generic [ref=e185]: 
+        - generic [ref=e187]:
+          - link "Act A-2026-004" [ref=e188] [cursor=pointer]:
+            - /url: /acts/wa_cancelled_apr
+          - generic [ref=e189]: 03.04.2026
+      - generic [ref=e190]:
+        - generic [ref=e192]: 
+        - generic [ref=e194]:
+          - link "Act A-2026-003" [ref=e195] [cursor=pointer]:
+            - /url: /acts/wa_draft_mar
+          - generic [ref=e196]: 10.03.2026

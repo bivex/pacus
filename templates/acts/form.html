@@ -3,112 +3,186 @@
 
 {% block head %}
 <style>
-  .item-row .fields { margin-bottom: 0; }
-  #items-body td { vertical-align: top; padding: 4px; }
+  .ui.card.active.card { border: 2px solid #2185d0; }
+  .vat-select { width: 90px !important; }
+  .amount-col { width: 120px; text-align: right; }
+  .items-table { margin-top: 1em; }
+  .items-table thead { background: #f8f9fa; }
+  .items-table tbody input, .items-table tbody select { padding: 0.4em 0.6em; }
+  .section-header { margin-top: 1.5em; margin-bottom: 0.8em; }
 </style>
 {% endblock %}
 
 {% block content %}
-<h2 class="ui header">{% if mode == 'create' %}{{ _('Новый акт') }}{% else %}{{ _('Редактирование акта') }}{% endif %}</h2>
+<div class="ui breadcrumb" style="margin-bottom: 1em;">
+  <a class="section" href="/acts">{{ _('Акты') }}</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">{% if mode == 'create' %}{{ _('Новый акт') }}{% else %}{{ _('Редактирование') }}{% endif %}</div>
+</div>
 
-<form class="ui form" method="post">
-  <div class="ui segment">
-    <h4 class="ui dividing header">{{ _('Реквизиты') }}</h4>
-    <div class="four fields">
+<div class="ui stackable grid">
+  <div class="twelve wide column">
+    <h2 class="ui header" style="color: #1b1c1d;">
+      <i class="file alternate icon orange"></i>
+      {% if mode == 'create' %}
+        {{ _('Новый акт') }}
+      {% else %}
+        {{ _('Редактирование акта') }} #{{ act.act_number }}
+      {% endif %}
+    </h2>
+  </div>
+  <div class="four wide right aligned column">
+    <a href="/acts" class="ui button">{{ _('Отмена') }}</a>
+  </div>
+</div>
+
+<form class="ui form" method="post" id="act-form">
+  <!-- Section 1: Basic Info -->
+  <div class="ui styled segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 class="ui dividing header">
+      <i class="info circle icon"></i>
+      {{ _('Реквизиты') }}
+    </h4>
+
+    <div class="two fields">
       <div class="field">
         <label>{{ _('Контрагент') }} *</label>
-        <select class="ui search dropdown" name="counterparty_id" id="counterparty_id">
-          <option value="">{{ _('Выберите...') }}</option>
+        <select class="ui search fluid dropdown" name="counterparty_id" id="counterparty_id" required>
+          <option value="">{{ _('Выберите контрагента...') }}</option>
           {% for cp in counterparties %}
-          <option value="{{ cp.id }}" {% if mode == 'edit' and act.counterparty_id == cp.id %}selected{% endif %}>{{ cp.full_name }}{% if cp.inn %} ({{ cp.inn }}){% endif %}</option>
+          <option value="{{ cp.id }}" {% if mode == 'edit' and act.counterparty_id == cp.id %}selected{% endif %}>
+            {{ cp.full_name }}{% if cp.inn %} (ИНН {{ cp.inn }}){% endif %}
+          </option>
           {% endfor %}
         </select>
       </div>
+
       <div class="field">
         <label>{{ _('Договор') }} *</label>
-        <select class="ui dropdown" name="contract_id" id="contract_id">
-          <option value="">{{ _('Выберите контрагента...') }}</option>
+        <select class="ui fluid dropdown" name="contract_id" id="contract_id" required>
+          <option value="">{{ _('Сначала выберите контрагента...') }}</option>
+          {% if mode == 'edit' %}
+          <option value="{{ act.contract_id }}" selected>{{ act.contract_number }} ({{ _('от') }} {{ act.contract_date }})</option>
+          {% endif %}
         </select>
       </div>
+    </div>
+
+    <div class="two fields">
       <div class="field">
         <label>{{ _('Проект') }}</label>
-        <select class="ui dropdown" name="project_id" id="project_id">
+        <select class="ui fluid dropdown" name="project_id" id="project_id">
           <option value="">{{ _('— нет —') }}</option>
+          {% if mode == 'edit' and act.project_id %}
+          <option value="{{ act.project_id }}" selected>{{ act.project_code }}</option>
+          {% endif %}
         </select>
       </div>
       <div class="field">
         <label>{{ _('Номер акта') }} *</label>
-        <input type="text" name="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005">
+        <input type="text" name="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005" required>
       </div>
     </div>
+
     <div class="three fields">
       <div class="field">
         <label>{{ _('Дата акта') }} *</label>
-        <input type="date" name="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% endif %}">
+        <input type="date" name="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% else %}{{ now_iso_date }}{% endif %}" required>
       </div>
       <div class="field">
         <label>{{ _('Период с') }} *</label>
-        <input type="date" name="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% endif %}">
+        <input type="date" name="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% else %}{{ now_iso_month_start }}{% endif %}" required>
       </div>
       <div class="field">
         <label>{{ _('Период по') }} *</label>
-        <input type="date" name="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% endif %}">
+        <input type="date" name="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% else %}{{ now_iso_date }}{% endif %}" required>
       </div>
     </div>
   </div>
 
-  <h4 class="ui dividing header">{{ _('Позиции') }}</h4>
-  <table class="ui compact celled table" id="items-table">
-    <thead>
-      <tr>
-        <th>{{ _('Описание') }}</th>
-        <th class="collapsing">{{ _('Ед.') }}</th>
-        <th class="collapsing">{{ _('Кол-во') }}</th>
-        <th class="collapsing">{{ _('Цена (₽)') }}</th>
-        <th class="collapsing">{{ _('НДС %%') }}</th>
-        <th class="collapsing">{{ _('Сумма') }}</th>
-        <th class="collapsing"></th>
-      </tr>
-    </thead>
-    <tbody id="items-body">
-      {% if mode == 'edit' %}
-      {% for it in items %}
-      <tr data-idx="{{ loop.index0 }}">
-        <td><input type="text" name="item_desc_{{ loop.index0 }}" value="{{ it.description }}"></td>
-        <td><input type="text" name="item_unit_{{ loop.index0 }}" value="{{ it.unit_code }}" style="width:60px"></td>
-        <td><input type="text" name="item_qty_{{ loop.index0 }}" value="{{ (it.quantity_milli / 1000)|round(3) }}" style="width:80px" class="calc-trigger"></td>
-        <td><input type="text" name="item_price_{{ loop.index0 }}" value="{{ (it.price_minor / 100)|round(2) }}" style="width:100px" class="calc-trigger"></td>
-        <td>
-          <select name="item_vat_{{ loop.index0 }}" class="calc-trigger" style="width:80px">
-            <option value="2000" {% if it.vat_rate_basis_points == 2000 %}selected{% endif %}>20%</option>
-            <option value="1000" {% if it.vat_rate_basis_points == 1000 %}selected{% endif %}>10%</option>
-            <option value="0" {% if it.vat_rate_basis_points == 0 %}selected{% endif %}>0%</option>
-          </select>
-        </td>
-        <td class="right aligned amount line-total">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
-        <td><button type="button" class="ui red mini icon button remove-row"><i class="trash icon"></i></button></td>
-      </tr>
-      {% endfor %}
-      {% endif %}
-    </tbody>
-    <tfoot>
-      <tr>
-        <th colspan="5" class="right aligned">{{ _('Итого с НДС') }}</th>
-        <th class="right aligned amount" id="grand-total">0,00</th>
-        <th></th>
-      </tr>
-    </tfoot>
-  </table>
-  <button type="button" class="ui basic button" id="add-row"><i class="plus icon"></i> {{ _('Добавить позицию') }}</button>
+  <!-- Section 2: Invoice Items -->
+  <div class="ui segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 1.5em;">
+    <h4 class="ui dividing header">
+      <i class="list ul icon"></i>
+      {{ _('Позиции') }}
+    </h4>
 
-  <div class="ui divider"></div>
-  <button class="ui primary button" type="submit">{% if mode == 'create' %}{{ _('Создать акт') }}{% else %}{{ _('Сохранить') }}{% endif %}</button>
-  {% if mode == 'edit' %}
-  <a href="/acts/{{ act.id }}" class="ui button">{{ _('Отмена') }}</a>
-  {% else %}
-  <a href="/acts" class="ui button">{{ _('Отмена') }}</a>
-  {% endif %}
+    <table class="ui very compact celled selectable table items-table" id="items-table">
+      <thead>
+        <tr>
+          <th style="width: 35%;">{{ _('Описание') }}</th>
+          <th class="collapsing">{{ _('Ед.') }}</th>
+          <th class="collapsing">{{ _('Кол-во') }}</th>
+          <th class="collapsing">{{ _('Цена (₽)') }}</th>
+          <th class="collapsing">{{ _('НДС %%') }}</th>
+          <th class="collapsing amount-col">{{ _('Сумма') }}</th>
+          <th class="collapsing"></th>
+        </tr>
+      </thead>
+      <tbody id="items-body">
+        {% if mode == 'edit' %}
+        {% for it in items %}
+        <tr data-idx="{{ loop.index0 }}">
+          <td><input type="text" name="item_desc_{{ loop.index0 }}" value="{{ it.description }}" placeholder="{{ _('Описание работ') }}" required></td>
+          <td><input type="text" name="item_unit_{{ loop.index0 }}" value="{{ it.unit_code }}" style="width:60px" required></td>
+          <td><input type="text" name="item_qty_{{ loop.index0 }}" value="{{ (it.quantity_milli / 1000)|round(3) }}" style="width:80px" class="calc-trigger" required></td>
+          <td><input type="text" name="item_price_{{ loop.index0 }}" value="{{ (it.price_minor / 100)|round(2) }}" style="width:100px" class="calc-trigger" required></td>
+          <td>
+            <select name="item_vat_{{ loop.index0 }}" class="ui compact dropdown vat-select calc-trigger" required>
+              <option value="2000" {% if it.vat_rate_basis_points == 2000 %}selected{% endif %}>20%</option>
+              <option value="1000" {% if it.vat_rate_basis_points == 1000 %}selected{% endif %}>10%</option>
+              <option value="0" {% if it.vat_rate_basis_points == 0 %}selected{% endif %}>0%</option>
+            </select>
+          </td>
+          <td class="right aligned amount line-total">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
+          <td><button type="button" class="ui red mini icon button remove-row"><i class="trash icon"></i></button></td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="5" class="right aligned">
+            <div class="ui large orange label" style="font-size: 1.1em; padding: 0.6em 1.2em;">
+              {{ _('Итого с НДС') }}:
+            </div>
+          </th>
+          <th class="right aligned amount" id="grand-total" style="font-size: 1.4em; font-weight: 700; color: #2185d0;">
+            0,00
+          </th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <button type="button" class="ui basic button" id="add-row" style="margin-top: 1em;">
+      <i class="plus icon"></i> {{ _('Добавить позицию') }}
+    </button>
+  </div>
+
+  <!-- Section 3: Actions -->
+  <div class="ui clearing divider"></div>
+  <div class="ui buttons">
+    <button class="ui large primary button" type="submit">
+      <i class="check icon"></i>
+      {% if mode == 'create' %}
+        {{ _('Создать акт') }}
+      {% else %}
+        {{ _('Сохранить') }}
+      {% endif %}
+    </button>
+    <a href="/{% if mode == 'edit' %}acts/{{ act.id }}{% else %}acts{% endif %}" class="ui large button">
+      {{ _('Отмена') }}
+    </a>
+  </div>
 </form>
+
+{% if mode == 'create' and not counterparties %}
+<div class="ui warning message" style="margin-top: 1.5em;">
+  <div class="header">{{ _('Нет контрагентов') }}</div>
+  <p>{{ _('Сначала создайте контрагентов') }}.</p>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -122,12 +196,12 @@ var rowIdx = {% if mode == 'edit' %}{{ items|length }}{% else %}0{% endif %};
 
 function rowHtml(i) {
   return '<tr data-idx="' + i + '">' +
-    '<td><input type="text" name="item_desc_' + i + '" placeholder="' + I18N.desc_placeholder + '"></td>' +
-    '<td><input type="text" name="item_unit_' + i + '" value="JOB" style="width:60px"></td>' +
-    '<td><input type="text" name="item_qty_' + i + '" value="1" style="width:80px" class="calc-trigger"></td>' +
-    '<td><input type="text" name="item_price_' + i + '" value="0" style="width:100px" class="calc-trigger"></td>' +
-    '<td><select name="item_vat_' + i + '" class="calc-trigger" style="width:80px">' +
-      '<option value="2000">20%</option><option value="1000">10%</option><option value="0">0%</option></select></td>' +
+    '<td><input type="text" name="item_desc_' + i + '" placeholder="' + I18N.desc_placeholder + '" required></td>' +
+    '<td><input type="text" name="item_unit_' + i + '" value="JOB" style="width:60px" required></td>' +
+    '<td><input type="text" name="item_qty_' + i + '" value="1" style="width:80px" class="calc-trigger" required></td>' +
+    '<td><input type="text" name="item_price_' + i + '" value="0" style="width:100px" class="calc-trigger" required></td>' +
+    '<td><select name="item_vat_' + i + '" class="ui compact dropdown vat-select calc-trigger" required>' +
+    '<option value="2000">20%</option><option value="1000">10%</option><option value="0">0%</option></select></td>' +
     '<td class="right aligned amount line-total">0,00</td>' +
     '<td><button type="button" class="ui red mini icon button remove-row"><i class="trash icon"></i></button></td></tr>';
 }
@@ -160,6 +234,7 @@ function fmtRub(minor) {
 $('#add-row').on('click', function() {
   $('#items-body').append(rowHtml(rowIdx));
   rowIdx++;
+  $('.ui.dropdown').dropdown();
   recalc();
 });
 
@@ -177,6 +252,7 @@ function loadContracts(cpId) {
     data.forEach(function(c) {
       sel.append('<option value="' + c.id + '">' + c.contract_number + ' {{ _('от') }} ' + c.contract_date + '</option>');
     });
+    sel.dropdown();
   });
 }
 
@@ -187,6 +263,7 @@ function loadProjects(cpId) {
     data.forEach(function(p) {
       sel.append('<option value="' + p.id + '">' + p.code + ' — ' + p.name + '</option>');
     });
+    sel.dropdown();
   });
 }
 
@@ -198,12 +275,11 @@ $('#counterparty_id').on('change', function() {
 {% if mode == 'edit' and act.counterparty_id %}
 loadContracts('{{ act.counterparty_id }}');
 loadProjects('{{ act.counterparty_id }}');
-setTimeout(function() {
-  $('#contract_id').val('{{ act.contract_id }}');
-  {% if act.project_id %}$('#project_id').val('{{ act.project_id }}');{% endif %}
-}, 200);
 {% endif %}
 
-recalc();
+$(document).ready(function() {
+  $('.ui.dropdown').dropdown();
+  recalc();
+});
 </script>
 {% endblock %}

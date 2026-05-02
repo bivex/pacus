@@ -1,0 +1,90 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link " К акту" [ref=e23] [cursor=pointer]:
+        - /url: /acts/wa_sent_feb
+        - generic [ref=e24]: 
+        - text: К акту
+      - link " Печать" [ref=e25] [cursor=pointer]:
+        - /url: javascript:window.print()
+        - generic [ref=e26]: 
+        - text: Печать
+    - iframe [ref=e28]:
+      - generic [active] [ref=f1e1]:
+        - heading "АКТ № A-2026-002" [level=1] [ref=f1e2]
+        - paragraph [ref=f1e3]: о выполнении работ по договору №SUP-2026-04 от 01.02.2026
+        - paragraph [ref=f1e4]:
+          - strong [ref=f1e5]: "Заказчик:"
+          - text: АО Бета Сервис, ИНН 7812345678, КПП 781201001, Санкт-Петербург, Невский пр., 12
+        - paragraph [ref=f1e6]:
+          - strong [ref=f1e7]: "Исполнитель:"
+          - text: Демо арендатор / Pacus Demo
+        - paragraph [ref=f1e8]: "Период: с 01.02.2026 по 28.02.2026"
+        - heading "1. Стоимость работ" [level=2] [ref=f1e9]
+        - table [ref=f1e10]:
+          - rowgroup [ref=f1e11]:
+            - row "№ Наименование Ед. Кол-во Цена Сумма НДС Сумма с НДС" [ref=f1e12]:
+              - columnheader "№" [ref=f1e13]
+              - columnheader "Наименование" [ref=f1e14]
+              - columnheader "Ед." [ref=f1e15]
+              - columnheader "Кол-во" [ref=f1e16]
+              - columnheader "Цена" [ref=f1e17]
+              - columnheader "Сумма" [ref=f1e18]
+              - columnheader "НДС" [ref=f1e19]
+              - columnheader "Сумма с НДС" [ref=f1e20]
+          - rowgroup [ref=f1e21]:
+            - row "1 Техническая поддержка платформы за февраль MONTH 1 70 000,00 70 000,00 14 000,00 84 000,00" [ref=f1e22]:
+              - cell "1" [ref=f1e23]
+              - cell "Техническая поддержка платформы за февраль" [ref=f1e24]
+              - cell "MONTH" [ref=f1e25]
+              - cell "1" [ref=f1e26]
+              - cell "70 000,00" [ref=f1e27]
+              - cell "70 000,00" [ref=f1e28]
+              - cell "14 000,00" [ref=f1e29]
+              - cell "84 000,00" [ref=f1e30]
+            - row "2 Администрирование и мониторинг MONTH 1 20 000,00 20 000,00 4 000,00 24 000,00" [ref=f1e31]:
+              - cell "2" [ref=f1e32]
+              - cell "Администрирование и мониторинг" [ref=f1e33]
+              - cell "MONTH" [ref=f1e34]
+              - cell "1" [ref=f1e35]
+              - cell "20 000,00" [ref=f1e36]
+              - cell "20 000,00" [ref=f1e37]
+              - cell "4 000,00" [ref=f1e38]
+              - cell "24 000,00" [ref=f1e39]
+          - rowgroup [ref=f1e40]:
+            - row "Итого 90 000,00 18 000,00 108 000,00" [ref=f1e41]:
+              - columnheader "Итого" [ref=f1e42]
+              - columnheader "90 000,00" [ref=f1e43]
+              - columnheader "18 000,00" [ref=f1e44]
+              - columnheader "108 000,00" [ref=f1e45]
+        - generic [ref=f1e46]:
+          - generic [ref=f1e47]: ________________ / Заказчик /
+          - generic [ref=f1e48]: ________________ / Исполнитель /

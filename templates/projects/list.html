@@ -2,44 +2,131 @@
 {% block title %}Pacus — {{ _('Проекты') }}{% endblock %}
 
 {% block content %}
-<h2 class="ui header">
-  {{ _('Проекты') }}
-  <a href="/projects/new" class="ui right floated primary button"><i class="plus icon"></i> {{ _('Новый проект') }}</a>
-</h2>
+<div class="ui vertical segment" style="padding: 0; background: transparent;">
+  <div class="ui stackable five column grid">
+    <div class="ten wide column">
+      <h2 class="ui header" style="margin-bottom: 0.2em; color: #1b1c1d;">
+        <i class="folder open icon teal"></i>
+        {{ _('Проекты') }}
+      </h2>
+      <div class="sub header">{{ _('Управление проектами и связь с актами') }}</div>
+    </div>
+    <div class="six wide right aligned column">
+      <a href="/projects/new" class="ui large primary button">
+        <i class="plus icon"></i> {{ _('Новый проект') }}
+      </a>
+    </div>
+  </div>
+</div>
 
-<div class="ui secondary menu">
-  <a class="item {% if not current_filter %}active{% endif %}" href="/projects">{{ _('Все') }}</a>
+<div class="ui divider"></div>
+
+<!-- Filter menu -->
+<div class="ui horizontal forest card menu" style="background: transparent; border: none; box-shadow: none;">
+  <a class="item {% if not current_filter %}active teal{% endif %}" href="/projects">
+    <i class="grid layout icon"></i>
+    {{ _('Все') }}
+  </a>
   {% for s in statuses %}
   <a class="item {% if current_filter == s %}active{% endif %}" href="/projects?status={{ s }}">
-    <span class="ui mini label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
+    <i class="status-{{ s }} icon"></i>
+    <span class="ui tiny label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
   </a>
   {% endfor %}
 </div>
 
-<table class="ui celled striped table">
-  <thead>
-    <tr>
-      <th>{{ _('Код') }}</th>
-      <th>{{ _('Название') }}</th>
-      <th>{{ _('Контрагент') }}</th>
-      <th>{{ _('Статус') }}</th>
-      <th class="right aligned">{{ _('Актов') }}</th>
-      <th class="right aligned amount">{{ _('Подписано на сумму') }}</th>
-      <th>{{ _('Начат') }}</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for p in projects %}
-    <tr>
-      <td><a href="/projects/{{ p.id }}">{{ p.code }}</a></td>
-      <td>{{ p.name }}</td>
-      <td>{{ p.counterparty_name }}</td>
-      <td><span class="ui mini label status-{{ p.status }}">{{ STATUS_LABELS.get(p.status, p.status) }}</span></td>
-      <td class="right aligned">{{ p.act_count }}</td>
-      <td class="right aligned amount">{{ p.signed_total_minor|rubles }}</td>
-      <td>{{ p.started_on|fmt_date }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% if projects %}
+<div class="ui three doubling stackable cards" style="margin-top: 2em;">
+  {% for p in projects %}
+  <div class="card" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: none; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden;">
+    <div class="content" style="padding: 1.5em 1.5em 1em 1.5em;">
+      <div class="header" style="font-size: 1.3em; font-weight: 700; margin-bottom: 0.3em;">
+        <a href="/projects/{{ p.id }}" style="color: #2185d0; text-decoration: none;">
+          <i class="folder outline icon"></i> {{ p.code }}
+        </a>
+      </div>
+      <div class="meta" style="color: #666; margin-bottom: 0.8em; font-weight: 500;">
+        {{ p.name|truncate(40) }}
+      </div>
+      <div class="description">
+        <div class="ui items" style="font-size: 0.93em;">
+          <div class="item" style="padding: 0.3em 0;">
+            <i class="building icon" style="color: #666;"></i>
+            <span style="color: #555;">{{ p.counterparty_name|truncate(25) }}</span>
+          </div>
+          <div class="item" style="padding: 0.3em 0;">
+            <i class="calendar icon" style="color: #666;"></i>
+            <span style="color: #555;">{{ p.started_on|fmt_date }}</span>
+          </div>
+          <div class="item" style="padding: 0.3em 0;">
+            <i class="file text icon" style="color: #666;"></i>
+            <span style="color: #555;">
+              {% if p.act_count > 0 %}
+                <a href="/projects/{{ p.id }}#acts">{{ p.act_count }} {{ _('актов') }}</a>
+              {% else %}
+                {{ p.act_count }} {{ _('актов') }}
+              {% endif %}
+            </span>
+            {% if p.signed_total_minor > 0 %}
+            <span class="ui tiny orange label" style="float: right; margin: 0;">
+              {{ p.signed_total_minor|rubles }}
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="extra content" style="background: #f8f9fa; padding: 0.8em 1.5em; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        {% set pcolor = {
+          'active': 'green',
+          'on_hold': 'yellow',
+          'completed': 'blue',
+          'cancelled': 'red'
+        }.get(p.status, 'grey') %}
+        <span class="ui {{ pcolor }} tiny label">
+          <i class="status-{{ p.status }} icon"></i>
+          {{ STATUS_LABELS.get(p.status, p.status) }}
+        </span>
+      </div>
+      <div>
+        <a href="/projects/{{ p.id }}" class="ui tiny basic button" style="border-radius: 6px;">
+          {{ _('Открыть') }} <i class="right chevron icon"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Summary stats -->
+<div class="ui raised very padded text container segment" style="background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); border-radius: 10px; margin-top: 2.5em; text-align: center; box-shadow: 0 3px 12px rgba(0,0,0,0.08);">
+  <div class="ui four statistics" style="margin: 0;">
+    <div class="statistic">
+      <div class="value">{{ projects|length }}</div>
+      <div class="label">{{ _('Всего проектов') }}</div>
+    </div>
+    <div class="statistic">
+      <div class="value">{{ projects|selectattr('status','eq','active')|list|length }}</div>
+      <div class="label">{{ _('Активных') }}</div>
+    </div>
+    <div class="statistic">
+      <div class="value">{{ projects|selectattr('status','eq','completed')|list|length }}</div>
+      <div class="label">{{ _('Завершено') }}</div>
+    </div>
+    <div class="statistic">
+      <div class="value">{{ projects|sum(attribute='signed_total_minor')|rubles }}</div>
+      <div class="label">{{ _('Общая подписаная сумма') }}</div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="ui placeholder segment" style="border-radius: 10px; min-height: 400px;">
+  <div class="ui icon header">
+    <i class="folder open icon"></i>
+    {{ _('Нет проектов') }}
+  </div>
+  <a href="/projects/new" class="ui large primary button">{{ _('Создать первый проект') }}</a>
+</div>
+{% endif %}
 {% endblock %}

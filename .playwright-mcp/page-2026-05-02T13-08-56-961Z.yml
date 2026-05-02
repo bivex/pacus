@@ -1,0 +1,139 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link "Акты" [ref=e23] [cursor=pointer]:
+        - /url: /acts
+      - generic [ref=e24]: 
+      - generic [ref=e25]: Редактирование
+    - generic [ref=e26]:
+      - 'heading " Редактирование акта #A-2026-003" [level=2] [ref=e28]':
+        - generic [ref=e29]: 
+        - text: "Редактирование акта #A-2026-003"
+      - link "Отмена" [ref=e31] [cursor=pointer]:
+        - /url: /acts
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading " Реквизиты" [level=4] [ref=e34]:
+          - generic [ref=e35]: 
+          - text: Реквизиты
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: Контрагент *
+            - generic [ref=e39] [cursor=pointer]:
+              - generic [ref=e40]: 
+              - textbox "Контрагент *" [ref=e41]
+              - generic [ref=e42]: ООО Альфа Инжиниринг
+          - generic [ref=e43]:
+            - generic [ref=e44]: Договор *
+            - generic [ref=e45] [cursor=pointer]:
+              - generic [ref=e46]: 
+              - generic [ref=e47]: (от )
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: Проект
+            - generic [ref=e52] [cursor=pointer]: 
+          - generic [ref=e53]:
+            - generic [ref=e54]: Номер акта *
+            - textbox "A-2026-005" [ref=e55]: A-2026-003
+        - generic [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: Дата акта *
+            - textbox [ref=e59]: 2026-03-10
+          - generic [ref=e60]:
+            - generic [ref=e61]: Период с *
+            - textbox [ref=e62]: 2026-03-01
+          - generic [ref=e63]:
+            - generic [ref=e64]: Период по *
+            - textbox [ref=e65]: 2026-03-10
+      - generic [ref=e66]:
+        - heading " Позиции" [level=4] [ref=e67]:
+          - generic [ref=e68]: 
+          - text: Позиции
+        - table [ref=e69]:
+          - rowgroup [ref=e70]:
+            - row "Описание Ед. Кол-во Цена (₽) НДС % Сумма" [ref=e71]:
+              - columnheader "Описание" [ref=e72]
+              - columnheader "Ед." [ref=e73]
+              - columnheader "Кол-во" [ref=e74]
+              - columnheader "Цена (₽)" [ref=e75]
+              - columnheader "НДС %" [ref=e76]
+              - columnheader "Сумма" [ref=e77]
+              - columnheader [ref=e78]
+          - rowgroup [ref=e79]:
+            - row "Разработка backend модуля актов JOB 1.0 120000.0  20% 144 000,00 " [ref=e80] [cursor=pointer]:
+              - cell "Разработка backend модуля актов" [ref=e81]:
+                - textbox "Описание работ" [ref=e82]: Разработка backend модуля актов
+              - cell "JOB" [ref=e83]:
+                - textbox [ref=e84]: JOB
+              - cell "1.0" [ref=e85]:
+                - textbox [ref=e86]: "1.0"
+              - cell "120000.0" [ref=e87]:
+                - textbox [ref=e88]: "120000.0"
+              - cell " 20%" [ref=e89]:
+                - generic [ref=e90]:
+                  - generic [ref=e91]: 
+                  - generic [ref=e92]: 20%
+              - cell "144 000,00" [ref=e93]
+              - cell "" [ref=e94]:
+                - button "" [ref=e95]:
+                  - generic [ref=e96]: 
+            - row "Интеграция печатной HTML-формы JOB 1.0 65000.0  20% 78 000,00 " [ref=e97] [cursor=pointer]:
+              - cell "Интеграция печатной HTML-формы" [ref=e98]:
+                - textbox "Описание работ" [ref=e99]: Интеграция печатной HTML-формы
+              - cell "JOB" [ref=e100]:
+                - textbox [ref=e101]: JOB
+              - cell "1.0" [ref=e102]:
+                - textbox [ref=e103]: "1.0"
+              - cell "65000.0" [ref=e104]:
+                - textbox [ref=e105]: "65000.0"
+              - cell " 20%" [ref=e106]:
+                - generic [ref=e107]:
+                  - generic [ref=e108]: 
+                  - generic [ref=e109]: 20%
+              - cell "78 000,00" [ref=e110]
+              - cell "" [ref=e111]:
+                - button "" [ref=e112]:
+                  - generic [ref=e113]: 
+          - rowgroup [ref=e114]:
+            - 'row "Итого с НДС: 222 000,00" [ref=e115]':
+              - columnheader "Итого с НДС:" [ref=e116]:
+                - generic [ref=e117]: "Итого с НДС:"
+              - columnheader "222 000,00" [ref=e118]
+              - columnheader [ref=e119]
+        - button " Добавить позицию" [ref=e120] [cursor=pointer]:
+          - generic [ref=e121]: 
+          - text: Добавить позицию
+      - generic [ref=e123]:
+        - button " Сохранить" [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: 
+          - text: Сохранить
+        - link "Отмена" [ref=e126] [cursor=pointer]:
+          - /url: /acts/wa_draft_mar

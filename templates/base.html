@@ -3,9 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Pacus{% endblock %}</title>
+  <title>{% block title %}Pacus — {{ _('Управление актами') }}{% endblock %}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/components/icon.min.css">
   <link rel="stylesheet" href="/static/pacus.css">
+  <style>
+    body { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%); min-height: 100vh; }
+    .ui.left.visible.sidebar { background: linear-gradient(180deg, #1b1c1d 0%, #2d2d2d 100%); border-right: 1px solid #444; box-shadow: 4px 0 12px rgba(0,0,0,0.15); }
+    .ui.left.visible.sidebar .header.item { font-size: 1.4em; font-weight: 700; letter-spacing: 0.5px; border-bottom: 1px solid #444; margin-bottom: 8px; padding-bottom: 12px; }
+    .ui.left.visible.sidebar .item { border-radius: 0 8px 8px 0; margin: 2px 8px; transition: all 0.2s ease; }
+    .ui.left.visible.sidebar .item:hover { background: rgba(255,255,255,0.08) !important; }
+    .ui.left.visible.sidebar .item.active { background: linear-gradient(90deg, #2185d0 0%, #1678c2 100%) !important; color: white !important; box-shadow: 0 2px 6px rgba(33, 133, 208, 0.4); }
+    .ui.main.container { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 28px 32px !important; margin-top: 16px !important; min-height: calc(100vh - 32px); }
+    .ui.success.message, .ui.error.message { border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .ui.primary.button { background: linear-gradient(135deg, #2185d0 0%, #1678c2 100%); border-radius: 8px; font-weight: 600; letter-spacing: 0.3px; box-shadow: 0 3px 8px rgba(33, 133, 208, 0.35); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .ui.primary.button:hover { transform: translateY(-1px); box-shadow: 0 5px 12px rgba(33, 133, 208, 0.45); }
+    h2, h3, h4 { font-weight: 700; letter-spacing: -0.3px; }
+    .ui.cards { margin: 1em -0.5em; }
+    .ui.card { border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .ui.card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .ui.basic.segment { background: #fafbfc; border-radius: 8px; border: 1px solid #eee; }
+    .ui.table { border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .ui.table thead { background: #f8f9fa; }
+    .ui.table tbody tr:hover { background: #f0f7ff !important; }
+    .ui.label { border-radius: 6px; font-weight: 600; letter-spacing: 0.2px; }
+    .ui.divider { margin: 2em 0; border-top: 2px solid #eee; }
+    .ui.three.statistics { margin: 1.5em 0; }
+    .statistic .value { font-weight: 800; letter-spacing: -1px; }
+    .statistic .label { font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85em; }
+    .ui.popup { border-radius: 8px; }
+    .ui.dropdown .menu { border-radius: 8px; overflow: hidden; }
+    .ui.form .field > label { font-weight: 600; color: #444; }
+    .ui.input input, .ui.form input, .ui.form textarea, .ui.form select { border-radius: 6px; }
+    .ui.fluid.card { max-width: 100%; }
+    a { transition: color 0.15s; }
+  </style>
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -39,7 +71,7 @@
     </div>
   </div>
   <div class="pusher">
-    <div class="ui main container" style="margin-left: 210px !important; padding: 24px;">
+    <div class="ui main container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}

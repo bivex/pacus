@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Pacus — Flask Web UI for work acts management."""
+
 import argparse
 import hashlib
 import json
@@ -207,7 +208,9 @@ def dashboard():
     inbox_count = db.execute(
         "SELECT COUNT(*) FROM integration_inbox_work_act WHERE import_status = 'new'"
     ).fetchone()[0]
-    return render_template("dashboard.html", acts=acts, projects=projects, inbox_count=inbox_count)
+    return render_template(
+        "dashboard.html", acts=acts, projects=projects, inbox_count=inbox_count
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -227,7 +230,9 @@ def acts_list():
             "SELECT * FROM v_nocodb_work_act_overview WHERE tenant_id = ? ORDER BY act_date DESC",
             (TENANT_ID,),
         ).fetchall()
-    return render_template("acts/list.html", acts=rows, current_filter=status_filter, statuses=ACT_STATUSES)
+    return render_template(
+        "acts/list.html", acts=rows, current_filter=status_filter, statuses=ACT_STATUSES
+    )
 
 
 @app.route("/acts/new", methods=["GET", "POST"])
@@ -239,7 +244,16 @@ def act_new():
     ).fetchall()
 
     if request.method == "GET":
-        return render_template("acts/form.html", mode="create", counterparties=counterparties)
+        now = datetime.now()
+        now_iso_date = now.strftime("%Y-%m-%d")
+        now_iso_month_start = now.strftime("%Y-%m-01")
+        return render_template(
+            "acts/form.html",
+            mode="create",
+            counterparties=counterparties,
+            now_iso_date=now_iso_date,
+            now_iso_month_start=now_iso_month_start,
+        )
 
     # POST — create act
     cp_id = request.form.get("counterparty_id")
@@ -252,7 +266,9 @@ def act_new():
 
     if not all([cp_id, contract_id, act_number, act_date, period_from, period_to]):
         flash(_("Заполните все обязательные поля"), "error")
-        return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
+        return render_template(
+            "acts/form.html", mode="create", counterparties=counterparties
+        ), 400
 
     now = utc_now()
     act_id = make_id("wa", TENANT_ID, act_number, act_date)
@@ -291,7 +307,9 @@ def act_new():
 
     if not items:
         flash(_("Добавьте хотя бы одну позицию"), "error")
-        return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
+        return render_template(
+            "acts/form.html", mode="create", counterparties=counterparties
+        ), 400
 
     total = sum(i["amount_minor"] for i in items)
     vat = sum(i["vat_amount_minor"] for i in items)
@@ -300,16 +318,53 @@ def act_new():
         db.execute("BEGIN IMMEDIATE")
         db.execute(
             "INSERT INTO work_act (id,tenant_id,contract_id,counterparty_id,project_id,act_number,act_date,period_from,period_to,status,total_amount_minor,total_vat_amount_minor,grand_total_amount_minor,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            (act_id, TENANT_ID, contract_id, cp_id, project_id, act_number, act_date, period_from, period_to, "draft", total, vat, total + vat, "web_user", now, now),
+            (
+                act_id,
+                TENANT_ID,
+                contract_id,
+                cp_id,
+                project_id,
+                act_number,
+                act_date,
+                period_from,
+                period_to,
+                "draft",
+                total,
+                vat,
+                total + vat,
+                "web_user",
+                now,
+                now,
+            ),
         )
         for it in items:
             db.execute(
                 "INSERT INTO work_act_item (id,act_id,line_no,description,unit_code,quantity_milli,price_minor,amount_minor,vat_rate_basis_points,vat_amount_minor,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                (it["id"], act_id, it["line_no"], it["description"], it["unit_code"], it["quantity_milli"], it["price_minor"], it["amount_minor"], it["vat_rate_basis_points"], it["vat_amount_minor"], it["sort_order"]),
+                (
+                    it["id"],
+                    act_id,
+                    it["line_no"],
+                    it["description"],
+                    it["unit_code"],
+                    it["quantity_milli"],
+                    it["price_minor"],
+                    it["amount_minor"],
+                    it["vat_rate_basis_points"],
+                    it["vat_amount_minor"],
+                    it["sort_order"],
+                ),
             )
         db.execute(
             "INSERT INTO work_act_status_history (id,act_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("wsh", act_id, "draft"), act_id, None, "draft", "web_user", now, _("Создан через веб-UI")),
+            (
+                make_id("wsh", act_id, "draft"),
+                act_id,
+                None,
+                "draft",
+                "web_user",
+                now,
+                _("Создан через веб-UI"),
+            ),
         )
         db.commit()
         flash(_("Акт %(number)s создан", number=act_number), "success")
@@ -318,7 +373,9 @@ def act_new():
         if db.in_transaction:
             db.rollback()
         flash(_("Ошибка: %(error)s", error=exc), "error")
-        return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
+        return render_template(
+            "acts/form.html", mode="create", counterparties=counterparties
+        ), 400
 
 
 @app.route("/acts/<act_id>")
@@ -331,21 +388,36 @@ def act_detail(act_id):
     if not act:
         abort(404)
 
-    items = db.execute("SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)).fetchall()
-    history = db.execute("SELECT * FROM work_act_status_history WHERE act_id=? ORDER BY changed_at", (act_id,)).fetchall()
+    items = db.execute(
+        "SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)
+    ).fetchall()
+    history = db.execute(
+        "SELECT * FROM work_act_status_history WHERE act_id=? ORDER BY changed_at",
+        (act_id,),
+    ).fetchall()
     revisions = db.execute(
         "SELECT r.*, da.storage_path FROM work_act_revision r LEFT JOIN document_artifact da ON da.id=r.html_artifact_id WHERE r.act_id=? ORDER BY r.revision_no",
         (act_id,),
     ).fetchall()
 
     valid_transitions = ACT_TRANSITIONS.get(act["status"], [])
-    return render_template("acts/detail.html", act=act, items=items, history=history, revisions=revisions, valid_transitions=valid_transitions)
+    return render_template(
+        "acts/detail.html",
+        act=act,
+        items=items,
+        history=history,
+        revisions=revisions,
+        valid_transitions=valid_transitions,
+    )
 
 
 @app.route("/acts/<act_id>/edit", methods=["GET", "POST"])
 def act_edit(act_id):
     db = get_db()
-    act = db.execute("SELECT * FROM work_act WHERE id=? AND status='draft' AND deleted_at IS NULL", (act_id,)).fetchone()
+    act = db.execute(
+        "SELECT * FROM work_act WHERE id=? AND status='draft' AND deleted_at IS NULL",
+        (act_id,),
+    ).fetchone()
     if not act:
         flash(_("Редактирование доступно только для черновиков"), "error")
         return redirect(url_for("act_detail", act_id=act_id))
@@ -356,8 +428,16 @@ def act_edit(act_id):
     ).fetchall()
 
     if request.method == "GET":
-        items = db.execute("SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)).fetchall()
-        return render_template("acts/form.html", mode="edit", act=act, items=items, counterparties=counterparties)
+        items = db.execute(
+            "SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)
+        ).fetchall()
+        return render_template(
+            "acts/form.html",
+            mode="edit",
+            act=act,
+            items=items,
+            counterparties=counterparties,
+        )
 
     # POST — update draft
     act_number = request.form.get("act_number", "").strip()
@@ -409,7 +489,19 @@ def act_edit(act_id):
         for it in items:
             db.execute(
                 "INSERT INTO work_act_item (id,act_id,line_no,description,unit_code,quantity_milli,price_minor,amount_minor,vat_rate_basis_points,vat_amount_minor,sort_order) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                (it["id"], act_id, it["line_no"], it["description"], it["unit_code"], it["quantity_milli"], it["price_minor"], it["amount_minor"], it["vat_rate_basis_points"], it["vat_amount_minor"], it["sort_order"]),
+                (
+                    it["id"],
+                    act_id,
+                    it["line_no"],
+                    it["description"],
+                    it["unit_code"],
+                    it["quantity_milli"],
+                    it["price_minor"],
+                    it["amount_minor"],
+                    it["vat_rate_basis_points"],
+                    it["vat_amount_minor"],
+                    it["sort_order"],
+                ),
             )
         recalculate_totals(act_id)
         db.commit()
@@ -419,13 +511,17 @@ def act_edit(act_id):
         if db.in_transaction:
             db.rollback()
         flash(_("Ошибка: %(error)s", error=exc), "error")
-        return render_template("acts/form.html", mode="edit", act=act, counterparties=counterparties), 400
+        return render_template(
+            "acts/form.html", mode="edit", act=act, counterparties=counterparties
+        ), 400
 
 
 @app.route("/acts/<act_id>/status", methods=["POST"])
 def act_status_change(act_id):
     db = get_db()
-    act = db.execute("SELECT status FROM work_act WHERE id=? AND deleted_at IS NULL", (act_id,)).fetchone()
+    act = db.execute(
+        "SELECT status FROM work_act WHERE id=? AND deleted_at IS NULL", (act_id,)
+    ).fetchone()
     if not act:
         abort(404)
 
@@ -435,19 +531,40 @@ def act_status_change(act_id):
 
     valid = ACT_TRANSITIONS.get(act["status"], [])
     if to_status not in valid:
-        flash(_("Недопустимый переход: %(src)s → %(dst)s", src=act["status"], dst=to_status), "error")
+        flash(
+            _(
+                "Недопустимый переход: %(src)s → %(dst)s",
+                src=act["status"],
+                dst=to_status,
+            ),
+            "error",
+        )
         return redirect(url_for("act_detail", act_id=act_id))
 
     try:
         db.execute("BEGIN IMMEDIATE")
-        db.execute("UPDATE work_act SET status=?, updated_at=? WHERE id=?", (to_status, now, act_id))
+        db.execute(
+            "UPDATE work_act SET status=?, updated_at=? WHERE id=?",
+            (to_status, now, act_id),
+        )
         db.execute(
             "INSERT INTO work_act_status_history (id,act_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("wsh", act_id, to_status), act_id, act["status"], to_status, "web_user", now, reason),
+            (
+                make_id("wsh", act_id, to_status),
+                act_id,
+                act["status"],
+                to_status,
+                "web_user",
+                now,
+                reason,
+            ),
         )
         db.commit()
         labels = _status_labels()
-        flash(_("Статус изменён: %(status)s", status=labels.get(to_status, to_status)), "success")
+        flash(
+            _("Статус изменён: %(status)s", status=labels.get(to_status, to_status)),
+            "success",
+        )
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
@@ -464,10 +581,22 @@ def act_preview(act_id):
     ).fetchone()
     if not act:
         abort(404)
-    items = [dict(r) for r in db.execute("SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)).fetchall()]
-    revision = db.execute("SELECT * FROM work_act_revision WHERE id=?", (act["current_revision_id"],)).fetchone()
+    items = [
+        dict(r)
+        for r in db.execute(
+            "SELECT * FROM work_act_item WHERE act_id=? ORDER BY sort_order", (act_id,)
+        ).fetchall()
+    ]
+    revision = db.execute(
+        "SELECT * FROM work_act_revision WHERE id=?", (act["current_revision_id"],)
+    ).fetchone()
     act_dict = dict(act)
-    return render_template("acts/preview.html", act=act_dict, items=items, revision=dict(revision) if revision else None)
+    return render_template(
+        "acts/preview.html",
+        act=act_dict,
+        items=items,
+        revision=dict(revision) if revision else None,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -487,7 +616,12 @@ def projects_list():
             "SELECT * FROM v_nocodb_project_overview WHERE tenant_id = ? ORDER BY started_on DESC",
             (TENANT_ID,),
         ).fetchall()
-    return render_template("projects/list.html", projects=rows, current_filter=status_filter, statuses=PROJECT_STATUSES)
+    return render_template(
+        "projects/list.html",
+        projects=rows,
+        current_filter=status_filter,
+        statuses=PROJECT_STATUSES,
+    )
 
 
 @app.route("/projects/new", methods=["GET", "POST"])
@@ -513,11 +647,31 @@ def project_new():
         db.execute("BEGIN IMMEDIATE")
         db.execute(
             "INSERT INTO project (id,tenant_id,counterparty_id,code,name,description,status,started_on,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (proj_id, TENANT_ID, cp_id, code, name, description, "active", started_on, "web_user", now, now),
+            (
+                proj_id,
+                TENANT_ID,
+                cp_id,
+                code,
+                name,
+                description,
+                "active",
+                started_on,
+                "web_user",
+                now,
+                now,
+            ),
         )
         db.execute(
             "INSERT INTO project_status_history (id,project_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("psh", proj_id, "active"), proj_id, None, "active", "web_user", now, _("Создан через веб-UI")),
+            (
+                make_id("psh", proj_id, "active"),
+                proj_id,
+                None,
+                "active",
+                "web_user",
+                now,
+                _("Создан через веб-UI"),
+            ),
         )
         db.commit()
         flash(_("Проект %(code)s создан", code=code), "success")
@@ -532,44 +686,108 @@ def project_new():
 @app.route("/projects/<proj_id>")
 def project_detail(proj_id):
     db = get_db()
-    proj = db.execute(
-        "SELECT p.*, t.name AS tenant_name, cp.full_name AS counterparty_name FROM project p JOIN tenant t ON t.id=p.tenant_id JOIN counterparty cp ON cp.id=p.counterparty_id WHERE p.id=?",
+    project = db.execute("SELECT * FROM project WHERE id=?", (proj_id,)).fetchone()
+    if not project:
+        abort(404)
+    project = dict(project)
+
+    acts = db.execute(
+        """SELECT wa.id, wa.act_number, wa.act_date, wa.status AS act_status,
+                  wa.grand_total_amount_minor, wa.period_from, wa.period_to,
+                  c.contract_number, c.contract_date,
+                  cp.full_name AS counterparty_name
+           FROM work_act wa
+           JOIN contract c ON c.id = wa.contract_id
+           JOIN counterparty cp ON cp.id = wa.counterparty_id
+           WHERE wa.project_id = ? AND wa.deleted_at IS NULL
+           ORDER BY wa.act_date""",
+        (proj_id,),
+    ).fetchall()
+
+    journal = db.execute(
+        "SELECT id, entry_date, kind, title, decision_made FROM project_journal "
+        "WHERE project_id = ? ORDER BY entry_date DESC, recorded_at DESC",
+        (proj_id,),
+    ).fetchall()
+
+    history = db.execute(
+        "SELECT changed_at, from_status, to_status, reason "
+        "FROM project_status_history WHERE project_id = ? ORDER BY changed_at DESC",
+        (proj_id,),
+    ).fetchall()
+
+    valid_transitions = []
+    if project["status"] in PROJECT_TRANSITIONS:
+        valid_transitions = PROJECT_TRANSITIONS[project["status"]]
+
+    # Signed totals from view — сумма только подписанных актов
+    stats = db.execute(
+        "SELECT signed_act_count, signed_total_minor "
+        "FROM v_nocodb_project_overview WHERE id = ?",
         (proj_id,),
     ).fetchone()
-    if not proj:
-        abort(404)
+    signed_count = stats["signed_act_count"] if stats else 0
+    signed_total_minor = stats["signed_total_minor"] if stats else 0
+    project["signed_act_count"] = signed_count
+    project["signed_total_minor"] = signed_total_minor
 
-    history = db.execute("SELECT * FROM project_status_history WHERE project_id=? ORDER BY changed_at", (proj_id,)).fetchall()
-    acts = db.execute("SELECT * FROM v_nocodb_project_work_acts WHERE project_id=? ORDER BY period_from, act_date", (proj_id,)).fetchall()
-    journal = db.execute("SELECT * FROM project_journal WHERE project_id=? ORDER BY entry_date, recorded_at", (proj_id,)).fetchall()
+    return render_template(
+        "projects/detail.html",
+        project=project,
+        acts=acts,
+        journal=journal,
+        history=history,
+        valid_transitions=valid_transitions,
+    )
 
-    valid_transitions = PROJECT_TRANSITIONS.get(proj["status"], [])
-    return render_template("projects/detail.html", project=proj, history=history, acts=acts, journal=journal, valid_transitions=valid_transitions)
 
-
+# ---------------------------------------------------------------------------
+# Project edit (GET/POST)
+# ---------------------------------------------------------------------------
 @app.route("/projects/<proj_id>/status", methods=["POST"])
-def project_status_change(proj_id):
+def project_change_status(proj_id):
     db = get_db()
-    proj = db.execute("SELECT status FROM project WHERE id=?", (proj_id,)).fetchone()
-    if not proj:
+    to_status = request.form.get("to_status")
+    reason = request.form.get("reason", "").strip() or None
+    finished_on = request.form.get("finished_on")
+
+    project = db.execute(
+        "SELECT id, status FROM project WHERE id=?", (proj_id,)
+    ).fetchone()
+    if not project:
         abort(404)
 
-    to_status = request.form.get("to_status", "")
-    reason = request.form.get("reason", "")
-    finished_on = request.form.get("finished_on") or None
-    now = utc_now()
-
-    valid = PROJECT_TRANSITIONS.get(proj["status"], [])
+    valid = PROJECT_TRANSITIONS.get(project["status"], [])
     if to_status not in valid:
-        flash(_("Недопустимый переход"), "error")
+        flash(
+            _(
+                "Недопустимый переход: %(src)s → %(dst)s",
+                src=project["status"],
+                dst=to_status,
+            ),
+            "error",
+        )
         return redirect(url_for("project_detail", proj_id=proj_id))
 
     try:
         db.execute("BEGIN IMMEDIATE")
-        db.execute("UPDATE project SET status=?, finished_on=?, updated_at=? WHERE id=?", (to_status, finished_on, now, proj_id))
+        now = utc_now()
         db.execute(
-            "INSERT INTO project_status_history (id,project_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("psh", proj_id, to_status), proj_id, proj["status"], to_status, "web_user", now, reason),
+            "UPDATE project SET status=?, updated_at=? WHERE id=?",
+            (to_status, now, proj_id),
+        )
+        db.execute(
+            "INSERT INTO project_status_history (id,project_id,from_status,to_status,changed_by,changed_at,reason) "
+            "VALUES (?,?,?,?,?,?,?)",
+            (
+                make_id("psh", proj_id, to_status, now),
+                proj_id,
+                project["status"],
+                to_status,
+                "web_user",
+                now,
+                reason,
+            ),
         )
         db.commit()
         flash(_("Статус проекта изменён"), "success")
@@ -577,13 +795,22 @@ def project_status_change(proj_id):
         if db.in_transaction:
             db.rollback()
         flash(_("Ошибка: %(error)s", error=exc), "error")
+
     return redirect(url_for("project_detail", proj_id=proj_id))
+
+
+# ---------------------------------------------------------------------------
+# Project edit (GET/POST) — moved below detail to keep endpoints grouped
+# ---------------------------------------------------------------------------
 
 
 @app.route("/projects/<proj_id>/journal/new", methods=["GET", "POST"])
 def journal_new(proj_id):
     db = get_db()
-    proj = db.execute("SELECT id, tenant_id, counterparty_id, code FROM project WHERE id=?", (proj_id,)).fetchone()
+    proj = db.execute(
+        "SELECT id, tenant_id, counterparty_id, code FROM project WHERE id=?",
+        (proj_id,),
+    ).fetchone()
     if not proj:
         abort(404)
 
@@ -593,7 +820,9 @@ def journal_new(proj_id):
     ).fetchall()
 
     if request.method == "GET":
-        return render_template("journal/form.html", project=proj, linked_acts=linked_acts)
+        return render_template(
+            "journal/form.html", project=proj, linked_acts=linked_acts
+        )
 
     kind = request.form.get("kind")
     title = request.form.get("title", "").strip()
@@ -608,10 +837,25 @@ def journal_new(proj_id):
         db.execute("BEGIN IMMEDIATE")
         db.execute(
             "INSERT INTO project_journal (id,project_id,tenant_id,entry_date,kind,title,body,decision_made,outcome,recorded_by,recorded_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (entry_id, proj_id, TENANT_ID, entry_date, kind, title, body, decision_made, outcome, "web_user", now),
+            (
+                entry_id,
+                proj_id,
+                TENANT_ID,
+                entry_date,
+                kind,
+                title,
+                body,
+                decision_made,
+                outcome,
+                "web_user",
+                now,
+            ),
         )
         for act_id in request.form.getlist("linked_act_ids"):
-            db.execute("INSERT INTO project_journal_act (journal_id, act_id) VALUES (?,?)", (entry_id, act_id))
+            db.execute(
+                "INSERT INTO project_journal_act (journal_id, act_id) VALUES (?,?)",
+                (entry_id, act_id),
+            )
         db.commit()
         flash(_("Запись журнала добавлена"), "success")
         return redirect(url_for("project_detail", proj_id=proj_id))
@@ -619,7 +863,9 @@ def journal_new(proj_id):
         if db.in_transaction:
             db.rollback()
         flash(_("Ошибка: %(error)s", error=exc), "error")
-        return render_template("journal/form.html", project=proj, linked_acts=linked_acts), 400
+        return render_template(
+            "journal/form.html", project=proj, linked_acts=linked_acts
+        ), 400
 
 
 # ---------------------------------------------------------------------------

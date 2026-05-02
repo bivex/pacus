@@ -1,0 +1,100 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Print Center — Work Acts Demo" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Открывай нужный HTML-артефакт и печатай через браузер.
+    - button "Печать этой страницы" [ref=e8]
+  - heading "Карточки проектов" [level=2] [ref=e9]
+  - table [ref=e10]:
+    - rowgroup [ref=e11]:
+      - row "Проект Контрагент Статус Ссылка" [ref=e12]:
+        - columnheader "Проект" [ref=e13]
+        - columnheader "Контрагент" [ref=e14]
+        - columnheader "Статус" [ref=e15]
+        - columnheader "Ссылка" [ref=e16]
+    - rowgroup [ref=e17]:
+      - row "ALFA-DEV-2026 — Разработка платформы актов ООО Альфа Инжиниринг active Карточка" [ref=e18]:
+        - cell "ALFA-DEV-2026 — Разработка платформы актов" [ref=e19]
+        - cell "ООО Альфа Инжиниринг" [ref=e20]
+        - cell "active" [ref=e21]
+        - cell "Карточка" [ref=e22]:
+          - link "Карточка" [ref=e23] [cursor=pointer]:
+            - /url: /projects/tenant_demo/proj_alfa_dev/project-card.html
+      - row "BETA-SUP-2026 — Техническая поддержка платформы АО Бета Сервис completed Карточка" [ref=e24]:
+        - cell "BETA-SUP-2026 — Техническая поддержка платформы" [ref=e25]
+        - cell "АО Бета Сервис" [ref=e26]
+        - cell "completed" [ref=e27]
+        - cell "Карточка" [ref=e28]:
+          - link "Карточка" [ref=e29] [cursor=pointer]:
+            - /url: /projects/tenant_demo/proj_beta_support/project-card.html
+      - row "TEST-PROJ-001 — Test Project ООО Альфа Инжиниринг active Карточка" [ref=e30]:
+        - cell "TEST-PROJ-001 — Test Project" [ref=e31]
+        - cell "ООО Альфа Инжиниринг" [ref=e32]
+        - cell "active" [ref=e33]
+        - cell "Карточка" [ref=e34]:
+          - link "Карточка" [ref=e35] [cursor=pointer]:
+            - /url: /projects/tenant_demo/proj_32b85251ca94b07ecbb7/project-card.html
+  - heading "Акты работ" [level=2] [ref=e36]
+  - table [ref=e37]:
+    - rowgroup [ref=e38]:
+      - row "Акт Статус Печать Аудит" [ref=e39]:
+        - columnheader "Акт" [ref=e40]
+        - columnheader "Статус" [ref=e41]
+        - columnheader "Печать" [ref=e42]
+        - columnheader "Аудит" [ref=e43]
+    - rowgroup [ref=e44]:
+      - row "A-2026-001 corrected HTML Аудит" [ref=e45]:
+        - cell "A-2026-001" [ref=e46]
+        - cell "corrected" [ref=e47]
+        - cell "HTML" [ref=e48]:
+          - link "HTML" [ref=e49] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_original_jan/rev-1/act.html
+        - cell "Аудит" [ref=e50]:
+          - link "Аудит" [ref=e51] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_original_jan/audit/audit.html
+      - row "A-2026-001-К1 signed HTML Аудит" [ref=e52]:
+        - cell "A-2026-001-К1" [ref=e53]
+        - cell "signed" [ref=e54]
+        - cell "HTML" [ref=e55]:
+          - link "HTML" [ref=e56] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html
+        - cell "Аудит" [ref=e57]:
+          - link "Аудит" [ref=e58] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_correction_jan/audit/audit.html
+      - row "A-2026-002 sent HTML Аудит" [ref=e59]:
+        - cell "A-2026-002" [ref=e60]
+        - cell "sent" [ref=e61]
+        - cell "HTML" [ref=e62]:
+          - link "HTML" [ref=e63] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_sent_feb/rev-1/act.html
+        - cell "Аудит" [ref=e64]:
+          - link "Аудит" [ref=e65] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_sent_feb/audit/audit.html
+      - row "A-2026-003 draft HTML Аудит" [ref=e66]:
+        - cell "A-2026-003" [ref=e67]
+        - cell "draft" [ref=e68]
+        - cell "HTML" [ref=e69]:
+          - link "HTML" [ref=e70] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_draft_mar/rev-1/act.html
+        - cell "Аудит" [ref=e71]:
+          - link "Аудит" [ref=e72] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_draft_mar/audit/audit.html
+      - row "A-2026-004 cancelled HTML Аудит" [ref=e73]:
+        - cell "A-2026-004" [ref=e74]
+        - cell "cancelled" [ref=e75]
+        - cell "HTML" [ref=e76]:
+          - link "HTML" [ref=e77] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_cancelled_apr/rev-1/act.html
+        - cell "Аудит" [ref=e78]:
+          - link "Аудит" [ref=e79] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_cancelled_apr/audit/audit.html
+      - row "A-TEST-002 generated — Аудит" [ref=e80]:
+        - cell "A-TEST-002" [ref=e81]
+        - cell "generated" [ref=e82]
+        - cell "—" [ref=e83]
+        - cell "Аудит" [ref=e84]:
+          - link "Аудит" [ref=e85] [cursor=pointer]:
+            - /url: /acts/tenant_demo/2026/wa_0113ec840dbd6833e2ed/audit/audit.html
+  - paragraph [ref=e86]:
+    - text: "Базовый URL print server:"
+    - strong [ref=e87]: http://localhost:4000

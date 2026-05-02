@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link " Pacus" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: 
+      - text: Pacus
+    - link " Главная" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e6]: 
+      - text: Главная
+    - link " Акты" [ref=e7] [cursor=pointer]:
+      - /url: /acts
+      - generic [ref=e8]: 
+      - text: Акты
+    - link " Проекты" [ref=e9] [cursor=pointer]:
+      - /url: /projects
+      - generic [ref=e10]: 
+      - text: Проекты
+    - link " Печать" [ref=e11] [cursor=pointer]:
+      - /url: /artifacts/index.html
+      - generic [ref=e12]: 
+      - text: Печать
+    - link " Обновить HTML" [ref=e14] [cursor=pointer]:
+      - /url: /admin/regenerate
+      - generic [ref=e15]: 
+      - text: Обновить HTML
+    - link "English" [ref=e18] [cursor=pointer]:
+      - /url: /lang/en
+      - text: English
+  - generic [ref=e21]:
+    - generic [ref=e22]:
+      - link "Акты" [ref=e23] [cursor=pointer]:
+        - /url: /acts
+      - generic [ref=e24]: 
+      - generic [ref=e25]: Новый акт
+    - generic [ref=e26]:
+      - heading " Новый акт" [level=2] [ref=e28]:
+        - generic [ref=e29]: 
+        - text: Новый акт
+      - link "Отмена" [ref=e31] [cursor=pointer]:
+        - /url: /acts
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading " Реквизиты" [level=4] [ref=e34]:
+          - generic [ref=e35]: 
+          - text: Реквизиты
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: Контрагент *
+            - generic [ref=e39] [cursor=pointer]:
+              - generic [ref=e40]: 
+              - textbox "Контрагент *" [ref=e41]
+              - generic [ref=e42]: Выберите контрагента...
+          - generic [ref=e43]:
+            - generic [ref=e44]: Договор *
+            - generic [ref=e45] [cursor=pointer]:
+              - generic [ref=e46]: 
+              - generic [ref=e47]: Сначала выберите контрагента...
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: Проект
+            - generic [ref=e51] [cursor=pointer]:
+              - generic [ref=e52]: 
+              - generic [ref=e53]: — нет —
+          - generic [ref=e54]:
+            - generic [ref=e55]: Номер акта *
+            - textbox "A-2026-005" [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: Дата акта *
+            - textbox [ref=e60]
+          - generic [ref=e61]:
+            - generic [ref=e62]: Период с *
+            - textbox [ref=e63]
+          - generic [ref=e64]:
+            - generic [ref=e65]: Период по *
+            - textbox [ref=e66]
+      - generic [ref=e67]:
+        - heading " Позиции" [level=4] [ref=e68]:
+          - generic [ref=e69]: 
+          - text: Позиции
+        - table [ref=e70]:
+          - rowgroup [ref=e71]:
+            - row "Описание Ед. Кол-во Цена (₽) НДС % Сумма" [ref=e72]:
+              - columnheader "Описание" [ref=e73]
+              - columnheader "Ед." [ref=e74]
+              - columnheader "Кол-во" [ref=e75]
+              - columnheader "Цена (₽)" [ref=e76]
+              - columnheader "НДС %" [ref=e77]
+              - columnheader "Сумма" [ref=e78]
+              - columnheader [ref=e79]
+          - rowgroup
+          - rowgroup [ref=e80]:
+            - 'row "Итого с НДС: 0,00" [ref=e81]':
+              - columnheader "Итого с НДС:" [ref=e82]:
+                - generic [ref=e83]: "Итого с НДС:"
+              - columnheader "0,00" [ref=e84]
+              - columnheader [ref=e85]
+        - button " Добавить позицию" [ref=e86] [cursor=pointer]:
+          - generic [ref=e87]: 
+          - text: Добавить позицию
+      - generic [ref=e89]:
+        - button " Создать акт" [ref=e90] [cursor=pointer]:
+          - generic [ref=e91]: 
+          - text: Создать акт
+        - link "Отмена" [ref=e92] [cursor=pointer]:
+          - /url: /acts

@@ -1,12 +1,139 @@
-.ui.left.sidebar { overflow-y: auto !important; }
-.status-draft { color: #92400e; background: #fef3c7; }
-.status-generated { color: #1e40af; background: #dbeafe; }
-.status-sent { color: #9a3412; background: #fce7f3; }
-.status-signed { color: #166534; background: #dcfce7; }
-.status-cancelled { color: #991b1b; background: #fee2e2; }
-.status-corrected { color: #5b21b6; background: #f3e8ff; }
-.status-active { color: #166534; background: #dcfce7; }
-.status-on_hold { color: #92400e; background: #fef3c7; }
-.status-completed { color: #1e40af; background: #dbeafe; }
-.ui.table tfoot th { font-weight: bold; }
-.amount { text-align: right; font-variant-numeric: tabular-nums; }
+/* ===========================================
+   Pacus — Static Styles
+   =========================================== */
+
+/* Sidebar */
+.ui.left.sidebar {
+  overflow-y: auto !important;
+  padding: 0;
+}
+
+/* Status colour labels (complement Semantic UI theme) */
+.status-draft { color: #92400e !important; background: #fef3c7 !important; border: 1px solid #fcd34d; }
+.status-generated { color: #1e40af !important; background: #dbeafe !important; border: 1px solid #93c5fd; }
+.status-sent { color: #9a3412 !important; background: #fce7f3 !important; border: 1px solid #f9a8d4; }
+.status-signed { color: #166534 !important; background: #dcfce7 !important; border: 1px solid #86efac; }
+.status-corrected { color: #6b21a8 !important; background: #f3e8ff !important; border: 1px solid #d8b4fe; }
+.status-cancelled { color: #991b1b !important; background: #fee2e2 !important; border: 1px solid #fca5a5; }
+.status-active { color: #166534 !important; background: #dcfce7 !important; border: 1px solid #86efac; }
+.status-on_hold { color: #92400e !important; background: #fef3c7 !important; border: 1px solid #fcd34d; }
+.status-completed { color: #1e40af !important; background: #dbeafe !important; border: 1px solid #93c5fd; }
+
+/* Tables */
+.ui.table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.ui.table tbody tr:hover {
+  background: #f0f9ff !important;
+}
+.ui.table tfoot th {
+  font-weight: 700;
+  background: linear-gradient(to bottom, #f8f9fa, #f0f0f0);
+}
+.amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* Forms */
+.ui.form input:focus, .ui.form textarea:focus, .ui.form select:focus {
+  border-color: #2185d0 !important;
+}
+.ui.form .field > label {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Cards */
+.ui.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ui.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+.ui.card .extra.content {
+  border-top: 1px solid #eee;
+}
+
+/* Buttons */
+.ui.primary.button {
+  background: linear-gradient(135deg, #2185d0 0%, #1678c2 100%);
+  box-shadow: 0 3px 8px rgba(33, 133, 208, 0.35);
+}
+.ui.primary.button:hover {
+  background: linear-gradient(135deg, #1678c2 0%, #1260a8 100%);
+}
+
+/* Statistics */
+.statistic .value {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.statistic .label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8em;
+  color: #666;
+}
+
+/* Journal feed */
+.ui.feed .event .label i {
+  opacity: 0.9;
+}
+
+/* Divider spacing */
+.ui.divider {
+  margin: 2em 0;
+}
+
+/* Print button highlight */
+a[href*="preview"] {
+  border: 1px solid #21ba45;
+  color: #21ba45 !important;
+}
+a[href*="preview"]:hover {
+  background: #21ba45 !important;
+  color: white !important;
+}
+
+/* Status dropdown in detail page */
+.ui.floating.dropdown.button {
+  border-radius: 8px;
+}
+
+/* Action buttons group */
+.ui.buttons .button {
+  border-radius: 8px;
+}
+
+/* Inline form errors */
+.ui.form .error.message {
+  border-radius: 8px;
+}
+
+/* Breadcrumb */
+.ui.breadcrumb {
+  margin-bottom: 1.2em;
+}
+
+/* Level 2 header accent */
+.ui.header .sub.header {
+  color: #666;
+  font-weight: 400;
+}
+
+/* Table compactness */
+.ui.compact.table th, .ui.compact.table td {
+  padding: 0.6em 0.8em;
+}
+
+/* Placeholder segments */
+.ui.placeholder.segment {
+  border-radius: 10px;
+  min-height: 250px;
+}
