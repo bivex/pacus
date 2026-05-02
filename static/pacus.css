@@ -24,8 +24,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 h2, h3, h4 { letter-spacing: -0.3px; }
 
-a { color: #2185d0; text-decoration: none; transition: color 0.15s; }
-a:hover { color: #1678c2; text-decoration: underline; }
+a { color: #1a6db5; text-decoration: none; transition: color 0.15s; }
+a:hover { color: #125a99; text-decoration: underline; }
 
 /* ===========================================
    Sidebar
@@ -296,7 +296,7 @@ td .date,
 }
 .ui.feed .event .date {
   font-weight: 400;
-  color: #888;
+  color: #767676;
   font-size: 0.9em;
 }
 

@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Pacus — {{ _('Управление актами') }}{% endblock %}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/components/icon.min.css">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css"></noscript>
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/components/icon.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/components/icon.min.css"></noscript>
   <link rel="stylesheet" href="/static/pacus.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📄%3C/text%3E%3C/svg%3E">
   {% block head %}{% endblock %}
@@ -41,7 +43,7 @@
     </div>
   </div>
   <div class="pusher">
-    <div class="ui main container">
+    <main class="ui main container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
@@ -53,13 +55,15 @@
         {% endif %}
       {% endwith %}
       {% block content %}{% endblock %}
-    </div>
+    </main>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js" defer></script>
   <script>
-    $('.message .close').on('click', function() { $(this).closest('.message').transition('fade'); });
-    $('.ui.dropdown').dropdown();
+    document.addEventListener('DOMContentLoaded', function() {
+      $('.message .close').on('click', function() { $(this).closest('.message').transition('fade'); });
+      $('.ui.dropdown').dropdown();
+    });
   </script>
   {% block scripts %}{% endblock %}
 </body>
