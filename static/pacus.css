@@ -404,3 +404,19 @@ a[href*="preview"]:hover {
   outline: 2px solid #2185d0;
   outline-offset: 2px;
 }
+
+/* ===========================================
+   Animation — disable Fomantic UI animations
+   for compositing performance
+   =========================================== */
+@keyframes flash { }
+@keyframes shake { }
+@keyframes pulse { }
+@keyframes tada { }
+@keyframes bounce { }
+@keyframes glow { }
+.ui.animating,
+.ui.visible.transition {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}

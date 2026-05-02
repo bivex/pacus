@@ -46,7 +46,7 @@
 
     <div class="two fields">
       <div class="field">
-        <label>{{ _('Контрагент') }} *</label>
+        <label for="counterparty_id">{{ _('Контрагент') }} *</label>
         <select class="ui search fluid dropdown" name="counterparty_id" id="counterparty_id" required>
           <option value="">{{ _('Выберите контрагента...') }}</option>
           {% for cp in counterparties %}
@@ -58,7 +58,7 @@
       </div>
 
       <div class="field">
-        <label>{{ _('Договор') }} *</label>
+        <label for="contract_id">{{ _('Договор') }} *</label>
         <select class="ui fluid dropdown" name="contract_id" id="contract_id" required>
           <option value="">{{ _('Сначала выберите контрагента...') }}</option>
           {% if mode == 'edit' %}
@@ -70,7 +70,7 @@
 
     <div class="two fields">
       <div class="field">
-        <label>{{ _('Проект') }}</label>
+        <label for="project_id">{{ _('Проект') }}</label>
         <select class="ui fluid dropdown" name="project_id" id="project_id">
           <option value="">{{ _('— нет —') }}</option>
           {% if mode == 'edit' and act.project_id %}
@@ -79,23 +79,23 @@
         </select>
       </div>
       <div class="field">
-        <label>{{ _('Номер акта') }} *</label>
-        <input type="text" name="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005" required>
+        <label for="act_number">{{ _('Номер акта') }} *</label>
+        <input type="text" name="act_number" id="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005" required>
       </div>
     </div>
 
     <div class="three fields">
       <div class="field">
-        <label>{{ _('Дата акта') }} *</label>
-        <input type="date" name="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% else %}{{ now_iso_date }}{% endif %}" required>
+        <label for="act_date">{{ _('Дата акта') }} *</label>
+        <input type="date" name="act_date" id="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% else %}{{ now_iso_date }}{% endif %}" required>
       </div>
       <div class="field">
-        <label>{{ _('Период с') }} *</label>
-        <input type="date" name="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% else %}{{ now_iso_month_start }}{% endif %}" required>
+        <label for="period_from">{{ _('Период с') }} *</label>
+        <input type="date" name="period_from" id="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% else %}{{ now_iso_month_start }}{% endif %}" required>
       </div>
       <div class="field">
-        <label>{{ _('Период по') }} *</label>
-        <input type="date" name="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% else %}{{ now_iso_date }}{% endif %}" required>
+        <label for="period_to">{{ _('Период по') }} *</label>
+        <input type="date" name="period_to" id="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% else %}{{ now_iso_date }}{% endif %}" required>
       </div>
     </div>
   </div>

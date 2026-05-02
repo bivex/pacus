@@ -80,35 +80,35 @@
 
     <!-- Main fields -->
     <div class="field">
-      <label>{{ _('Дата записи') }} *</label>
-      <input type="date" name="entry_date" value="{{ now_date }}" required>
+      <label for="entry_date">{{ _('Дата записи') }} *</label>
+      <input type="date" name="entry_date" id="entry_date" value="{{ now_date }}" required>
     </div>
 
     <div class="field">
-      <label>{{ _('Заголовок') }} *</label>
-      <input type="text" name="title" placeholder="{{ _('Краткое описание события') }}" required>
+      <label for="title">{{ _('Заголовок') }} *</label>
+      <input type="text" name="title" id="title" placeholder="{{ _('Краткое описание события') }}" required>
     </div>
 
     <div class="field">
-      <label>{{ _('Содержание') }}</label>
-      <textarea name="body" rows="4" placeholder="{{ _('Подробное описание события, обсуждения или принятого решения') }}"></textarea>
+      <label for="body">{{ _('Содержание') }}</label>
+      <textarea name="body" id="body" rows="4" placeholder="{{ _('Подробное описание события, обсуждения или принятого решения') }}"></textarea>
     </div>
 
     <div class="two fields">
       <div class="field">
-        <label>{{ _('Принятое решение') }}</label>
-        <input type="text" name="decision_made" placeholder="{{ _('Краткое резюме решения') }}">
+        <label for="decision_made">{{ _('Принятое решение') }}</label>
+        <input type="text" name="decision_made" id="decision_made" placeholder="{{ _('Краткое резюме решения') }}">
       </div>
       <div class="field">
-        <label>{{ _('Результат') }}</label>
-        <input type="text" name="outcome" placeholder="{{ _('Итог или следующий шаг') }}">
+        <label for="outcome">{{ _('Результат') }}</label>
+        <input type="text" name="outcome" id="outcome" placeholder="{{ _('Итог или следующий шаг') }}">
       </div>
     </div>
 
     {% if linked_acts %}
     <div class="field">
-      <label>{{ _('Связанные акты') }}</label>
-      <select class="ui fluid search dropdown" name="linked_act_ids" multiple>
+      <label for="linked_act_ids">{{ _('Связанные акты') }}</label>
+      <select class="ui fluid search dropdown" name="linked_act_ids" id="linked_act_ids" multiple>
         {% for a in linked_acts %}
         <option value="{{ a.id }}">{{ a.act_number }} — {{ a.counterparty_name }}</option>
         {% endfor %}

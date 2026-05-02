@@ -26,7 +26,7 @@
       <div class="ui styled segment" style="border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
         <div class="two fields">
           <div class="field{% if errors.counterparty_id %} error{% endif %}">
-            <label>{{ _('Контрагент') }} *</label>
+            <label for="counterparty_id">{{ _('Контрагент') }} *</label>
             <select class="ui search fluid dropdown" name="counterparty_id" id="counterparty_id" required>
               <option value="">{{ _('Выберите контрагента...') }}</option>
               {% for cp in counterparties %}
@@ -41,25 +41,25 @@
           </div>
 
           <div class="field{% if errors.code %} error{% endif %}">
-            <label>{{ _('Код проекта') }} *</label>
-            <input type="text" name="code" placeholder="PROJ-2026-001" value="{{ data.code or '' }}" required>
+            <label for="code">{{ _('Код проекта') }} *</label>
+            <input type="text" name="code" id="code" placeholder="PROJ-2026-001" value="{{ data.code or '' }}" required>
             <small style="color: #888; font-size: 0.85em;">Пример: PROJECT-2026-01</small>
           </div>
         </div>
 
         <div class="field{% if errors.name %} error{% endif %}">
-          <label>{{ _('Название') }} *</label>
-          <input type="text" name="name" placeholder="{{ _('Разработка платформы актов') }}" value="{{ data.name or '' }}" required>
+          <label for="name">{{ _('Название') }} *</label>
+          <input type="text" name="name" id="name" placeholder="{{ _('Разработка платформы актов') }}" value="{{ data.name or '' }}" required>
         </div>
 
         <div class="field">
-          <label>{{ _('Описание') }}</label>
-          <textarea name="description" rows="3" placeholder="{{ _('Краткое описание проекта') }}">{{ data.description or '' }}</textarea>
+          <label for="description">{{ _('Описание') }}</label>
+          <textarea name="description" id="description" rows="3" placeholder="{{ _('Краткое описание проекта') }}">{{ data.description or '' }}</textarea>
         </div>
 
         <div class="field{% if errors.started_on %} error{% endif %}">
-          <label>{{ _('Дата начала') }} *</label>
-          <input type="date" name="started_on" value="{{ data.started_on or '' }}" required>
+          <label for="started_on">{{ _('Дата начала') }} *</label>
+          <input type="date" name="started_on" id="started_on" value="{{ data.started_on or '' }}" required>
         </div>
       </div>
 
