@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Акт A-TEST-002</title>
+<link rel="stylesheet" href="/style.css">
+<script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
+</head>
+<body>
+<main role="main">
+  <nav aria-label="Основная навигация">
+  <div class="topbar no-print">
+    <div>
+      <h1>Акт A-TEST-002</h1>
+      <p class="muted">Статус: <span class="status-label status-generated">generated</span> · ООО Альфа Инжиниринг</p>
+    </div>
+    <div class="actions">
+      <a href="/acts/tenant_demo/2026/wa_0113ec840dbd6833e2ed/audit/audit.html">Аудит</a>
+      <a href="/index.html">К списку</a>
+      <button onclick="window.print()">Печать</button>
+    </div>
+  </div>
+  </nav>
+
+  <h1>Акт выполненных работ № A-TEST-002</h1>
+  <p class="muted">от 01.05.2026</p>
+
+  <div class="grid">
+    <div>
+      <p><strong>Исполнитель:</strong> Демо арендатор / Pacus Demo</p>
+      <p><strong>Заказчик:</strong> ООО Альфа Инжиниринг</p>
+      <p><strong>ИНН/КПП:</strong> 7701234567 / 770101001</p>
+    </div>
+    <div>
+      <p><strong>Договор:</strong> DEV-2026-01 от 15.01.2026</p>
+      <p><strong>Период:</strong> 01.04.2026 — 30.04.2026</p>
+      
+    </div>
+  </div>
+
+  <h2>Состав работ</h2>
+  <table aria-label="Состав выполненных работ">
+    <caption class="sr-only">Состав выполненных работ по акту A-TEST-002</caption>
+    <thead><tr>
+      <th scope="col">№</th>
+      <th scope="col">Описание</th>
+      <th scope="col">Ед.</th>
+      <th scope="col">Кол-во</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Сумма</th>
+      <th scope="col">НДС</th>
+      <th scope="col">НДС сумма</th>
+    </tr></thead>
+    <tbody>
+<tr><td>1</td><td>Test works</td><td>JOB</td><td class='amount'>1</td><td class='amount'>10 000,00 <span class="sym"></span></td><td class='amount'>10 000,00 <span class="sym"></span></td><td class='amount'>20%</td><td class='amount'>2 000,00 <span class="sym"></span></td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5" class="right">Итого</th>
+        <td class="amount">10 000,00 <span class="sym"></span></td>
+        <td></td>
+        <td class="amount">2 000,00 <span class="sym"></span></td>
+      </tr>
+      <tr>
+        <th colspan="5" class="right">Всего с НДС</th>
+        <td colspan="3" class="amount"><strong>12 000,00 <span class="sym"></span></strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="grid" style="margin-top: 40px;">
+    <div>
+      <p><strong>Исполнитель:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">Демо арендатор / Pacus Demo</p>
+    </div>
+    <div>
+      <p><strong>Заказчик:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">ООО Альфа Инжиниринг</p>
+    </div>
+  </div>
+
+  
+  <p class="muted">Документ сформирован автоматически · Демо арендатор / Pacus Demo</p>
+</main>
+<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
+</body>
+</html>

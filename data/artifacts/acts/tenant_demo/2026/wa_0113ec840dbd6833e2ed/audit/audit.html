@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Аудит акта A-TEST-002</title>
+<link rel="stylesheet" href="/style.css">
+<script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
+</head>
+<body>
+<main role="main">
+  <nav aria-label="Основная навигация">
+  <div class="topbar no-print">
+    <div>
+      <h1>Аудит акта A-TEST-002</h1>
+      <p class="muted">Статус: <span class="status-label status-generated">generated</span> · ООО Альфа Инжиниринг · Проект: ALFA-DEV-2026</p>
+    </div>
+    <div class="actions">
+      <a href="/acts/tenant_demo/2026/wa_0113ec840dbd6833e2ed/rev-1/act.html">Акт</a>
+      <a href="/index.html">К списку</a>
+      <button onclick="window.print()">Печать</button>
+     </div>
+   </div>
+   </nav>
+
+   <h1>Аудит: Акт A-TEST-002</h1>
+
+  <div class="grid">
+    <div>
+      <p><strong>Исполнитель:</strong> Демо арендатор / Pacus Demo</p>
+      <p><strong>Заказчик:</strong> ООО Альфа Инжиниринг</p>
+      <p><strong>Договор:</strong> DEV-2026-01</p>
+      <p><strong>Проект:</strong> ALFA-DEV-2026 — Разработка платформы актов</p>
+    </div>
+    <div>
+      <p><strong>Дата акта:</strong> 01.05.2026</p>
+      <p><strong>Период:</strong> 01.04.2026 — 30.04.2026</p>
+      <p><strong>Текущий статус:</strong> <span class="status-label status-generated">generated</span></p>
+    </div>
+  </div>
+
+   <h2>Хронология статусов</h2>
+   <table aria-label="Хронология изменения статусов акта">
+     <caption class="sr-only">Хронология изменения статусов акта</caption>
+     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
+     <tbody>
+ <tr><td>02.05.2026 12:09</td><td><span class='muted'>—</span></td><td><strong>draft</strong></td><td>web_user</td><td>Создан через веб-UI</td></tr>
+<tr><td>02.05.2026 12:10</td><td>draft</td><td><strong>generated</strong></td><td>web_user</td><td>Test transition</td></tr>
+    </tbody>
+   </table>
+
+   <h2>Ревизии документа</h2>
+   <table aria-label="Ревизии документа акта">
+     <caption class="sr-only">Ревизии документа акта</caption>
+     <thead><tr><th scope="col">№</th><th scope="col">Вид</th><th scope="col">Шаблон</th><th scope="col">Создана</th><th scope="col">Создал</th><th scope="col">Комментарий</th><th scope="col">Иммут.</th><th scope="col">Артефакт</th></tr></thead>
+     <tbody>
+     </tbody>
+   </table>
+
+  <h2>Связанные документы</h2>
+  <table aria-label="Связанные документы акта">
+    <caption class="sr-only">Связанные документы акта</caption>
+    <thead><tr><th scope="col">Тип</th><th scope="col">Номер / Код</th><th scope="col">Статус / Название</th><th scope="col">Ссылка</th></tr></thead>
+    <tbody>
+<tr><td>Карточка проекта</td><td>ALFA-DEV-2026</td><td>Разработка платформы актов</td><td><a href='/projects/tenant_demo/proj_alfa_dev/project-card.html'>Открыть</a></td></tr>
+    </tbody>
+  </table>
+
+  <p class="muted">Аудит-трейл сформирован автоматически из БД · Демо арендатор / Pacus Demo</p>
+</main>
+<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
+</body>
+</html>
