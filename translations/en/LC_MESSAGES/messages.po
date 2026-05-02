@@ -371,7 +371,7 @@ msgid "Цена (₽)"
 msgstr "Price (₽)"
 
 #: templates/acts/form.html:68
-#, fuzzy, python-format
+#, python-format
 msgid "НДС %%"
 msgstr "VAT %%"
 

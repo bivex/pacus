@@ -372,8 +372,8 @@ msgid "Цена (₽)"
 msgstr ""
 
 #: templates/acts/form.html:68
-msgid "НДС %"
-msgstr ""
+msgid "НДС %%"
+msgstr "НДС %%"
 
 #: templates/acts/form.html:96 templates/acts/form.html:118
 msgid "Итого с НДС"
