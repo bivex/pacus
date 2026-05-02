@@ -41,49 +41,45 @@
   </div>
 </div>
 
-<!-- Project Status Card -->
-<div class="ui raised segment" style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 10px; border: none; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 2em;">
-  <div class="ui grid" style="margin: 0;">
-    <div class="ten wide column" style="padding: 1.5em;">
-      <div class="ui three column stackable grid" style="margin: 0;">
-        <div class="column">
-          <div class="ui small header" style="color: #666; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
-            {{ _('Контрагент') }}
-          </div>
-          <div style="font-size: 1.1em; font-weight: 600;">{{ project.counterparty_name }}</div>
-        </div>
-        <div class="column">
-          <div class="ui small header" style="color: #666; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
-            {{ _('Начат') }}
-          </div>
-          <div style="font-size: 1.1em; font-weight: 600;">{{ project.started_on|fmt_date }}</div>
-        </div>
-        <div class="column">
-          <div class="ui small header" style="color: #666; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
-            {{ _('Статус') }}
-          </div>
-          <div>
-            <span class="ui label status-{{ project.status }}" style="font-size: 1.1em; padding: 0.5em 1em;">{{ STATUS_LABELS.get(project.status, project.status) }}</span>
-          </div>
-        </div>
+<!-- Project Info Card -->
+<div class="ui raised segment" style="border-radius: 10px; border: none; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 2em; padding: 0; overflow: hidden;">
+  <!-- Info row -->
+  <div class="ui three column stackable grid" style="margin: 0;">
+    <div class="column" style="padding: 1.5em;">
+      <div style="color: #767676; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4em;">
+        {{ _('Контрагент') }}
+      </div>
+      <div style="font-size: 1.05em; font-weight: 600;">{{ project.counterparty_name }}</div>
+    </div>
+    <div class="column" style="padding: 1.5em;">
+      <div style="color: #767676; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4em;">
+        {{ _('Начат') }}
+      </div>
+      <div style="font-size: 1.05em; font-weight: 600;">{{ project.started_on|fmt_date }}</div>
+    </div>
+    <div class="column" style="padding: 1.5em;">
+      <div style="color: #767676; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4em;">
+        {{ _('Статус') }}
+      </div>
+      <span class="ui label status-{{ project.status }}">{{ STATUS_LABELS.get(project.status, project.status) }}</span>
+    </div>
+  </div>
+  <!-- Stats bar -->
+  <div style="background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%); padding: 1.2em 1.5em; border-top: 1px solid #dde8f0;">
+    <div class="ui three statistics" style="margin: 0;">
+      <div class="statistic">
+        <div class="value" style="color: #2185d0;">{{ acts|length }}</div>
+        <div class="label">{{ _('Актов') }}</div>
+      </div>
+      <div class="statistic">
+        <div class="value" style="color: #21ba45;">{{ project.signed_act_count }}</div>
+        <div class="label">{{ _('Подписано') }}</div>
+      </div>
+      <div class="statistic">
+        <div class="value" style="color: #f2711c;">{{ project.signed_total_minor|rubles }}</div>
+        <div class="label">{{ _('Подписано на сумму') }}</div>
       </div>
     </div>
-        <div class="six wide column" style="padding: 1.5em; background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%); border-radius: 0 10px 10px 0; text-align: center;">
-          <div class="ui three statistics" style="margin: 0 auto; max-width: 350px;">
-            <div class="statistic">
-              <div class="value" style="color: #2185d0;">{{ acts|length }}</div>
-              <div class="label">{{ _('Актов') }}</div>
-            </div>
-            <div class="statistic">
-              <div class="value" style="color: #21ba45;">{{ project.signed_act_count }}</div>
-              <div class="label">{{ _('Подписано') }}</div>
-            </div>
-            <div class="statistic">
-              <div class="value" style="color: #f2711c;">{{ project.signed_total_minor|rubles }}</div>
-              <div class="label">{{ _('Подписано на сумму') }}</div>
-            </div>
-          </div>
-        </div>
   </div>
 </div>
 
