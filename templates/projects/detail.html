@@ -1,15 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Проект {{ project.code }}{% endblock %}
+{% block title %}{{ _('Проект') }} {{ project.code }}{% endblock %}
 
 {% block content %}
 <div class="ui right floated buttons">
   {% if valid_transitions %}
   <div class="ui floating dropdown button">
     <i class="exchange icon"></i>
-    <span class="text">Сменить статус</span>
+    <span class="text">{{ _('Сменить статус') }}</span>
     <div class="menu">
       {% for ts in valid_transitions %}
-      <div class="item" data-status="{{ ts }}">{{ ts|status_label }}</div>
+      <div class="item" data-status="{{ ts }}">{{ STATUS_LABELS.get(ts, ts) }}</div>
       {% endfor %}
     </div>
   </div>
@@ -18,23 +18,23 @@
 
 <h2 class="ui header">
   {{ project.code }} — {{ project.name }}
-  <span class="ui label status-{{ project.status }}">{{ project.status|status_label }}</span>
+  <span class="ui label status-{{ project.status }}">{{ STATUS_LABELS.get(project.status, project.status) }}</span>
 </h2>
 
 <div class="ui segment">
   <div class="ui three column grid">
     <div class="column">
-      <strong>Контрагент:</strong><br>{{ project.counterparty_name }}
+      <strong>{{ _('Контрагент') }}:</strong><br>{{ project.counterparty_name }}
     </div>
     <div class="column">
-      <strong>Начат:</strong><br>{{ project.started_on|fmt_date }}
+      <strong>{{ _('Начат') }}:</strong><br>{{ project.started_on|fmt_date }}
       {% if project.finished_on %}
-      <br><strong>Завершён:</strong> {{ project.finished_on|fmt_date }}
+      <br><strong>{{ _('Завершён') }}:</strong> {{ project.finished_on|fmt_date }}
       {% endif %}
     </div>
     <div class="column">
       {% if project.description %}
-      <strong>Описание:</strong><br>{{ project.description }}
+      <strong>{{ _('Описание') }}:</strong><br>{{ project.description }}
       {% endif %}
     </div>
   </div>
@@ -43,15 +43,15 @@
 <div class="ui grid">
   <div class="ten wide column">
     <h3 class="ui header">
-      Акты проекта
+      {{ _('Акты проекта') }}
       {% if project.status in ('active', 'on_hold') %}
-      <a href="/acts/new" class="ui right floated tiny primary button">Новый акт</a>
+      <a href="/acts/new" class="ui right floated tiny primary button">{{ _('Новый акт') }}</a>
       {% endif %}
     </h3>
     {% if acts %}
     <table class="ui compact striped table">
       <thead>
-        <tr><th>Номер</th><th>Дата</th><th>Период</th><th class="amount">Сумма</th><th>Статус</th></tr>
+        <tr><th>{{ _('Номер') }}</th><th>{{ _('Дата') }}</th><th>{{ _('Период') }}</th><th class="amount">{{ _('Сумма') }}</th><th>{{ _('Статус') }}</th></tr>
       </thead>
       <tbody>
         {% for a in acts %}
@@ -60,20 +60,20 @@
           <td>{{ a.act_date|fmt_date }}</td>
           <td>{{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}</td>
           <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
-          <td><span class="ui mini label status-{{ a.act_status }}">{{ a.act_status|status_label }}</span></td>
+          <td><span class="ui mini label status-{{ a.act_status }}">{{ STATUS_LABELS.get(a.act_status, a.act_status) }}</span></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     {% else %}
-    <p class="ui info message">Нет актов в этом проекте</p>
+    <p class="ui info message">{{ _('Нет актов в этом проекте') }}</p>
     {% endif %}
 
-    <h3 class="ui header">Журнал</h3>
+    <h3 class="ui header">{{ _('Журнал') }}</h3>
     {% if journal %}
     <table class="ui compact striped table">
       <thead>
-        <tr><th>Дата</th><th>Тип</th><th>Заголовок</th><th>Решение</th></tr>
+        <tr><th>{{ _('Дата') }}</th><th>{{ _('Тип') }}</th><th>{{ _('Заголовок') }}</th><th>{{ _('Решение') }}</th></tr>
       </thead>
       <tbody>
         {% for j in journal %}
@@ -87,21 +87,21 @@
       </tbody>
     </table>
     {% else %}
-    <p class="ui info message">Нет записей в журнале</p>
+    <p class="ui info message">{{ _('Нет записей в журнале') }}</p>
     {% endif %}
-    <a href="/projects/{{ project.id }}/journal/new" class="ui basic button"><i class="plus icon"></i> Запись в журнал</a>
+    <a href="/projects/{{ project.id }}/journal/new" class="ui basic button"><i class="plus icon"></i> {{ _('Запись в журнал') }}</a>
   </div>
 
   <div class="six wide column">
-    <h3 class="ui header">История статусов</h3>
+    <h3 class="ui header">{{ _('История статусов') }}</h3>
     <table class="ui very basic compact table">
-      <thead><tr><th>Дата</th><th>Из</th><th>В</th><th>Причина</th></tr></thead>
+      <thead><tr><th>{{ _('Дата') }}</th><th>{{ _('Из') }}</th><th>{{ _('В') }}</th><th>{{ _('Причина') }}</th></tr></thead>
       <tbody>
         {% for h in history %}
         <tr>
           <td>{{ h.changed_at|fmt_dt }}</td>
-          <td><span class="ui mini label status-{{ h.from_status or 'active' }}">{{ (h.from_status or '—')|status_label }}</span></td>
-          <td><span class="ui mini label status-{{ h.to_status }}">{{ h.to_status|status_label }}</span></td>
+          <td><span class="ui mini label status-{{ h.from_status or 'active' }}">{{ STATUS_LABELS.get(h.from_status or 'active', '—') }}</span></td>
+          <td><span class="ui mini label status-{{ h.to_status }}">{{ STATUS_LABELS.get(h.to_status, h.to_status) }}</span></td>
           <td>{{ h.reason or '' }}</td>
         </tr>
         {% endfor %}
@@ -112,23 +112,23 @@
 
 {# Status transition modal #}
 <div class="ui tiny modal" id="status-modal">
-  <div class="header">Сменить статус проекта</div>
+  <div class="header">{{ _('Сменить статус проекта') }}</div>
   <div class="content">
     <form class="ui form" id="status-form" method="post" action="/projects/{{ project.id }}/status">
       <input type="hidden" name="to_status" id="modal-to-status">
       <div class="field">
-        <label>Причина (необязательно)</label>
+        <label>{{ _('Причина (необязательно)') }}</label>
         <textarea name="reason" rows="2"></textarea>
       </div>
       <div class="field" id="finished-on-field" style="display:none">
-        <label>Дата завершения</label>
+        <label>{{ _('Дата завершения') }}</label>
         <input type="date" name="finished_on">
       </div>
     </form>
   </div>
   <div class="actions">
-    <div class="ui cancel button">Отмена</div>
-    <div class="ui ok primary button">Подтвердить</div>
+    <div class="ui cancel button">{{ _('Отмена') }}</div>
+    <div class="ui ok primary button">{{ _('Подтвердить') }}</div>
   </div>
 </div>
 {% endblock %}

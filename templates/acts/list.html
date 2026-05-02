@@ -1,17 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Pacus — Акты{% endblock %}
+{% block title %}Pacus — {{ _('Акты') }}{% endblock %}
 
 {% block content %}
 <h2 class="ui header">
-  Акты
-  <a href="/acts/new" class="ui right floated primary button"><i class="plus icon"></i> Новый акт</a>
+  {{ _('Акты') }}
+  <a href="/acts/new" class="ui right floated primary button"><i class="plus icon"></i> {{ _('Новый акт') }}</a>
 </h2>
 
 <div class="ui secondary menu">
-  <a class="item {% if not current_filter %}active{% endif %}" href="/acts">Все</a>
+  <a class="item {% if not current_filter %}active{% endif %}" href="/acts">{{ _('Все') }}</a>
   {% for s in statuses %}
   <a class="item {% if current_filter == s %}active{% endif %}" href="/acts?status={{ s }}">
-    <span class="ui mini label status-{{ s }}">{{ s|status_label }}</span>
+    <span class="ui mini label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
   </a>
   {% endfor %}
 </div>
@@ -19,13 +19,13 @@
 <table class="ui celled striped table">
   <thead>
     <tr>
-      <th>Номер</th>
-      <th>Контрагент</th>
-      <th>Договор</th>
-      <th>Дата акта</th>
-      <th>Период</th>
-      <th class="amount">Сумма</th>
-      <th>Статус</th>
+      <th>{{ _('Номер') }}</th>
+      <th>{{ _('Контрагент') }}</th>
+      <th>{{ _('Договор') }}</th>
+      <th>{{ _('Дата акта') }}</th>
+      <th>{{ _('Период') }}</th>
+      <th class="amount">{{ _('Сумма') }}</th>
+      <th>{{ _('Статус') }}</th>
     </tr>
   </thead>
   <tbody>
@@ -37,13 +37,13 @@
       <td>{{ a.act_date|fmt_date }}</td>
       <td>{{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}</td>
       <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
-      <td><span class="ui mini label status-{{ a.status }}">{{ a.status|status_label }}</span></td>
+      <td><span class="ui mini label status-{{ a.status }}">{{ STATUS_LABELS.get(a.status, a.status) }}</span></td>
     </tr>
     {% endfor %}
   </tbody>
   <tfoot>
     <tr>
-      <th colspan="5" class="right aligned">Итого актов: {{ acts|length }}</th>
+      <th colspan="5" class="right aligned">{{ _('Итого актов') }}: {{ acts|length }}</th>
       <th class="amount">{{ acts|sum(attribute='grand_total_amount_minor')|rubles }}</th>
       <th></th>
     </tr>

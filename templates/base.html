@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ current_locale }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,21 +14,29 @@
       <i class="file alternate icon"></i> Pacus
     </a>
     <a class="item {% if request.path == '/' %}active{% endif %}" href="/">
-      <i class="home icon"></i> Главная
+      <i class="home icon"></i> {{ _('Главная') }}
     </a>
     <a class="item {% if '/acts' in request.path %}active{% endif %}" href="/acts">
-      <i class="file text icon"></i> Акты
+      <i class="file text icon"></i> {{ _('Акты') }}
     </a>
     <a class="item {% if '/projects' in request.path %}active{% endif %}" href="/projects">
-      <i class="folder open icon"></i> Проекты
+      <i class="folder open icon"></i> {{ _('Проекты') }}
     </a>
     <a class="item" href="/artifacts/index.html">
-      <i class="print icon"></i> Печать
+      <i class="print icon"></i> {{ _('Печать') }}
     </a>
     <div class="ui divider"></div>
-    <a class="item" href="/admin/regenerate" onclick="return confirm('Регенерировать все HTML?')">
-      <i class="refresh icon"></i> Обновить HTML
+    <a class="item" href="/admin/regenerate" onclick="return confirm('{{ _('Регенерировать все HTML?') }}')">
+      <i class="refresh icon"></i> {{ _('Обновить HTML') }}
     </a>
+    <div class="ui divider"></div>
+    <div class="item">
+      {% if current_locale == 'ru' %}
+      <a href="/lang/en" style="color:inherit"><i class="gb flag"></i> English</a>
+      {% else %}
+      <a href="/lang/ru" style="color:inherit"><i class="ru flag"></i> Русский</a>
+      {% endif %}
+    </div>
   </div>
   <div class="pusher">
     <div class="ui main container" style="margin-left: 210px !important; padding: 24px;">

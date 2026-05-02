@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ 'Новый акт' if mode == 'create' else 'Редактирование акта' }}{% endblock %}
+{% block title %}{% if mode == 'create' %}{{ _('Новый акт') }}{% else %}{{ _('Редактирование акта') }}{% endif %}{% endblock %}
 
 {% block head %}
 <style>
@@ -9,64 +9,64 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="ui header">{{ 'Новый акт' if mode == 'create' else 'Редактирование акта' }}</h2>
+<h2 class="ui header">{% if mode == 'create' %}{{ _('Новый акт') }}{% else %}{{ _('Редактирование акта') }}{% endif %}</h2>
 
 <form class="ui form" method="post">
   <div class="ui segment">
-    <h4 class="ui dividing header">Реквизиты</h4>
+    <h4 class="ui dividing header">{{ _('Реквизиты') }}</h4>
     <div class="four fields">
       <div class="field">
-        <label>Контрагент *</label>
+        <label>{{ _('Контрагент') }} *</label>
         <select class="ui search dropdown" name="counterparty_id" id="counterparty_id">
-          <option value="">Выберите...</option>
+          <option value="">{{ _('Выберите...') }}</option>
           {% for cp in counterparties %}
           <option value="{{ cp.id }}" {% if mode == 'edit' and act.counterparty_id == cp.id %}selected{% endif %}>{{ cp.full_name }}{% if cp.inn %} ({{ cp.inn }}){% endif %}</option>
           {% endfor %}
         </select>
       </div>
       <div class="field">
-        <label>Договор *</label>
+        <label>{{ _('Договор') }} *</label>
         <select class="ui dropdown" name="contract_id" id="contract_id">
-          <option value="">Выберите контрагента...</option>
+          <option value="">{{ _('Выберите контрагента...') }}</option>
         </select>
       </div>
       <div class="field">
-        <label>Проект</label>
+        <label>{{ _('Проект') }}</label>
         <select class="ui dropdown" name="project_id" id="project_id">
-          <option value="">— нет —</option>
+          <option value="">{{ _('— нет —') }}</option>
         </select>
       </div>
       <div class="field">
-        <label>Номер акта *</label>
+        <label>{{ _('Номер акта') }} *</label>
         <input type="text" name="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005">
       </div>
     </div>
     <div class="three fields">
       <div class="field">
-        <label>Дата акта *</label>
+        <label>{{ _('Дата акта') }} *</label>
         <input type="date" name="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% endif %}">
       </div>
       <div class="field">
-        <label>Период с *</label>
+        <label>{{ _('Период с') }} *</label>
         <input type="date" name="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% endif %}">
       </div>
       <div class="field">
-        <label>Период по *</label>
+        <label>{{ _('Период по') }} *</label>
         <input type="date" name="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% endif %}">
       </div>
     </div>
   </div>
 
-  <h4 class="ui dividing header">Позиции</h4>
+  <h4 class="ui dividing header">{{ _('Позиции') }}</h4>
   <table class="ui compact celled table" id="items-table">
     <thead>
       <tr>
-        <th>Описание</th>
-        <th class="collapsing">Ед.</th>
-        <th class="collapsing">Кол-во</th>
-        <th class="collapsing">Цена (₽)</th>
-        <th class="collapsing">НДС %</th>
-        <th class="collapsing">Сумма</th>
+        <th>{{ _('Описание') }}</th>
+        <th class="collapsing">{{ _('Ед.') }}</th>
+        <th class="collapsing">{{ _('Кол-во') }}</th>
+        <th class="collapsing">{{ _('Цена (₽)') }}</th>
+        <th class="collapsing">{{ _('НДС %%') }}</th>
+        <th class="collapsing">{{ _('Сумма') }}</th>
         <th class="collapsing"></th>
       </tr>
     </thead>
@@ -93,31 +93,36 @@
     </tbody>
     <tfoot>
       <tr>
-        <th colspan="5" class="right aligned">Итого с НДС</th>
+        <th colspan="5" class="right aligned">{{ _('Итого с НДС') }}</th>
         <th class="right aligned amount" id="grand-total">0,00</th>
         <th></th>
       </tr>
     </tfoot>
   </table>
-  <button type="button" class="ui basic button" id="add-row"><i class="plus icon"></i> Добавить позицию</button>
+  <button type="button" class="ui basic button" id="add-row"><i class="plus icon"></i> {{ _('Добавить позицию') }}</button>
 
   <div class="ui divider"></div>
-  <button class="ui primary button" type="submit">{{ 'Создать акт' if mode == 'create' else 'Сохранить' }}</button>
+  <button class="ui primary button" type="submit">{% if mode == 'create' %}{{ _('Создать акт') }}{% else %}{{ _('Сохранить') }}{% endif %}</button>
   {% if mode == 'edit' %}
-  <a href="/acts/{{ act.id }}" class="ui button">Отмена</a>
+  <a href="/acts/{{ act.id }}" class="ui button">{{ _('Отмена') }}</a>
   {% else %}
-  <a href="/acts" class="ui button">Отмена</a>
+  <a href="/acts" class="ui button">{{ _('Отмена') }}</a>
   {% endif %}
 </form>
 {% endblock %}
 
 {% block scripts %}
 <script>
+var I18N = {
+  desc_placeholder: "{{ _('Описание работ') }}",
+  total_with_vat: "{{ _('Итого с НДС') }}"
+};
+
 var rowIdx = {% if mode == 'edit' %}{{ items|length }}{% else %}0{% endif %};
 
 function rowHtml(i) {
   return '<tr data-idx="' + i + '">' +
-    '<td><input type="text" name="item_desc_' + i + '" placeholder="Описание работ"></td>' +
+    '<td><input type="text" name="item_desc_' + i + '" placeholder="' + I18N.desc_placeholder + '"></td>' +
     '<td><input type="text" name="item_unit_' + i + '" value="JOB" style="width:60px"></td>' +
     '<td><input type="text" name="item_qty_' + i + '" value="1" style="width:80px" class="calc-trigger"></td>' +
     '<td><input type="text" name="item_price_' + i + '" value="0" style="width:100px" class="calc-trigger"></td>' +
@@ -165,13 +170,12 @@ $('#items-body').on('click', '.remove-row', function() {
 
 $('#items-body').on('input change', '.calc-trigger', recalc);
 
-// Cascading dropdowns
 function loadContracts(cpId) {
   $.getJSON('/api/contracts?counterparty_id=' + cpId, function(data) {
     var sel = $('#contract_id');
-    sel.empty().append('<option value="">Выберите...</option>');
+    sel.empty().append('<option value="">{{ _('Выберите...') }}</option>');
     data.forEach(function(c) {
-      sel.append('<option value="' + c.id + '">' + c.contract_number + ' от ' + c.contract_date + '</option>');
+      sel.append('<option value="' + c.id + '">' + c.contract_number + ' {{ _('от') }} ' + c.contract_date + '</option>');
     });
   });
 }
@@ -179,7 +183,7 @@ function loadContracts(cpId) {
 function loadProjects(cpId) {
   $.getJSON('/api/projects?counterparty_id=' + cpId, function(data) {
     var sel = $('#project_id');
-    sel.empty().append('<option value="">— нет —</option>');
+    sel.empty().append('<option value="">{{ _('— нет —') }}</option>');
     data.forEach(function(p) {
       sel.append('<option value="' + p.id + '">' + p.code + ' — ' + p.name + '</option>');
     });

@@ -1,0 +1,561 @@
+# Translations template for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-05-02 15:43+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: app.py:76
+msgid "Черновик"
+msgstr ""
+
+#: app.py:77
+msgid "Сформирован"
+msgstr ""
+
+#: app.py:78
+msgid "Отправлен"
+msgstr ""
+
+#: app.py:79
+msgid "Подписан"
+msgstr ""
+
+#: app.py:80
+msgid "Отменён"
+msgstr ""
+
+#: app.py:81
+msgid "Скорректирован"
+msgstr ""
+
+#: app.py:82
+msgid "Активный"
+msgstr ""
+
+#: app.py:83
+msgid "Приостановлен"
+msgstr ""
+
+#: app.py:84 templates/projects/detail.html:32
+msgid "Завершён"
+msgstr ""
+
+#: app.py:254
+msgid "Заполните все обязательные поля"
+msgstr ""
+
+#: app.py:293
+msgid "Добавьте хотя бы одну позицию"
+msgstr ""
+
+#: app.py:312 app.py:520
+msgid "Создан через веб-UI"
+msgstr ""
+
+#: app.py:315
+#, python-format
+msgid "Акт %(number)s создан"
+msgstr ""
+
+#: app.py:320 app.py:421 app.py:454 app.py:528 app.py:579 app.py:621
+#, python-format
+msgid "Ошибка: %(error)s"
+msgstr ""
+
+#: app.py:350
+msgid "Редактирование доступно только для черновиков"
+msgstr ""
+
+#: app.py:416
+msgid "Акт обновлён"
+msgstr ""
+
+#: app.py:438
+#, python-format
+msgid "Недопустимый переход: %(src)s → %(dst)s"
+msgstr ""
+
+#: app.py:450
+#, python-format
+msgid "Статус изменён: %(status)s"
+msgstr ""
+
+#: app.py:523
+#, python-format
+msgid "Проект %(code)s создан"
+msgstr ""
+
+#: app.py:564
+msgid "Недопустимый переход"
+msgstr ""
+
+#: app.py:575
+msgid "Статус проекта изменён"
+msgstr ""
+
+#: app.py:616
+msgid "Запись журнала добавлена"
+msgstr ""
+
+#: app.py:662
+msgid "HTML-артефакты обновлены"
+msgstr ""
+
+#: app.py:664
+#, python-format
+msgid "Ошибка регенерации: %(error)s"
+msgstr ""
+
+#: templates/base.html:17 templates/dashboard.html:2
+msgid "Главная"
+msgstr ""
+
+#: templates/acts/list.html:2 templates/acts/list.html:6 templates/base.html:20
+msgid "Акты"
+msgstr ""
+
+#: templates/base.html:23 templates/dashboard.html:52
+#: templates/projects/list.html:2 templates/projects/list.html:6
+msgid "Проекты"
+msgstr ""
+
+#: templates/acts/preview.html:7 templates/base.html:26
+msgid "Печать"
+msgstr ""
+
+#: templates/base.html:29
+msgid "Регенерировать все HTML?"
+msgstr ""
+
+#: templates/base.html:30
+msgid "Обновить HTML"
+msgstr ""
+
+#: templates/dashboard.html:5
+msgid "Дашборд"
+msgstr ""
+
+#: templates/dashboard.html:10 templates/dashboard.html:57
+#: templates/projects/list.html:26
+msgid "Актов"
+msgstr ""
+
+#: templates/dashboard.html:14
+msgid "Черновиков"
+msgstr ""
+
+#: templates/dashboard.html:18
+msgid "Проектов"
+msgstr ""
+
+#: templates/dashboard.html:22
+msgid "Входящих"
+msgstr ""
+
+#: templates/dashboard.html:30
+msgid "Последние акты"
+msgstr ""
+
+#: templates/acts/form.html:2 templates/acts/form.html:12
+#: templates/acts/list.html:7 templates/dashboard.html:31
+#: templates/projects/detail.html:48
+msgid "Новый акт"
+msgstr ""
+
+#: templates/acts/list.html:22 templates/dashboard.html:35
+#: templates/projects/detail.html:54
+msgid "Номер"
+msgstr ""
+
+#: templates/acts/detail.html:31 templates/acts/form.html:19
+#: templates/acts/list.html:23 templates/dashboard.html:35
+#: templates/projects/detail.html:27 templates/projects/form.html:11
+#: templates/projects/list.html:24
+msgid "Контрагент"
+msgstr ""
+
+#: templates/acts/detail.html:91 templates/acts/detail.html:109
+#: templates/dashboard.html:35 templates/journal/form.html:14
+#: templates/projects/detail.html:54 templates/projects/detail.html:76
+#: templates/projects/detail.html:98
+msgid "Дата"
+msgstr ""
+
+#: templates/acts/detail.html:58 templates/acts/form.html:69
+#: templates/acts/list.html:27 templates/acts/preview.html:38
+#: templates/dashboard.html:35 templates/projects/detail.html:54
+msgid "Сумма"
+msgstr ""
+
+#: templates/acts/list.html:28 templates/dashboard.html:35
+#: templates/dashboard.html:57 templates/projects/detail.html:54
+#: templates/projects/list.html:25
+msgid "Статус"
+msgstr ""
+
+#: templates/dashboard.html:53 templates/projects/form.html:2
+#: templates/projects/form.html:5 templates/projects/list.html:7
+msgid "Новый проект"
+msgstr ""
+
+#: templates/dashboard.html:57 templates/projects/list.html:22
+msgid "Код"
+msgstr ""
+
+#: templates/dashboard.html:57 templates/projects/form.html:25
+#: templates/projects/list.html:23
+msgid "Название"
+msgstr ""
+
+#: templates/acts/detail.html:2 templates/acts/detail.html:24
+#: templates/acts/preview.html:22
+msgid "Акт"
+msgstr ""
+
+#: templates/acts/detail.html:7
+msgid "Редактировать"
+msgstr ""
+
+#: templates/acts/detail.html:12 templates/acts/detail.html:130
+#: templates/projects/detail.html:9
+msgid "Сменить статус"
+msgstr ""
+
+#: templates/acts/detail.html:20
+msgid "Превью"
+msgstr ""
+
+#: templates/acts/detail.html:34 templates/acts/form.html:28
+#: templates/acts/list.html:24
+msgid "Договор"
+msgstr ""
+
+#: templates/acts/detail.html:34 templates/acts/form.html:178
+#: templates/acts/preview.html:25
+msgid "от"
+msgstr ""
+
+#: templates/acts/detail.html:37 templates/acts/form.html:46
+#: templates/acts/list.html:25
+msgid "Дата акта"
+msgstr ""
+
+#: templates/acts/detail.html:40 templates/acts/list.html:26
+#: templates/projects/detail.html:54
+msgid "Период"
+msgstr ""
+
+#: templates/acts/detail.html:45 templates/acts/form.html:34
+#: templates/journal/form.html:7 templates/projects/detail.html:2
+msgid "Проект"
+msgstr ""
+
+#: templates/acts/detail.html:49 templates/acts/form.html:60
+msgid "Позиции"
+msgstr ""
+
+#: templates/acts/detail.html:54 templates/acts/form.html:64
+#: templates/projects/detail.html:37 templates/projects/form.html:29
+msgid "Описание"
+msgstr ""
+
+#: templates/acts/detail.html:55 templates/acts/form.html:65
+#: templates/acts/preview.html:35
+msgid "Ед."
+msgstr ""
+
+#: templates/acts/detail.html:56 templates/acts/form.html:66
+#: templates/acts/preview.html:36
+msgid "Кол-во"
+msgstr ""
+
+#: templates/acts/detail.html:57 templates/acts/preview.html:37
+msgid "Цена"
+msgstr ""
+
+#: templates/acts/detail.html:59 templates/acts/preview.html:39
+msgid "НДС"
+msgstr ""
+
+#: templates/acts/detail.html:60 templates/acts/preview.html:40
+msgid "Сумма с НДС"
+msgstr ""
+
+#: templates/acts/detail.html:79 templates/acts/preview.html:41
+msgid "Итого"
+msgstr ""
+
+#: templates/acts/detail.html:89 templates/projects/detail.html:96
+msgid "История статусов"
+msgstr ""
+
+#: templates/acts/detail.html:91 templates/projects/detail.html:98
+msgid "Из"
+msgstr ""
+
+#: templates/acts/detail.html:91 templates/projects/detail.html:98
+msgid "В"
+msgstr ""
+
+#: templates/acts/detail.html:91 templates/projects/detail.html:98
+msgid "Причина"
+msgstr ""
+
+#: templates/acts/detail.html:107
+msgid "Ревизии"
+msgstr ""
+
+#: templates/acts/detail.html:135 templates/projects/detail.html:120
+msgid "Причина (необязательно)"
+msgstr ""
+
+#: templates/acts/detail.html:141 templates/acts/form.html:107
+#: templates/acts/form.html:109 templates/journal/form.html:59
+#: templates/projects/detail.html:130 templates/projects/form.html:38
+msgid "Отмена"
+msgstr ""
+
+#: templates/acts/detail.html:142 templates/projects/detail.html:131
+msgid "Подтвердить"
+msgstr ""
+
+#: templates/acts/form.html:2 templates/acts/form.html:12
+msgid "Редактирование акта"
+msgstr ""
+
+#: templates/acts/form.html:16
+msgid "Реквизиты"
+msgstr ""
+
+#: templates/acts/form.html:21 templates/acts/form.html:176
+#: templates/projects/form.html:13
+msgid "Выберите..."
+msgstr ""
+
+#: templates/acts/form.html:30
+msgid "Выберите контрагента..."
+msgstr ""
+
+#: templates/acts/form.html:36 templates/acts/form.html:186
+msgid "— нет —"
+msgstr ""
+
+#: templates/acts/form.html:40
+msgid "Номер акта"
+msgstr ""
+
+#: templates/acts/form.html:50
+msgid "Период с"
+msgstr ""
+
+#: templates/acts/form.html:54
+msgid "Период по"
+msgstr ""
+
+#: templates/acts/form.html:67
+msgid "Цена (₽)"
+msgstr ""
+
+#: templates/acts/form.html:68
+#, python-format
+msgid "НДС %%"
+msgstr ""
+
+#: templates/acts/form.html:96 templates/acts/form.html:118
+msgid "Итого с НДС"
+msgstr ""
+
+#: templates/acts/form.html:102
+msgid "Добавить позицию"
+msgstr ""
+
+#: templates/acts/form.html:105
+msgid "Создать акт"
+msgstr ""
+
+#: templates/acts/form.html:105
+msgid "Сохранить"
+msgstr ""
+
+#: templates/acts/form.html:117
+msgid "Описание работ"
+msgstr ""
+
+#: templates/acts/list.html:11 templates/projects/list.html:11
+msgid "Все"
+msgstr ""
+
+#: templates/acts/list.html:46
+msgid "Итого актов"
+msgstr ""
+
+#: templates/acts/preview.html:2
+msgid "Превью акта"
+msgstr ""
+
+#: templates/acts/preview.html:6
+msgid "К акту"
+msgstr ""
+
+#: templates/acts/preview.html:23
+msgid "АКТ №"
+msgstr ""
+
+#: templates/acts/preview.html:24
+msgid "о выполнении работ по договору №"
+msgstr ""
+
+#: templates/acts/preview.html:26
+msgid "Заказчик"
+msgstr ""
+
+#: templates/acts/preview.html:27
+msgid "ИНН"
+msgstr ""
+
+#: templates/acts/preview.html:28
+msgid "КПП"
+msgstr ""
+
+#: templates/acts/preview.html:29
+msgid "Исполнитель"
+msgstr ""
+
+#: templates/acts/preview.html:30
+msgid "Период: с"
+msgstr ""
+
+#: templates/acts/preview.html:31
+msgid "по"
+msgstr ""
+
+#: templates/acts/preview.html:32
+msgid "1. Стоимость работ"
+msgstr ""
+
+#: templates/acts/preview.html:34
+msgid "Наименование"
+msgstr ""
+
+#: templates/journal/form.html:2 templates/journal/form.html:6
+#: templates/projects/detail.html:92
+msgid "Запись в журнал"
+msgstr ""
+
+#: templates/journal/form.html:18 templates/projects/detail.html:76
+msgid "Тип"
+msgstr ""
+
+#: templates/journal/form.html:20
+msgid "Встреча"
+msgstr ""
+
+#: templates/journal/form.html:21
+msgid "Звонок"
+msgstr ""
+
+#: templates/journal/form.html:22
+msgid "Письмо"
+msgstr ""
+
+#: templates/journal/form.html:23
+msgid "Заметка"
+msgstr ""
+
+#: templates/journal/form.html:24
+msgid "Веха"
+msgstr ""
+
+#: templates/journal/form.html:25 templates/projects/detail.html:76
+msgid "Решение"
+msgstr ""
+
+#: templates/journal/form.html:30 templates/projects/detail.html:76
+msgid "Заголовок"
+msgstr ""
+
+#: templates/journal/form.html:31
+msgid "Краткое описание события"
+msgstr ""
+
+#: templates/journal/form.html:34
+msgid "Содержание"
+msgstr ""
+
+#: templates/journal/form.html:39
+msgid "Принятое решение"
+msgstr ""
+
+#: templates/journal/form.html:43
+msgid "Результат"
+msgstr ""
+
+#: templates/journal/form.html:49
+msgid "Связанные акты"
+msgstr ""
+
+#: templates/journal/form.html:58
+msgid "Добавить запись"
+msgstr ""
+
+#: templates/projects/detail.html:30 templates/projects/list.html:28
+msgid "Начат"
+msgstr ""
+
+#: templates/projects/detail.html:46
+msgid "Акты проекта"
+msgstr ""
+
+#: templates/projects/detail.html:69
+msgid "Нет актов в этом проекте"
+msgstr ""
+
+#: templates/projects/detail.html:72
+msgid "Журнал"
+msgstr ""
+
+#: templates/projects/detail.html:90
+msgid "Нет записей в журнале"
+msgstr ""
+
+#: templates/projects/detail.html:115
+msgid "Сменить статус проекта"
+msgstr ""
+
+#: templates/projects/detail.html:124
+msgid "Дата завершения"
+msgstr ""
+
+#: templates/projects/form.html:20
+msgid "Код проекта"
+msgstr ""
+
+#: templates/projects/form.html:26
+msgid "Разработка платформы актов"
+msgstr ""
+
+#: templates/projects/form.html:33
+msgid "Дата начала"
+msgstr ""
+
+#: templates/projects/form.html:37
+msgid "Создать проект"
+msgstr ""
+
+#: templates/projects/list.html:27
+msgid "Подписано на сумму"
+msgstr ""
+

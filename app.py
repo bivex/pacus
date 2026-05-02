@@ -20,8 +20,10 @@ from flask import (
     render_template,
     request,
     send_from_directory,
+    session,
     url_for,
 )
+from flask_babel import Babel, gettext as _
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -30,10 +32,20 @@ ROOT_DIR = Path(__file__).parent
 DB_PATH = ROOT_DIR / "data/sqlite/work_acts_demo.sqlite"
 ARTIFACTS_DIR = ROOT_DIR / "data/artifacts"
 TENANT_ID = "tenant_demo"
+SUPPORTED_LOCALES = ["ru", "en"]
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "pacus-dev-secret-2026")
 app.config["ARTIFACTS_DIR"] = str(ARTIFACTS_DIR)
+app.config["BABEL_DEFAULT_LOCALE"] = "ru"
+app.config["BABEL_TRANSLATION_DIRECTORIES"] = str(ROOT_DIR / "translations")
+
+
+def get_locale():
+    return session.get("lang", "ru")
+
+
+babel = Babel(app, locale_selector=get_locale)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -58,17 +70,19 @@ PROJECT_TRANSITIONS = {
     "cancelled": [],
 }
 
-STATUS_LABELS = {
-    "draft": "Черновик",
-    "generated": "Сформирован",
-    "sent": "Отправлен",
-    "signed": "Подписан",
-    "cancelled": "Отменён",
-    "corrected": "Скорректирован",
-    "active": "Активный",
-    "on_hold": "Приостановлен",
-    "completed": "Завершён",
-}
+
+def _status_labels():
+    return {
+        "draft": _("Черновик"),
+        "generated": _("Сформирован"),
+        "sent": _("Отправлен"),
+        "signed": _("Подписан"),
+        "cancelled": _("Отменён"),
+        "corrected": _("Скорректирован"),
+        "active": _("Активный"),
+        "on_hold": _("Приостановлен"),
+        "completed": _("Завершён"),
+    }
 
 
 def make_id(prefix, *parts):
@@ -103,7 +117,7 @@ def fmt_amount(minor):
     rubles = minor / 100
     integer = int(rubles)
     frac = round((rubles - integer) * 100)
-    s = "{:,}".format(integer).replace(",", " ")
+    s = "{:,}".format(integer).replace(",", " ")
     return "{},{:02d}".format(s, frac)
 
 
@@ -154,7 +168,6 @@ def recalculate_totals(act_id):
 app.jinja_env.filters["rubles"] = lambda v: fmt_amount(v)
 app.jinja_env.filters["fmt_date"] = fmt_date
 app.jinja_env.filters["fmt_dt"] = fmt_dt
-app.jinja_env.filters["status_label"] = lambda s: STATUS_LABELS.get(s, s)
 
 
 @app.context_processor
@@ -162,8 +175,19 @@ def inject_globals():
     return {
         "ACT_TRANSITIONS": ACT_TRANSITIONS,
         "PROJECT_TRANSITIONS": PROJECT_TRANSITIONS,
-        "STATUS_LABELS": STATUS_LABELS,
+        "STATUS_LABELS": _status_labels(),
+        "current_locale": get_locale(),
     }
+
+
+# ---------------------------------------------------------------------------
+# Language switch
+# ---------------------------------------------------------------------------
+@app.route("/lang/<locale>")
+def set_language(locale):
+    if locale in SUPPORTED_LOCALES:
+        session["lang"] = locale
+    return redirect(request.referrer or url_for("dashboard"))
 
 
 # ---------------------------------------------------------------------------
@@ -227,7 +251,7 @@ def act_new():
     period_to = request.form.get("period_to", "").strip()
 
     if not all([cp_id, contract_id, act_number, act_date, period_from, period_to]):
-        flash("Заполните все обязательные поля", "error")
+        flash(_("Заполните все обязательные поля"), "error")
         return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
 
     now = utc_now()
@@ -266,7 +290,7 @@ def act_new():
         idx += 1
 
     if not items:
-        flash("Добавьте хотя бы одну позицию", "error")
+        flash(_("Добавьте хотя бы одну позицию"), "error")
         return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
 
     total = sum(i["amount_minor"] for i in items)
@@ -285,15 +309,15 @@ def act_new():
             )
         db.execute(
             "INSERT INTO work_act_status_history (id,act_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("wsh", act_id, "draft"), act_id, None, "draft", "web_user", now, "Создан через веб-UI"),
+            (make_id("wsh", act_id, "draft"), act_id, None, "draft", "web_user", now, _("Создан через веб-UI")),
         )
         db.commit()
-        flash("Акт {} создан".format(act_number), "success")
+        flash(_("Акт %(number)s создан", number=act_number), "success")
         return redirect(url_for("act_detail", act_id=act_id))
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
         return render_template("acts/form.html", mode="create", counterparties=counterparties), 400
 
 
@@ -323,7 +347,7 @@ def act_edit(act_id):
     db = get_db()
     act = db.execute("SELECT * FROM work_act WHERE id=? AND status='draft' AND deleted_at IS NULL", (act_id,)).fetchone()
     if not act:
-        flash("Редактирование доступно только для черновиков", "error")
+        flash(_("Редактирование доступно только для черновиков"), "error")
         return redirect(url_for("act_detail", act_id=act_id))
 
     counterparties = db.execute(
@@ -389,12 +413,12 @@ def act_edit(act_id):
             )
         recalculate_totals(act_id)
         db.commit()
-        flash("Акт обновлён", "success")
+        flash(_("Акт обновлён"), "success")
         return redirect(url_for("act_detail", act_id=act_id))
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
         return render_template("acts/form.html", mode="edit", act=act, counterparties=counterparties), 400
 
 
@@ -411,7 +435,7 @@ def act_status_change(act_id):
 
     valid = ACT_TRANSITIONS.get(act["status"], [])
     if to_status not in valid:
-        flash("Недопустимый переход: {} → {}".format(act["status"], to_status), "error")
+        flash(_("Недопустимый переход: %(src)s → %(dst)s", src=act["status"], dst=to_status), "error")
         return redirect(url_for("act_detail", act_id=act_id))
 
     try:
@@ -422,11 +446,12 @@ def act_status_change(act_id):
             (make_id("wsh", act_id, to_status), act_id, act["status"], to_status, "web_user", now, reason),
         )
         db.commit()
-        flash("Статус изменён: {}".format(STATUS_LABELS.get(to_status, to_status)), "success")
+        labels = _status_labels()
+        flash(_("Статус изменён: %(status)s", status=labels.get(to_status, to_status)), "success")
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
     return redirect(url_for("act_detail", act_id=act_id))
 
 
@@ -492,15 +517,15 @@ def project_new():
         )
         db.execute(
             "INSERT INTO project_status_history (id,project_id,from_status,to_status,changed_by,changed_at,reason) VALUES (?,?,?,?,?,?,?)",
-            (make_id("psh", proj_id, "active"), proj_id, None, "active", "web_user", now, "Создан через веб-UI"),
+            (make_id("psh", proj_id, "active"), proj_id, None, "active", "web_user", now, _("Создан через веб-UI")),
         )
         db.commit()
-        flash("Проект {} создан".format(code), "success")
+        flash(_("Проект %(code)s создан", code=code), "success")
         return redirect(url_for("project_detail", proj_id=proj_id))
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
         return render_template("projects/form.html", counterparties=counterparties), 400
 
 
@@ -536,7 +561,7 @@ def project_status_change(proj_id):
 
     valid = PROJECT_TRANSITIONS.get(proj["status"], [])
     if to_status not in valid:
-        flash("Недопустимый переход", "error")
+        flash(_("Недопустимый переход"), "error")
         return redirect(url_for("project_detail", proj_id=proj_id))
 
     try:
@@ -547,11 +572,11 @@ def project_status_change(proj_id):
             (make_id("psh", proj_id, to_status), proj_id, proj["status"], to_status, "web_user", now, reason),
         )
         db.commit()
-        flash("Статус проекта изменён", "success")
+        flash(_("Статус проекта изменён"), "success")
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
     return redirect(url_for("project_detail", proj_id=proj_id))
 
 
@@ -588,12 +613,12 @@ def journal_new(proj_id):
         for act_id in request.form.getlist("linked_act_ids"):
             db.execute("INSERT INTO project_journal_act (journal_id, act_id) VALUES (?,?)", (entry_id, act_id))
         db.commit()
-        flash("Запись журнала добавлена", "success")
+        flash(_("Запись журнала добавлена"), "success")
         return redirect(url_for("project_detail", proj_id=proj_id))
     except Exception as exc:
         if db.in_transaction:
             db.rollback()
-        flash("Ошибка: {}".format(exc), "error")
+        flash(_("Ошибка: %(error)s", error=exc), "error")
         return render_template("journal/form.html", project=proj, linked_acts=linked_acts), 400
 
 
@@ -634,9 +659,9 @@ def regenerate_artifacts():
             capture_output=True,
             text=True,
         )
-        flash("HTML-артефакты обновлены", "success")
+        flash(_("HTML-артефакты обновлены"), "success")
     except Exception as exc:
-        flash("Ошибка регенерации: {}".format(exc), "error")
+        flash(_("Ошибка регенерации: %(error)s", error=exc), "error")
     return redirect(request.referrer or url_for("dashboard"))
 
 

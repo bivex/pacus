@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Превью акта {{ act.act_number }}{% endblock %}
+{% block title %}{{ _('Превью акта') }} {{ act.act_number }}{% endblock %}
 
 {% block content %}
 <div class="ui secondary menu">
-  <a href="/acts/{{ act.id }}" class="item"><i class="arrow left icon"></i> К акту</a>
-  <a href="javascript:window.print()" class="item"><i class="print icon"></i> Печать</a>
+  <a href="/acts/{{ act.id }}" class="item"><i class="arrow left icon"></i> {{ _('К акту') }}</a>
+  <a href="javascript:window.print()" class="item"><i class="print icon"></i> {{ _('Печать') }}</a>
 </div>
 
 <div class="ui segment" style="padding:0; border:none; box-shadow:none;">
@@ -17,6 +17,29 @@
 var actData = {{ act|tojson }};
 var items = {{ items|tojson }};
 var revision = {% if revision %}{{ revision|tojson }}{% else %}null{% endif %};
+
+var I18N = {
+  act: "{{ _('Акт') }}",
+  act_certificate: "{{ _('АКТ №') }}",
+  work_certificate: "{{ _('о выполнении работ по договору №') }}",
+  from_word: "{{ _('от') }}",
+  customer: "{{ _('Заказчик') }}",
+  inn: "{{ _('ИНН') }}",
+  kpp: "{{ _('КПП') }}",
+  contractor: "{{ _('Исполнитель') }}",
+  period_from: "{{ _('Период: с') }}",
+  period_to: "{{ _('по') }}",
+  work_cost: "{{ _('1. Стоимость работ') }}",
+  col_no: "№",
+  col_name: "{{ _('Наименование') }}",
+  col_unit: "{{ _('Ед.') }}",
+  col_qty: "{{ _('Кол-во') }}",
+  col_price: "{{ _('Цена') }}",
+  col_sum: "{{ _('Сумма') }}",
+  col_vat: "{{ _('НДС') }}",
+  col_sum_vat: "{{ _('Сумма с НДС') }}",
+  total: "{{ _('Итого') }}"
+};
 
 function fmtAmount(minor) {
   if (minor == null) return '—';
@@ -53,28 +76,28 @@ function buildHtml() {
       '</tr>';
   }).join('');
 
-  return '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">' +
-    '<title>Акт ' + a.act_number + '</title>' +
+  return '<!DOCTYPE html><html lang="' + '{{ current_locale }}' + '"><head><meta charset="UTF-8">' +
+    '<title>' + I18N.act + ' ' + a.act_number + '</title>' +
     '<style>body{font-family:serif;max-width:210mm;margin:0 auto;padding:20mm;font-size:11pt}' +
     'table{width:100%;border-collapse:collapse}th,td{border:1px solid #333;padding:4px 8px;font-size:10pt}' +
     'th{background:#eee;text-align:center}.r{text-align:right}' +
     'h1{font-size:14pt;text-align:center}h2{font-size:12pt}' +
     '.sign{display:flex;justify-content:space-between;margin-top:40mm}.sign div{width:40%}' +
     '@media print{body{padding:10mm}}</style></head><body>' +
-    '<h1>АКТ № ' + a.act_number + '</h1>' +
-    '<p>о выполнении работ по договору № ' + a.contract_number + ' от ' + fmtDate(a.contract_date) + '</p>' +
-    '<p><strong>Заказчик:</strong> ' + a.counterparty_name +
-    (a.counterparty_inn ? ', ИНН ' + a.counterparty_inn : '') +
-    (a.counterparty_kpp ? ', КПП ' + a.counterparty_kpp : '') +
+    '<h1>' + I18N.act_certificate + ' ' + a.act_number + '</h1>' +
+    '<p>' + I18N.work_certificate + a.contract_number + ' ' + I18N.from_word + ' ' + fmtDate(a.contract_date) + '</p>' +
+    '<p><strong>' + I18N.customer + ':</strong> ' + a.counterparty_name +
+    (a.counterparty_inn ? ', ' + I18N.inn + ' ' + a.counterparty_inn : '') +
+    (a.counterparty_kpp ? ', ' + I18N.kpp + ' ' + a.counterparty_kpp : '') +
     (a.counterparty_address ? ', ' + a.counterparty_address : '') + '</p>' +
-    '<p><strong>Исполнитель:</strong> ' + a.tenant_name + '</p>' +
-    '<p>Период: с ' + fmtDate(a.period_from) + ' по ' + fmtDate(a.period_to) + '</p>' +
-    '<h2>1. Стоимость работ</h2>' +
-    '<table><thead><tr><th>№</th><th>Наименование</th><th>Ед.</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>НДС</th><th>Сумма с НДС</th></tr></thead>' +
+    '<p><strong>' + I18N.contractor + ':</strong> ' + a.tenant_name + '</p>' +
+    '<p>' + I18N.period_from + ' ' + fmtDate(a.period_from) + ' ' + I18N.period_to + ' ' + fmtDate(a.period_to) + '</p>' +
+    '<h2>' + I18N.work_cost + '</h2>' +
+    '<table><thead><tr><th>' + I18N.col_no + '</th><th>' + I18N.col_name + '</th><th>' + I18N.col_unit + '</th><th>' + I18N.col_qty + '</th><th>' + I18N.col_price + '</th><th>' + I18N.col_sum + '</th><th>' + I18N.col_vat + '</th><th>' + I18N.col_sum_vat + '</th></tr></thead>' +
     '<tbody>' + rows + '</tbody>' +
-    '<tfoot><tr><th colspan="5">Итого</th><th class="r">' + fmtAmount(total) + '</th><th class="r">' + fmtAmount(vatTotal) + '</th><th class="r">' + fmtAmount(total + vatTotal) + '</th></tr></tfoot>' +
+    '<tfoot><tr><th colspan="5">' + I18N.total + '</th><th class="r">' + fmtAmount(total) + '</th><th class="r">' + fmtAmount(vatTotal) + '</th><th class="r">' + fmtAmount(total + vatTotal) + '</th></tr></tfoot>' +
     '</table>' +
-    '<div class="sign"><div>________________ / Заказчик /</div><div>________________ / Исполнитель /</div></div>' +
+    '<div class="sign"><div>________________ / ' + I18N.customer + ' /</div><div>________________ / ' + I18N.contractor + ' /</div></div>' +
     '</body></html>';
 }
 
