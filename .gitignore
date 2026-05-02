@@ -18,3 +18,5 @@ data/sqlite/*.sqlite-wal
 # Local binaries / caches
 bin/nocodb
 scripts/__pycache__/
+/.playwright-mcp
+console_full.log

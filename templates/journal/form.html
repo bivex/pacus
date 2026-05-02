@@ -122,9 +122,11 @@
       <i class="plus icon"></i> {{ _('Добавить запись') }}
     </button>
     <a href="/projects/{{ project.id }}" class="ui large button">{{ _('Отмена') }}</a>
-  </div>
-</form>
+   </div>
+ </form>
+ {% endblock %}
 
+{% block scripts %}
 <script>
 $(document).ready(function() {
   $('.ui.dropdown').dropdown();
