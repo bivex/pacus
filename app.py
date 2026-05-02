@@ -692,7 +692,7 @@ def project_detail(proj_id):
     project = dict(project)
 
     acts = db.execute(
-        """SELECT wa.id, wa.act_number, wa.act_date, wa.status AS act_status,
+        """SELECT wa.id AS act_id, wa.act_number, wa.act_date, wa.status AS act_status,
                   wa.grand_total_amount_minor, wa.period_from, wa.period_to,
                   c.contract_number, c.contract_date,
                   cp.full_name AS counterparty_name
@@ -705,7 +705,7 @@ def project_detail(proj_id):
     ).fetchall()
 
     journal = db.execute(
-        "SELECT id, entry_date, kind, title, decision_made FROM project_journal "
+        "SELECT id, entry_date, kind, title, body, decision_made FROM project_journal "
         "WHERE project_id = ? ORDER BY entry_date DESC, recorded_at DESC",
         (proj_id,),
     ).fetchall()
