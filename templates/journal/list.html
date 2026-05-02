@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Журнал проектов') }}{% endblock %}
+
+{% block content %}
+<div class="ui breadcrumb" style="margin-bottom: 1em;">
+  <a class="section" href="/">{{ _('Главная') }}</a>
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ _('Журнал') }}</div>
+</div>
+
+<h2 class="ui header" style="color: #1b1c1d;">
+  <i class="book icon orange"></i>
+  {{ _('Журнал проектов') }}
+</h2>
+
+{% if entries %}
+<div class="ui feed" style="margin-top: 1.5em;">
+  {% for j in entries %}
+  <div class="event" style="padding: 1em 0; border-bottom: 1px solid #eee;">
+    <div class="label">
+      {% set jicon = {
+        'meeting': 'users',
+        'call': 'phone',
+        'email': 'envelope',
+        'note': 'sticky note',
+        'milestone': 'flag',
+        'decision': 'gavel',
+        'result': 'trophy'
+      }.get(j.kind, 'circle') %}
+      <i class="ui {{ {
+        'meeting': 'blue',
+        'call': 'teal',
+        'email': 'orange',
+        'note': 'yellow',
+        'milestone': 'red',
+        'decision': 'purple',
+        'result': 'green'
+      }.get(j.kind, 'grey') }} icon {{ jicon }}"></i>
+    </div>
+    <div class="content">
+      <div class="summary" style="font-weight: 600; font-size: 1.05em;">
+        <a href="/projects/{{ j.project_id }}">{{ j.project_code }}</a> — {{ j.title }}
+        <div class="date" style="float: right; color: #888; font-weight: 400;">{{ j.entry_date|fmt_date }}</div>
+      </div>
+      <div class="meta">
+        <span class="ui tiny label" style="margin-top: 0.3em;">
+          <i class="tag icon"></i> {{ j.kind|capitalize }}
+        </span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="ui placeholder segment" style="border-radius: 10px; min-height: 180px;">
+  <div class="ui icon header">
+    <i class="book icon"></i>
+    {{ _('Журнал пуст — записи появятся после добавления их в проекты') }}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

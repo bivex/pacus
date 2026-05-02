@@ -906,6 +906,23 @@ def journal_new(proj_id):
 
 
 # ---------------------------------------------------------------------------
+# Journal list (all projects)
+# ---------------------------------------------------------------------------
+@app.route("/journal")
+def journal_list():
+    db = get_db()
+    entries = db.execute(
+        "SELECT j.id, j.entry_date, j.kind, j.title, j.project_id, p.code AS project_code "
+        "FROM project_journal j "
+        "JOIN project p ON p.id = j.project_id "
+        "WHERE j.tenant_id = ? "
+        "ORDER BY j.entry_date DESC, j.recorded_at DESC",
+        (TENANT_ID,),
+    ).fetchall()
+    return render_template("journal/list.html", entries=entries)
+
+
+# ---------------------------------------------------------------------------
 # API endpoints
 # ---------------------------------------------------------------------------
 @app.route("/api/contracts")
