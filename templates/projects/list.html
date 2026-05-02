@@ -23,7 +23,7 @@
 
 <!-- Filter menu -->
 <div class="ui horizontal forest card menu" style="background: transparent; border: none; box-shadow: none;">
-  <a class="item {% if not current_filter %}active teal{% endif %}" href="/projects">
+  <a class="item {% if not current_filter %}active teal{% endif %}" href="/projects" {% if not current_filter %}style="background-color: #187a6e; color: #fff;"{% endif %}>
     <i class="grid layout icon"></i>
     {{ _('Все') }}
   </a>
@@ -68,7 +68,7 @@
               {% endif %}
             </span>
             {% if p.signed_total_minor > 0 %}
-            <span class="ui tiny orange label" style="float: right; margin: 0; background-color: #c45e15;">
+            <span class="ui tiny orange label" style="float: right; margin: 0; background-color: #a85010;">
               {{ p.signed_total_minor|rubles }}
             </span>
             {% endif %}

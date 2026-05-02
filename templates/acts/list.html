@@ -23,7 +23,7 @@
 
 <!-- Filter menu with icons -->
 <div class="ui horizontal forest card menu" style="background: transparent; border: none; box-shadow: none;">
-  <a class="item {% if not current_filter %}active teal{% endif %}" href="/acts">
+  <a class="item {% if not current_filter %}active teal{% endif %}" href="/acts" {% if not current_filter %}style="background-color: #187a6e; color: #fff;"{% endif %}>
     <i class="grid layout icon"></i>
     {{ _('Все') }}
   </a>
@@ -60,7 +60,7 @@
             </small>
           </div>
           <div class="eight wide right aligned column">
-            <div class="ui orange large label" style="font-size: 1.1em; padding: 0.5em 1em; background-color: #c45e15;">
+            <div class="ui orange large label" style="font-size: 1.1em; padding: 0.5em 1em; background-color: #a85010;">
               <i class="ruble sign icon"></i> {{ a.grand_total_amount_minor|rubles }}
             </div>
           </div>
