@@ -408,11 +408,22 @@ a[href*="preview"]:hover {
 /* ===========================================
    Contrast fixes — Fomantic UI overrides
    =========================================== */
-.ui.green.label {
-  background-color: #1a7f37 !important;
-  border-color: #1a7f37 !important;
+/* Orange labels — match Fomantic .ui.ui.ui.orange.label specificity */
+.ui.ui.ui.orange.label,
+.ui.orange.labels .label,
+.ui.orange.labels .label.label {
+  background-color: #c45e15 !important;
+  border-color: #c45e15 !important;
+  color: #fff !important;
 }
-.ui.tiny.green.label {
+/* Teal active menu items — match Fomantic specificity */
+.ui.ui.ui.menu .teal.active.item,
+.ui.ui.teal.menu .active.item {
+  background-color: #1a8a7a !important;
+  color: #fff !important;
+}
+/* Green labels */
+.ui.ui.ui.green.label {
   background-color: #1a7f37 !important;
   border-color: #1a7f37 !important;
 }

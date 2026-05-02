@@ -41,7 +41,7 @@
   <div class="card" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: none; transition: transform 0.2s ease, box-shadow 0.2s ease; overflow: hidden;">
     <div class="content" style="padding: 1.5em 1.5em 1em 1.5em;">
       <div class="header" style="font-size: 1.3em; font-weight: 700; margin-bottom: 0.3em;">
-        <a href="/projects/{{ p.id }}" style="color: #2185d0; text-decoration: none;">
+        <a href="/projects/{{ p.id }}" style="text-decoration: none;">
           <i class="folder outline icon"></i> {{ p.code }}
         </a>
       </div>
@@ -68,7 +68,7 @@
               {% endif %}
             </span>
             {% if p.signed_total_minor > 0 %}
-            <span class="ui tiny orange label" style="float: right; margin: 0;">
+            <span class="ui tiny orange label" style="float: right; margin: 0; background-color: #c45e15;">
               {{ p.signed_total_minor|rubles }}
             </span>
             {% endif %}
