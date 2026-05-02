@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS project_journal (
   project_id    TEXT NOT NULL REFERENCES project(id) ON DELETE RESTRICT,
   tenant_id     TEXT NOT NULL REFERENCES tenant(id)  ON DELETE RESTRICT,
   entry_date    TEXT NOT NULL,
-  kind          TEXT NOT NULL CHECK (kind IN ('decision', 'result', 'note', 'milestone')),
+   kind          TEXT NOT NULL CHECK (kind IN ('meeting', 'call', 'email', 'note', 'milestone', 'decision', 'result')),
   title         TEXT NOT NULL,
   body          TEXT,
   decision_made TEXT,
