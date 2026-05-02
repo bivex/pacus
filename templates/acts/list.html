@@ -36,7 +36,7 @@
 </div>
 
 {% if acts %}
-<div class="ui relaxed divided卡片列表" style="margin-top: 2em;">
+<div class="ui relaxed divided list" style="margin-top: 2em;">
   {% for a in acts %}
   <div class="ui card" style="border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 1em; border: 1px solid #f0f0f0;">
     <div class="content" style="padding: 1.25em 1.5em;">
@@ -69,15 +69,16 @@
     </div>
     <div class="extra content" style="background: #f8f9fa; padding: 0.8em 1.5em; border-top: 1px solid #eee; border-radius: 0 0 10px 10px;">
       <div class="ui mini labels">
-        {% set st = {
-          'draft': ('gray', 'file alternate'),
-          'generated': ('blue', 'cog'),
-          'sent': ('orange', 'paper plane'),
-          'signed': ('green', 'check circle'),
-          'corrected': ('yellow', 'sync')
-        }.get(a.status, ('grey', 'question')) %}
-        <span class="ui {{ st[0] }} label">
-          <i class="{{ st[1] }} icon"></i>
+        <span class="ui label status-{{ a.status }}">
+          {% set st_icon = {
+            'draft': 'file alternate',
+            'generated': 'cog',
+            'sent': 'paper plane',
+            'signed': 'check circle',
+            'corrected': 'sync',
+            'cancelled': 'cancel'
+          }.get(a.status, 'question') %}
+          <i class="{{ st_icon }} icon"></i>
           {{ STATUS_LABELS.get(a.status, a.status) }}
         </span>
       </div>

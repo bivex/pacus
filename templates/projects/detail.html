@@ -63,13 +63,7 @@
             {{ _('Статус') }}
           </div>
           <div>
-            {% set scolor = {
-              'active': 'green',
-              'on_hold': 'yellow',
-              'completed': 'blue',
-              'cancelled': 'red'
-            }.get(project.status, 'grey') %}
-            <span class="ui {{ scolor }} large label" style="font-size: 1.1em; padding: 0.5em 1em;">{{ STATUS_LABELS.get(project.status, project.status) }}</span>
+            <span class="ui label status-{{ project.status }}" style="font-size: 1.1em; padding: 0.5em 1em;">{{ STATUS_LABELS.get(project.status, project.status) }}</span>
           </div>
         </div>
       </div>

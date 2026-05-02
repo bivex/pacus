@@ -58,15 +58,7 @@
           </div>
         </div>
         <div class="ten wide column" style="padding: 1.5em 1.5em 1.5em 0; text-align: right;">
-          {% set stcolor = {
-            'draft': 'grey',
-            'generated': 'blue',
-            'sent': 'orange',
-            'signed': 'green',
-            'corrected': 'yellow'
-          }.get(act.status, 'grey') %}
-          <div class="ui {{ stcolor }} massive label" style="font-size: 1.5em; padding: 0.6em 1.5em; letter-spacing: 1px;">
-            <i class="status-{{ act.status }} icon"></i>
+          <div class="ui label status-{{ act.status }}" style="font-size: 1.5em; padding: 0.6em 1.5em; letter-spacing: 0.04em;">
             {{ STATUS_LABELS.get(act.status, act.status) }}
           </div>
         </div>

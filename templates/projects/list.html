@@ -78,14 +78,7 @@
     </div>
     <div class="extra content" style="background: #f8f9fa; padding: 0.8em 1.5em; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
       <div>
-        {% set pcolor = {
-          'active': 'green',
-          'on_hold': 'yellow',
-          'completed': 'blue',
-          'cancelled': 'red'
-        }.get(p.status, 'grey') %}
-        <span class="ui {{ pcolor }} tiny label">
-          <i class="status-{{ p.status }} icon"></i>
+        <span class="ui tiny label status-{{ p.status }}">
           {{ STATUS_LABELS.get(p.status, p.status) }}
         </span>
       </div>
