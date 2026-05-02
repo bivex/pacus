@@ -406,6 +406,37 @@ a[href*="preview"]:hover {
 }
 
 /* ===========================================
+   Contrast fixes — Fomantic UI overrides
+   =========================================== */
+.ui.green.label {
+  background-color: #1a7f37 !important;
+  border-color: #1a7f37 !important;
+}
+.ui.tiny.green.label {
+  background-color: #1a7f37 !important;
+  border-color: #1a7f37 !important;
+}
+.ui.items > .item .meta,
+.ui.list > .item .meta,
+.ui.card .meta,
+.ui.cards > .card .meta {
+  color: #595959 !important;
+}
+.ui.items > .item .description,
+.ui.list > .item .description,
+.ui.list .list > .item .description,
+.ui.card .description,
+.ui.cards > .card .description {
+  color: #595959 !important;
+}
+.ui.header .sub.header {
+  color: #595959 !important;
+}
+.ui.feed > .event .content .extra.text {
+  color: #595959 !important;
+}
+
+/* ===========================================
    Pusher offset — prevents CLS from sidebar
    =========================================== */
 .pusher {
