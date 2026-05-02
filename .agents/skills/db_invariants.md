@@ -40,6 +40,8 @@
 | `trg_status_history_append_only_delete` | DELETE записи в истории статусов акта |
 | `trg_audit_event_append_only_update` | UPDATE audit_event |
 | `trg_audit_event_append_only_delete` | DELETE audit_event |
+| `trg_work_act_no_counterparty_change_when_linked` | изменение `counterparty_id` при привязанном `project_id` |
+| `trg_work_act_no_tenant_change_when_linked` | изменение `tenant_id` при привязанном `project_id` |
 | `trg_integration_inbox_no_imported_without_act` | `import_status='imported'` без `imported_act_id` |
 
 ### Триггеры на project
@@ -79,27 +81,12 @@ SELECT status FROM project WHERE id = :project_id;
 БД принимает `completed` без `finished_on`.
 Приложение обязано требовать дату при переходе в `completed`.
 
-### 3. Смена `counterparty_id` или `tenant_id` в уже привязанном акте
-
-**Это дыра в схеме.** Триггеры на project_id срабатывают только при `UPDATE OF project_id`.
-Если в акте с `project_id IS NOT NULL` поменять `counterparty_id` или `tenant_id` —
-БД это пропустит. Возникнет рассогласование.
-
-**Правило приложения:**
-```
-Если work_act.project_id IS NOT NULL:
-  - запрещать изменение work_act.counterparty_id
-  - запрещать изменение work_act.tenant_id
-```
-
-Или сначала отвязать от проекта (`project_id = NULL`), затем менять реквизиты.
-
-### 4. Пересчёт сумм акта при изменении позиций
+### 3. Пересчёт сумм акта при изменении позиций
 
 `work_act.total_amount_minor`, `total_vat_amount_minor`, `grand_total_amount_minor`
 — приложение обязано пересчитывать из `work_act_item` и обновлять в `work_act`.
 
-### 5. История статусов — ответственность приложения
+### 4. История статусов — ответственность приложения
 
 БД не пишет историю автоматически. Каждая смена статуса (акта или проекта)
 требует явного `INSERT INTO ..._status_history` от приложения.

@@ -80,8 +80,8 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | # | Recommendation | Status | Evidence/Location | Action Needed |
 |---|-------------------|--------|----------------------|---------------|
 | 6.11.1 | Identity clearly presented | ⚠️ Partial | `tenant_name` in footer | Add company name consistently |
-| 6.11.2 | Contact channels provided | ❌ Fail | No contact info | Add email/phone |
-| 6.11.3 | Metadata for identification | ❌ Fail | No meta tags | Add `<meta>` tags |
+| 6.11.2 | Contact channels provided | ✅ Pass | `contact.html` with email/phone | None |
+| 6.11.3 | Metadata for identification | ✅ Pass | `<meta charset>`, `<meta viewport>` on all pages | None |
 
 ### 6.12 Coherent Multi-Site Strategy
 
@@ -110,15 +110,15 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | # | Recommendation | Status | Evidence/Location | Action Needed |
 |---|-------------------|--------|----------------------|---------------|
 | 7.2.1 | Content objects defined | ✅ Pass | Tables, buttons, links | None |
-| 7.2.2 | Independence of content/structure/presentation | ❌ Fail | Inline CSS | Separate CSS to external file |
+| 7.2.2 | Independence of content/structure/presentation | ✅ Pass | CSS in external `style.css`, linked via `<link>` | None |
 | 7.2.3 | Appropriate media selected | ✅ Pass | HTML only, no multimedia | None |
 | 7.2.3.2 | Text equivalents for non-text media | ❌ Fail | No alt text | Add `alt` attributes |
 | 7.2.3.3 | Control of time-dependent media | N/A | No time-dependent media | Not applicable |
 | 7.2.4 | Content kept up-to-date | ✅ Pass | Static HTML, no expiry | None |
 | 7.2.5 | Date/time of last update | ❌ Fail | No timestamp | Add "Generated: [date]" |
-| 7.2.6 | Communication with website owner | ❌ Fail | No contact mechanism | Add feedback link |
-| 7.2.7 | Accepting online user feedback | ❌ Fail | No feedback form | Add feedback mechanism |
-| 7.2.8.1 | Privacy policy provided | ❌ Fail | None | Create privacy policy |
+| 7.2.6 | Communication with website owner | ✅ Pass | `feedback.html` with form + email/phone | None |
+| 7.2.7 | Accepting online user feedback | ✅ Pass | `feedback.html` form with type/subject/message | None |
+| 7.2.8.1 | Privacy policy provided | ✅ Pass | `privacy.html` created and linked in footer | None |
 | 7.2.8.2 | Business policy provided | ⚠️ Partial | `QUALITY_POLICY.md` | Link to policy |
 | 7.2.9.1 | Individualization/adaptation used | ⚠️ Partial | Currency selector only | Add more personalization |
 | 7.2.9.2 | Taking account of user tasks | ⚠️ Partial | Currency matches user need | Expand personalization |
@@ -189,27 +189,27 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | # | Recommendation | Status | Evidence/Location | Action Needed |
 |---|-------------------|--------|----------------------|---------------|
-| 8.5.1 | Search mechanisms provided | ❌ Fail | None | Add search function |
-| 8.5.2.1 | Search function | ❌ Fail | None | Implement search |
-| 8.5.2.2 | Appropriate search functions | ❌ Fail | None | Choose search type |
-| 8.5.2.3 | Simple search function | ❌ Fail | None | Add simple search |
-| 8.5.2.4 | Advanced search | ❌ Fail | None | Consider advanced search |
-| 8.5.2.5 | Full text search | ❌ Fail | None | Index content |
-| 8.5.2.6 | Describing search technique | ❌ Fail | None | Explain search syntax |
-| 8.5.2.7 | Availability of search | ❌ Fail | None | Add to all pages |
-| 8.5.2.8 | Error-tolerant search | ❌ Fail | None | Handle typos |
-| 8.5.3.1 | Ordering search results | ❌ Fail | No search | Define ordering |
-| 8.5.3.2 | Relevance-based ranking | ❌ Fail | No search | Implement ranking |
-| 8.5.3.3 | Descriptiveness of results | ❌ Fail | No search | Describe results |
-| 8.5.3.4 | Sorting/filtering results | ❌ Fail | No search | Add filters |
-| 8.5.4.1 | Scope of search | ❌ Fail | No search | Define scope |
-| 8.5.4.2 | Selecting scope | ❌ Fail | No search | Allow scope selection |
-| 8.5.4.3 | Feedback on volume | ❌ Fail | No search | Show result count |
-| 8.5.4.4 | Handling large result sets | ❌ Fail | No search | Paginate results |
-| 8.5.4.5 | Showing query with results | ❌ Fail | No search | Show search query |
-| 8.5.5.1 | Advice for unsuccessul searches | ❌ Fail | No search | Suggest alternatives |
-| 8.5.5.2 | Repeating searches | ❌ Fail | No search | Allow new search |
-| 8.5.5.3 | Refining searches | ❌ Fail | No search | Add filters |
+| 8.5.1 | Search mechanisms provided | ✅ Pass | Client-side search on project cards | None |
+| 8.5.2.1 | Search function | ✅ Pass | JS search in `gen_artifacts.py` project cards | None |
+| 8.5.2.2 | Appropriate search functions | ✅ Pass | Text search across tables and content | None |
+| 8.5.2.3 | Simple search function | ✅ Pass | Single text input, 2+ char threshold | None |
+| 8.5.2.4 | Advanced search | ⚠️ Partial | Basic text search only | Add filters |
+| 8.5.2.5 | Full text search | ✅ Pass | Searches page title + all table content | None |
+| 8.5.2.6 | Describing search technique | ⚠️ Partial | Placeholder text in input | Add help text |
+| 8.5.2.7 | Availability of search | ✅ Pass | On every project card page | None |
+| 8.5.2.8 | Error-tolerant search | ⚠️ Partial | Case-insensitive, no typo handling | Add fuzzy match |
+| 8.5.3.1 | Ordering search results | ✅ Pass | Results grouped by type (title, table rows) | None |
+| 8.5.3.2 | Relevance-based ranking | ⚠️ Partial | Title matches shown first | Improve ranking |
+| 8.5.3.3 | Descriptiveness of results | ✅ Pass | Shows match type + context text | None |
+| 8.5.3.4 | Sorting/filtering results | ⚠️ Partial | No sort/filter controls | Add filters |
+| 8.5.4.1 | Scope of search | ✅ Pass | Searches entire page content | None |
+| 8.5.4.2 | Selecting scope | ❌ Fail | No scope selector | Add scope filter |
+| 8.5.4.3 | Feedback on volume | ✅ Pass | Shows match count: "Найдено (N)" | None |
+| 8.5.4.4 | Handling large result sets | ⚠️ Partial | No pagination | Add limits |
+| 8.5.4.5 | Showing query with results | ⚠️ Partial | Query in input only | Echo query in results |
+| 8.5.5.1 | Advice for unsuccessul searches | ✅ Pass | Shows "Ничего не найдено" message | None |
+| 8.5.5.2 | Repeating searches | ✅ Pass | Input stays active, re-search on type | None |
+| 8.5.5.3 | Refining searches | ✅ Pass | Live search as user types | None |
 
 ---
 
@@ -220,7 +220,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | # | Recommendation | Status | Evidence/Location | Action Needed |
 |---|-------------------|--------|----------------------|---------------|
 | 9.1.1 | Consult related standards | ✅ Pass | ISO 9241-12 applied | None |
-| 9.1.2 | Content/presentation separated | ❌ Fail | Inline CSS | Separate CSS |
+| 9.1.2 | Content/presentation separated | ✅ Pass | CSS in external `style.css` | None |
 
 ### 9.2 Observing Principles of Human Perception
 
@@ -287,7 +287,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 | 9.6.2 | Supporting text skimming | ✅ Pass | Headings, tables | None |
 | 9.6.3 | Writing style | ✅ Pass | Clear Russian sentences | None |
 | 9.6.4 | Text quality/readability | ✅ Pass | No spelling errors | None |
-| 9.6.5 | Identifying language used | ❌ Fail | No `lang="ru"` | Add lang attribute |
+| 9.6.5 | Identifying language used | ✅ Pass | `<html lang="ru">` on all pages | None |
 | 9.6.6 | Making text resizable | ✅ Pass | Browser zoom works | None |
 
 ---
@@ -308,9 +308,9 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | # | Recommendation | Status | Evidence/Location | Action Needed |
 |---|-------------------|--------|----------------------|---------------|
-| 10.2.1 | Providing help information | ❌ Fail | No help system | Add FAQ section |
-| 10.2.2 | Where to place help | ❌ Fail | No help link | Add help link |
-| 10.2.3 | Making help easily accessible | ❌ Fail | No help | Make help accessible |
+| 10.2.1 | Providing help information | ✅ Pass | FAQ on `feedback.html`, accessibility docs | None |
+| 10.2.2 | Where to place help | ✅ Pass | Help links in footer of all pages | None |
+| 10.2.3 | Making help easily accessible | ✅ Pass | Footer links on every page | None |
 
 ### 10.3 Making Web User Interfaces Error-Tolerant
 
@@ -367,67 +367,57 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Clause | Compliant | Partial | Non-Compliant | Score |
 |--------|-----------|----------|-----------------|-------|
-| 6. High-Level Design | 6 | 3 | 2 | 67% |
-| 7. Content Design | 8 | 4 | 4 | 50% |
-| 8. Navigation | 12 | 2 | 4 | 67% |
-| 9. Content Presentation | 15 | 2 | 3 | 75% |
-| 10. General Design | 10 | 0 | 3 | 77% |
+| 6. High-Level Design | 8 | 3 | 0 | 89% |
+| 7. Content Design | 12 | 4 | 1 | 70% |
+| 8. Navigation | 31 | 6 | 1 | 82% |
+| 9. Content Presentation | 18 | 2 | 0 | 90% |
+| 10. General Design | 13 | 0 | 0 | 100% |
 
-**Overall Score**: ~58% — **Needs improvement**
+**Overall Score**: ~86% — **Substantially compliant**
 
 ---
 
 ## 7. Priority Action Plan
 
-### High Priority (Fix by 2026-06-01)
+### High Priority (Completed 2026-05-02)
 
-1. **Add contact information** (Clause 6.11.2)
-   - Add email, phone to footer of all pages
-   - Create "Контакты" page
+1. ✅ **Add contact information** (Clause 6.11.2)
+   - `contact.html` created with email, phone, working hours
 
-2. **Add privacy policy** (Clause 7.2.8.1)
-   - Create `PRIVACY_POLICY.md`
-   - Link from footer
+2. ✅ **Add privacy policy** (Clause 7.2.8.1)
+   - `privacy.html` created with data handling, user rights, contacts
 
-3. **Add feedback mechanism** (Clause 7.2.6-7.2.7)
-   - Add feedback link to footer
-   - Create feedback form (Google Forms or similar)
+3. ✅ **Add feedback mechanism** (Clause 7.2.6-7.2.7)
+   - `feedback.html` already existed with form + FAQ
 
-4. **Separate CSS from content** (Clause 7.2.2, 9.1.2, 9.5.2)
-   - Extract inline CSS to `style.css`
-   - Link via `<link>` tag
+4. ✅ **Separate CSS from content** (Clause 7.2.2, 9.1.2, 9.5.2)
+   - CSS already in external `style.css` linked via `<link>`
 
-### Medium Priority (Fix by 2026-07-01)
+5. ✅ **Add search function** (Clause 8.5)
+   - Client-side JS search on project card pages
 
-5. **Add site map** (Clause 8.4.8)
+6. ✅ **Add language attribute** (Clause 9.6.5)
+   - `<html lang="ru">` already on all pages
+
+7. ✅ **Add help section** (Clause 10.2)
+   - FAQ on feedback.html, accessibility docs, help links in footer
+
+### Remaining Medium Priority (Fix by 2026-07-01)
+
+8. **Add site map** (Clause 8.4.8)
    - Create `sitemap.html`
-   - Link from footer
 
-6. **Add search function** (Clause 8.5)
-   - Implement client-side search (JavaScript)
-   - Index all artifact content
+9. **Improve search** (Clause 8.5)
+   - Add scope selector, fuzzy matching, pagination
 
-7. **Add text-only alternative** (Clause 9.3.12)
-   - Create simplified HTML version
-   - Link from footer
-
-8. **Add language attribute** (Clause 9.6.5)
-   - Add `lang="ru"` to `<html>` tag
-   - Add `lang="en"` where English terms used
+10. **Add text-only alternative** (Clause 9.3.12)
+    - Create simplified HTML version
 
 ### Low Priority (Fix by 2026-08-01)
 
-9. **Add sitemap.xml** for search engines
-   - Generate `sitemap.xml`
-   - Submit to search engines
+11. **Add sitemap.xml** for search engines
 
-10. **Add FAQ section** (Clause 10.2)
-    - Create `FAQ.md`
-    - Link from help section
-
-11. **Add "Generated on" timestamp** (Clause 7.2.5)
-    - Add `<meta>` tag with generation date
-    - Show date in footer
+12. **Add "Generated on" timestamp** (Clause 7.2.5)
 
 ---
 
@@ -435,6 +425,7 @@ This document provides a compliance checklist for pacus HTML artifacts (project 
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-05-02 | 1.1 | Contact, privacy, search, help, lang — all major gaps closed |
 | 2026-05-01 | 1.0 | Initial compliance checklist |
 
 ---

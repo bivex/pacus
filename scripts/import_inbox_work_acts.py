@@ -13,7 +13,7 @@ def utc_now() -> str:
 
 
 def make_id(prefix: str, *parts: str) -> str:
-    digest = hashlib.sha1("|".join(parts).encode("utf-8")).hexdigest()[:20]
+    digest = hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()[:20]
     return f"{prefix}_{digest}"
 
 
