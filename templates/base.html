@@ -55,13 +55,11 @@
       {% block content %}{% endblock %}
     </main>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      $('.message .close').on('click', function() { $(this).closest('.message').transition('fade'); });
-      $('.ui.dropdown').dropdown();
-    });
+    $('.message .close').on('click', function() { $(this).closest('.message').transition('fade'); });
+    $('.ui.dropdown').dropdown();
   </script>
   {% block scripts %}{% endblock %}
 </body>
