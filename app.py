@@ -633,7 +633,13 @@ def project_new():
     ).fetchall()
 
     if request.method == "GET":
-        return render_template("projects/form.html", counterparties=counterparties)
+        return render_template(
+            "projects/form.html",
+            counterparties=counterparties,
+            errors={},
+            selected_counterparty=None,
+            data={},
+        )
 
     cp_id = request.form.get("counterparty_id")
     code = request.form.get("code", "").strip()
@@ -642,6 +648,25 @@ def project_new():
     started_on = request.form.get("started_on", "").strip()
     now = utc_now()
     proj_id = make_id("proj", TENANT_ID, code)
+
+    errors = {}
+    if not cp_id:
+        errors["counterparty_id"] = _("Выберите контрагента")
+    if not code:
+        errors["code"] = _("Укажите код проекта")
+    if not name:
+        errors["name"] = _("Укажите название проекта")
+    if not started_on:
+        errors["started_on"] = _("Укажите дату начала")
+    if errors:
+        flash(_("Заполните все обязательные поля"), "error")
+        return render_template(
+            "projects/form.html",
+            counterparties=counterparties,
+            errors=errors,
+            selected_counterparty=cp_id,
+            data={"code": code, "name": name, "description": description, "started_on": started_on},
+        ), 400
 
     try:
         db.execute("BEGIN IMMEDIATE")
@@ -680,7 +705,13 @@ def project_new():
         if db.in_transaction:
             db.rollback()
         flash(_("Ошибка: %(error)s", error=exc), "error")
-        return render_template("projects/form.html", counterparties=counterparties), 400
+        return render_template(
+            "projects/form.html",
+            counterparties=counterparties,
+            errors={},
+            selected_counterparty=cp_id,
+            data={"code": code, "name": name, "description": description, "started_on": started_on},
+        ), 400
 
 
 @app.route("/projects/<proj_id>")
@@ -815,13 +846,19 @@ def journal_new(proj_id):
         abort(404)
 
     linked_acts = db.execute(
-        "SELECT wa.id, wa.act_number FROM work_act wa WHERE wa.project_id=? AND wa.deleted_at IS NULL ORDER BY wa.act_date",
+        "SELECT wa.id, wa.act_number, cp.full_name AS counterparty_name "
+        "FROM work_act wa "
+        "JOIN counterparty cp ON cp.id = wa.counterparty_id "
+        "WHERE wa.project_id=? AND wa.deleted_at IS NULL ORDER BY wa.act_date",
         (proj_id,),
     ).fetchall()
 
     if request.method == "GET":
         return render_template(
-            "journal/form.html", project=proj, linked_acts=linked_acts
+            "journal/form.html",
+            project=proj,
+            linked_acts=linked_acts,
+            now_date=datetime.now().strftime("%Y-%m-%d"),
         )
 
     kind = request.form.get("kind")
@@ -921,7 +958,7 @@ def serve_artifact(path):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pacus Web UI")
-    parser.add_argument("--port", type=int, default=5000)
+    parser.add_argument("--port", type=int, default=5001)
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
     app.run(host="127.0.0.1", port=args.port, debug=args.debug)
