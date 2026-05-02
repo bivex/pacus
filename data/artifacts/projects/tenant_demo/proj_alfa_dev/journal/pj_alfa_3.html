@@ -4,84 +4,36 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Решение: Апрельский акт аннулирован — работы перенесены на май</title>
-<style>
-@page { size: A4; margin: 16mm 14mm 18mm; }
-* { box-sizing: border-box; }
-body { margin: 0; background: #f3f4f6; color: #111827; font: 14px/1.45 Inter, "Segoe UI", Arial, sans-serif; }
-main { max-width: 860px; margin: 24px auto; background: #fff; padding: 18mm 16mm; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
-h1, h2, h3, p { margin: 0 0 10px; }
-h1 { font-size: 24px; }
-h2 { font-size: 16px; margin-top: 18px; }
-table { width: 100%; border-collapse: collapse; margin: 12px 0 16px; }
-th, td { border: 1px solid #d1d5db; padding: 8px 10px; vertical-align: top; }
-th { background: #f9fafb; text-align: left; }
-.topbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
-.muted { color: #6b7280; }
-.amount { text-align: right; white-space: nowrap; }
-.right { text-align: right; }
-.signature { height: 54px; border-bottom: 1px solid #9ca3af; margin-top: 24px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
-.no-print button, .no-print a, button { background: #111827; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; text-decoration: none; cursor: pointer; }
-.actions { display: flex; gap: 10px; }
-/* Screen reader only content (ISO 9241-171) */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-/* Zebra striping for visual scanning (ISO 9241-12) */
-tbody tr:nth-child(even) { background: #f9fafb; }
-/* Keyboard focus indicators (ISO 9241-171) */
-a:focus-visible, button:focus-visible { outline: 2px solid #005fcc; outline-offset: 2px; }
-/* Status text labels (ISO 9241-171 - not colour alone) */
-.status-label { font-size: 12px; padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
-.status-draft { background: #fef3c7; color: #92400e; }
-.status-generated { background: #dbeafe; color: #1e40af; }
-.status-sent { background: #fce7f3; color: #9a3412; }
-.status-signed { background: #dcfce7; color: #166534; }
-.status-cancelled { background: #fee2e2; color: #991b1b; }
-.status-corrected { background: #f3e8ff; color: #5b21b6; }
-@media print {
-  body { background: #fff; }
-  main { max-width: none; margin: 0; box-shadow: none; padding: 0; }
-  .no-print { display: none !important; }
-  thead { display: table-header-group; }
-  tr, img { break-inside: avoid; }
-  .status-label { background: transparent !important; color: #000 !important; border: 1px solid #000; }
-}
-</style>
-</head>
-<body>
-<main>
-  <div class="topbar no-print">
-    <div>
-      <h1>Решение: Апрельский акт аннулирован — работы перенесены на май</h1>
-      <p class="muted">03.04.2026 · Проект ALFA-DEV-2026</p>
-    </div>
-    <div class="actions">
-      <a href="/projects/tenant_demo/proj_alfa_dev/project-card.html" aria-label="Вернуться к карточке проекта">К проекту</a>
-      <a href="/index.html" aria-label="Вернуться к списку проектов">К списку</a>
-      <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
-    </div>
-  </div>
+ <link rel="stylesheet" href="/style.css">
+ </head>
+ <body>
+ <main role="main">
+    <nav aria-label="Основная навигация">
+    <div class="topbar no-print">
+     <div>
+       <h1>Решение: Апрельский акт аннулирован — работы перенесены на май</h1>
+       <p class="muted">03.04.2026 · Проект ALFA-DEV-2026</p>
+     </div>
+     <div class="actions">
+       <a href="/projects/tenant_demo/proj_alfa_dev/project-card.html" aria-label="Вернуться к карточке проекта">К проекту</a>
+       <a href="/index.html" aria-label="Вернуться к списку проектов">К списку</a>
+       <button onclick="window.print()" aria-label="Печать страницы">Печать</button>
+     </div>
+   </div>
+   </nav>
 
   <h1>Апрельский акт аннулирован — работы перенесены на май</h1>
 
-  <table>
-    <tbody>
-<tr><th style='width:28%'>Тип записи</th><td>Решение</td></tr>
-<tr><th style='width:28%'>Дата события</th><td>03.04.2026</td></tr>
-<tr><th style='width:28%'>Проект</th><td><a href="/projects/tenant_demo/proj_alfa_dev/project-card.html">ALFA-DEV-2026 — Разработка платформы актов</a></td></tr>
-<tr><th style='width:28%'>Записал</th><td>user_demo_manager</td></tr>
-<tr><th style='width:28%'>Записано</th><td>03.04.2026 14:00</td></tr>
+   <table aria-label="Детали записи журнала">
+     <caption class="sr-only">Детали записи журнала</caption>
+     <tbody>
+ <tr><th scope='row' style='width:28%'>Тип записи</th><td>Решение</td></tr>
+<tr><th scope='row' style='width:28%'>Дата события</th><td>03.04.2026</td></tr>
+<tr><th scope='row' style='width:28%'>Проект</th><td><a href="/projects/tenant_demo/proj_alfa_dev/project-card.html">ALFA-DEV-2026 — Разработка платформы актов</a></td></tr>
+<tr><th scope='row' style='width:28%'>Записал</th><td>user_demo_manager</td></tr>
+<tr><th scope='row' style='width:28%'>Записано</th><td>03.04.2026 14:00</td></tr>
     </tbody>
-  </table>
+   </table>
 
 <h2>Описание</h2><p>ООО «Альфа Инжиниринг» направило уведомление о внутренней реорганизации IT-департамента. В связи с этим все работы апреля приостановлены до 30.04.2026. Предварительный акт A-2026-004 на сумму 48 000 ₽ (с НДС) был подготовлен и передан контрагенту, однако до подписания не дошёл. Проведена сверка с бухгалтерией: акт не был проведён в учёте ни одной из сторон. Принято решение об аннулировании без финансовых последствий.</p>
 <h2>Принятое решение</h2><p>Акт A-2026-004 переведён в статус cancelled. Работы (предварительный аудит интеграции, 40 000 ₽ + НДС 8 000 ₽) будут перевыставлены отдельной строкой в акте за май 2026 г. Возобновление работ запланировано на 05.05.2026 после утверждения нового состава рабочей группы со стороны заказчика.</p>

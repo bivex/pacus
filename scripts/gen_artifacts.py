@@ -30,6 +30,18 @@ CURRENCY_BODY = '<script>document.querySelectorAll(".sym").forEach(e=>e.textCont
 SYM = '<span class="sym"></span>'
 SYMC = '<span class="sym-code"></span>'
 
+SEARCH_JS = """<script>
+document.getElementById('search-input').addEventListener('input',function(e){
+var q=e.target.value.toLowerCase(),rd=document.getElementById('search-results');
+if(q.length<2){rd.innerHTML='';return}
+var m=[];
+if(document.title.toLowerCase().indexOf(q)>=0)m.push({t:'Заголовок',x:document.title});
+document.querySelectorAll('table tr').forEach(function(r){
+if(r.innerText.toLowerCase().indexOf(q)>=0)m.push({t:'Таблица',x:r.innerText.substring(0,100)+'...'})});
+if(m.length>0){rd.innerHTML='<h4>Найдено ('+m.length+'):</h4><ul>'+m.map(function(v){return '<li><strong>'+v.t+':</strong> '+v.x+'</li>'}).join('')+'</ul>'}
+else{rd.innerHTML='<p>Ничего не найдено.</p>'}});
+</script>"""
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -295,46 +307,7 @@ def render_project_card(
     <div id="search-results" style="margin-top: 12px;"></div>
   </div>
 
-  <script>
-    // Simple client-side search (ISO 9241-151 8.5.2)
-    document.getElementById('search-input').addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase();
-      const resultsDiv = document.getElementById('search-results');
-      
-      if (query.length < 2) {
-        resultsDiv.innerHTML = '';
-        return;
-      }
-      
-      const pageTitle = document.title.toLowerCase();
-      const pageContent = document.body.innerText.toLowerCase();
-      
-      let matches = [];
-      if (pageTitle.includes(query)) {
-        matches.push({type: 'Заголовок', text: document.title});
-      }
-      
-      // Search in tables
-      const tables = document.querySelectorAll('table');
-      tables.forEach(table => {
-        const rows = table.querySelectorAll('tr');
-        rows.forEach(row => {
-          const text = row.innerText.toLowerCase();
-          if (text.includes(query)) {
-            matches.push({type: 'Таблица', text: row.innerText.substring(0, 100) + '...'});
-          }
-        });
-      });
-      
-      if (matches.length > 0) {
-        resultsDiv.innerHTML = '<h4>Найдено (' + matches.length + '):</h4><ul>' + 
-          matches.map(m => '<li><strong>' + m.type + ':</strong> ' + m.text + '</li>').join('') + 
-          '</ul>';
-      } else {
-        resultsDiv.innerHTML = '<p>Ничего не найдено.</p>';
-      }
-    });
-  </script>
+  {SEARCH_JS}
 
   <p class="muted">Документ сформирован автоматически из БД · {tenant_name}<br>
   <a href="/contact.html" aria-label="Контактная информация">Контакты</a> ·
@@ -343,8 +316,8 @@ def render_project_card(
   
   <noscript>
     <style>
-      .no-print { display: none !important; }
-      noscript { display: block; padding: 16px; background: #fff3cd; color: #856404; margin: 16px; border-radius: 8px; }
+      .no-print {{ display: none !important; }}
+      noscript {{ display: block; padding: 16px; background: #fff3cd; color: #856404; margin: 16px; border-radius: 8px; }}
     </style>
     <div>
       <strong>Внимание:</strong> Для полной функциональности сайта требуется JavaScript. 
@@ -476,6 +449,157 @@ def render_journal_entry(
 
   <p class="muted">Запись журнала проекта · {proj["tenant_name"]}</p>
 </main>
+</body>
+</html>
+"""
+
+
+# ---------------------------------------------------------------------------
+# Act HTML (printable work act document)
+# ---------------------------------------------------------------------------
+def render_act_html(
+    act: dict,
+    items: list,
+    revision: Optional[dict],
+    self_path: Path,
+    out_dir: Path,
+) -> str:
+    act_number = act["act_number"]
+    status = act["status"]
+    cp_name = act["counterparty_name"]
+    cp_inn = act.get("counterparty_inn") or ""
+    cp_kpp = act.get("counterparty_kpp") or ""
+    cp_address = act.get("counterparty_address") or ""
+    contract = act["contract_number"]
+    contract_date = fmt_date(act.get("contract_date"))
+    tenant_name = act["tenant_name"]
+    act_date = fmt_date(act["act_date"])
+    period = f"{fmt_date(act['period_from'])} — {fmt_date(act['period_to'])}"
+    total_amount = act["total_amount_minor"] or 0
+    total_vat = act["total_vat_amount_minor"] or 0
+    grand_total = act["grand_total_amount_minor"] or 0
+    rev_comment = revision["comment"] if revision else ""
+    rev_created = fmt_dt(revision["created_at"]) if revision else ""
+    rev_by = revision["created_by"] if revision else ""
+
+    index_href = rel(self_path, out_dir / "index.html")
+    audit_href = rel(
+        self_path, act_audit_path(out_dir, act["tenant_id"], act["act_id"], act["act_date"])
+    )
+
+    item_rows = ""
+    for it in items:
+        qty = it["quantity_milli"] / 1000
+        price = it["price_minor"] / 100
+        amount = it["amount_minor"] / 100
+        vat_bp = it["vat_rate_basis_points"]
+        vat_pct = vat_bp / 100
+        vat_amount = it["vat_amount_minor"] / 100
+        item_rows += (
+            f"<tr>"
+            f"<td>{it['line_no']}</td>"
+            f"<td>{it['description']}</td>"
+            f"<td>{it.get('unit_code') or '—'}</td>"
+            f"<td class='amount'>{qty:g}</td>"
+            f"<td class='amount'>{fmt_amount(it['price_minor'])} {SYM}</td>"
+            f"<td class='amount'>{fmt_amount(it['amount_minor'])} {SYM}</td>"
+            f"<td class='amount'>{vat_pct:g}%</td>"
+            f"<td class='amount'>{fmt_amount(it['vat_amount_minor'])} {SYM}</td>"
+            f"</tr>\n"
+        )
+
+    source_line = ""
+    if act.get("source_act_id"):
+        source_line = f"<p><strong>Корректировка к акту:</strong> {act.get('source_act_number', '')}</p>"
+
+    return f"""\
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Акт {act_number}</title>
+{INLINE_CSS}
+{CURRENCY_HEAD}
+</head>
+<body>
+<main role="main">
+  <nav aria-label="Основная навигация">
+  <div class="topbar no-print">
+    <div>
+      <h1>Акт {act_number}</h1>
+      <p class="muted">Статус: <span class="status-label status-{status}">{status}</span> · {cp_name}</p>
+    </div>
+    <div class="actions">
+      <a href="{audit_href}">Аудит</a>
+      <a href="{index_href}">К списку</a>
+      <button onclick="window.print()">Печать</button>
+    </div>
+  </div>
+  </nav>
+
+  <h1>Акт выполненных работ № {act_number}</h1>
+  <p class="muted">от {act_date}</p>
+
+  <div class="grid">
+    <div>
+      <p><strong>Исполнитель:</strong> {tenant_name}</p>
+      <p><strong>Заказчик:</strong> {cp_name}</p>
+      <p><strong>ИНН/КПП:</strong> {cp_inn} / {cp_kpp}</p>
+    </div>
+    <div>
+      <p><strong>Договор:</strong> {contract} от {contract_date}</p>
+      <p><strong>Период:</strong> {period}</p>
+      {source_line}
+    </div>
+  </div>
+
+  <h2>Состав работ</h2>
+  <table aria-label="Состав выполненных работ">
+    <caption class="sr-only">Состав выполненных работ по акту {act_number}</caption>
+    <thead><tr>
+      <th scope="col">№</th>
+      <th scope="col">Описание</th>
+      <th scope="col">Ед.</th>
+      <th scope="col">Кол-во</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Сумма</th>
+      <th scope="col">НДС</th>
+      <th scope="col">НДС сумма</th>
+    </tr></thead>
+    <tbody>
+{item_rows}    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5" class="right">Итого</th>
+        <td class="amount">{fmt_amount(total_amount)} {SYM}</td>
+        <td></td>
+        <td class="amount">{fmt_amount(total_vat)} {SYM}</td>
+      </tr>
+      <tr>
+        <th colspan="5" class="right">Всего с НДС</th>
+        <td colspan="3" class="amount"><strong>{fmt_amount(grand_total)} {SYM}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="grid" style="margin-top: 40px;">
+    <div>
+      <p><strong>Исполнитель:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">{tenant_name}</p>
+    </div>
+    <div>
+      <p><strong>Заказчик:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">{cp_name}</p>
+    </div>
+  </div>
+
+  {"<p class='muted'>Ревизия: " + str(revision['revision_no']) + " (" + rev_by + ", " + rev_created + ") " + (rev_comment or '') + "</p>" if revision else ""}
+  <p class="muted">Документ сформирован автоматически · {tenant_name}</p>
+</main>
+{CURRENCY_BODY}
 </body>
 </html>
 """
@@ -747,9 +871,16 @@ def generate(db_path: Path, out_dir: Path):
         SELECT wa.id AS act_id, wa.tenant_id, wa.act_number, wa.act_date,
                wa.period_from, wa.period_to, wa.status,
                wa.source_act_id, wa.project_id,
+               wa.current_revision_id,
+               wa.total_amount_minor, wa.total_vat_amount_minor,
+               wa.grand_total_amount_minor,
                t.name AS tenant_name,
                cp.full_name AS counterparty_name,
+               cp.inn AS counterparty_inn,
+               cp.kpp AS counterparty_kpp,
+               cp.legal_address AS counterparty_address,
                ct.contract_number,
+               ct.contract_date,
                p.code AS project_code,
                p.name AS project_name
         FROM work_act wa
@@ -801,6 +932,33 @@ def generate(db_path: Path, out_dir: Path):
         )
         write_file(self_path, html)
         print(f"  audit    {self_path.relative_to(out_dir)}")
+
+    # ---- Act HTML documents ----
+    for act in acts:
+        act_d = dict(act)
+
+        items = conn.execute(
+            "SELECT line_no, description, unit_code, quantity_milli, price_minor, amount_minor, vat_rate_basis_points, vat_amount_minor FROM work_act_item WHERE act_id = ? ORDER BY sort_order",
+            (act_d["act_id"],),
+        ).fetchall()
+
+        revision = conn.execute(
+            "SELECT revision_no, revision_kind, created_by, created_at, comment FROM work_act_revision WHERE id = ?",
+            (act_d.get("current_revision_id"),),
+        ).fetchone()
+
+        self_path = act_html_path(
+            out_dir, act_d["tenant_id"], act_d["act_id"], act_d["act_date"]
+        )
+        html = render_act_html(
+            act_d,
+            [dict(i) for i in items],
+            dict(revision) if revision else None,
+            self_path,
+            out_dir,
+        )
+        write_file(self_path, html)
+        print(f"  act      {self_path.relative_to(out_dir)}")
 
     # ---- index.html ----
     all_projects = conn.execute("""
