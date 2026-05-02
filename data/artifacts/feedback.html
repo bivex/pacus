@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Обратная связь — pacus</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<main>
+  <div class="topbar no-print">
+    <div><h1>Обратная связь</h1></div>
+    <div class="actions"><a href="/index.html" aria-label="К списку проектов">К списку</a></div>
+  </div>
+  
+  <h1>Обратная связь</h1>
+  
+  <div class="grid">
+    <div>
+      <h2>Отправьте сообщение</h2>
+      <form action="mailto:feedback@pacust.example.com" method="POST" enctype="text/plain" onsubmit="alert('Спасибо за обращение! Если ваш клиент почты настроен, откроется окно отправки. Иначе скопируйте текст и отправьте вручную.');">
+        <p>
+          <label for="type">Тип сооб:</label><br>
+          <select name="type" id="type" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+            <option value="">Выберите тип...</option>
+            <option value="bug">Сообщение об ошибке</option>
+            <option value="suggestion">Предложение по улучшению</option>
+            <option value="question">Вопрос</option>
+            <option value="feedback">Общий отзыв</option>
+          </select>
+        </p>
+        <p>
+          <label for="subject">Тема:</label><br>
+          <input type="text" name="subject" id="subject" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;" placeholder="Кратко опишите тему">
+        </p>
+        <p>
+          <label for="email">Ваш email (необязательно):</label><br>
+          <input type="email" name="email" id="email" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;" placeholder="user@example.com">
+        </p>
+        <p>
+          <label for="message">Сообщение:</label><br>
+          <textarea name="message" id="message" rows="6" required style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; resize: vertical;" placeholder="Подробно опишите ваше сообщение..."></textarea>
+        </p>
+        <p>
+          <button type="submit" style="background: #111827; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; cursor: pointer; font-size: 16px;">Отправить</button>
+        </p>
+      </form>
+    </div>
+    
+    <div>
+      <h2>Часто задаваемые вопросы</h2>
+      <table aria-label="FAQ — Часто задаваемые вопросы">
+        <caption class="sr-only">Часто задаваемые вопросы по системе pacus</caption>
+        <thead><tr><th scope="col">Вопрос</th><th scope="col">Ответ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Как добавить новый проект?</strong></td><td>Отправьте запрос на <a href="mailto:owner@pacust.example.com">owner@pacust.example.com</a> с реквизитами организации.</td></tr>
+          <tr><td><strong>Как исправить ошибку в акте?</strong></td><td>Используйте флаг <code>--retry-errors</code> при повторном импорте или исправьте данные в источнике.</td></tr>
+          <tr><td><strong>Как изменить валюту отображения?</strong></td><td>Используйте переключатель валюты в верхней панели (USD, EUR, RUB, GBP).</td></tr>
+          <tr><td><strong>Не печатается документ?</strong></td><td>Убедитесь, что установлен Adobe Reader или используйте Ctrl+P. Проверьте, что браузер разрешает печать.</td></tr>
+          <tr><td><strong>Как получить доступ к аудиту?</strong></td><td>На странице проекта нажмите "Аудит" рядом с нужным актом. Откроется полная история статусов.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <h2>Контакты для экстренных случаев</h2>
+  <p>Если система недоступна или есть критическая ошибка:</p>
+  <ul>
+    <li><strong>Техподдержка:</strong> <a href="mailto:support@pacust.example.com">support@pacust.example.com</a> (круглосуточно)</li>
+    <li><strong>Телефон:</strong> +7 (495) 123-45-67 (круглосуточно)</li>
+  </ul>
+  
+  <p class="muted">Спасибо, что помогаете нам улучшать систему!</p>
+</main>
+</body>
+</html>

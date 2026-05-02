@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Спецификация: Домен «Проекты»</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm 18mm; }
+    :root { --text:#1f2937; --muted:#4b5563; --line:#d1d5db; --soft:#f3f4f6; --accent:#0f766e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 "Inter", "Segoe UI", Arial, sans-serif; color: var(--text); background: #fff; }
+    main { max-width: 920px; margin: 0 auto; padding: 16mm 14mm; }
+    h1, h2, h3 { margin: 0 0 10px; line-height: 1.2; }
+    h1 { font-size: 26px; color: var(--accent); }
+    h2 { font-size: 18px; margin-top: 24px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 15px; margin-top: 16px; }
+    p, li { margin: 0 0 8px; }
+    ul, ol { padding-left: 20px; margin: 8px 0 12px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; }
+    th, td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: top; }
+    th { background: var(--soft); text-align: left; }
+    .lead, .muted { color: var(--muted); }
+    .box { background: #fafafa; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+    .page-break { break-before: page; page-break-before: always; }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.95em; }
+    @media print {
+      main { max-width: none; padding: 0; }
+      a { color: inherit; text-decoration: none; }
+      tr, img, .box { break-inside: avoid; }
+      thead { display: table-header-group; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Спецификация: Домен «Проекты»</h1>
+    <p class="lead">Документ описывает доменную модель проектов, FSM статусов, инварианты БД, обязанности приложения и HTML-артефакты для системы Pacus.</p>
+
+    <section>
+      <h2>1. Назначение домена</h2>
+      <ul>
+        <li>Проект группирует акты работ одного исполнителя с одним контрагентом.</li>
+        <li>Акт может быть привязан к проекту опционально (<code>project_id</code> nullable).</li>
+        <li>Проект не привязан к конкретному договору — один проект может охватывать несколько договоров.</li>
+        <li>Все акты внутри проекта принадлежат одному <code>tenant</code> и одному <code>counterparty</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>2. Сущности</h2>
+
+      <table>
+        <thead>
+          <tr><th>Сущность</th><th>Таблица</th><th>Назначение</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Проект</td><td><code>project</code></td><td>Основная сущность: код, название, статус, даты</td></tr>
+          <tr><td>История статусов</td><td><code>project_status_history</code></td><td>Append-only лог переходов статуса</td></tr>
+          <tr><td>Привязка акта</td><td><code>work_act.project_id</code></td><td>FK на project, nullable, с trigger-проверками</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Поля таблицы <code>project</code></h3>
+      <table>
+        <thead>
+          <tr><th>Поле</th><th>Тип</th><th>Обязательное</th><th>Описание</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>TEXT PK</td><td>да</td><td>UUID</td></tr>
+          <tr><td><code>tenant_id</code></td><td>TEXT FK</td><td>да</td><td>Арендатор</td></tr>
+          <tr><td><code>counterparty_id</code></td><td>TEXT FK</td><td>да</td><td>Контрагент (не договор)</td></tr>
+          <tr><td><code>code</code></td><td>TEXT</td><td>да</td><td>Уникален в рамках tenant</td></tr>
+          <tr><td><code>name</code></td><td>TEXT</td><td>да</td><td>Название проекта</td></tr>
+          <tr><td><code>description</code></td><td>TEXT</td><td>нет</td><td>Описание</td></tr>
+          <tr><td><code>status</code></td><td>TEXT</td><td>да</td><td>active / on_hold / completed / cancelled</td></tr>
+          <tr><td><code>started_on</code></td><td>TEXT</td><td>да</td><td>Дата начала YYYY-MM-DD</td></tr>
+          <tr><td><code>finished_on</code></td><td>TEXT</td><td>нет</td><td>Дата завершения (обязательна при completed)</td></tr>
+          <tr><td><code>created_by</code></td><td>TEXT</td><td>да</td><td>Пользователь</td></tr>
+          <tr><td><code>created_at</code>, <code>updated_at</code></td><td>TEXT</td><td>да</td><td>UTC ISO 8601</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. FSM статусов проекта</h2>
+
+      <pre class="box"><code>active ──→ on_hold ──→ active
+  │            │
+  ↓            ↓
+completed   cancelled</code></pre>
+
+      <table>
+        <thead>
+          <tr><th>Из</th><th>В</th><th>Когда</th><th>БД блокирует</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>NULL</td><td>active</td><td>Создание проекта</td><td>—</td></tr>
+          <tr><td>active</td><td>on_hold</td><td>Временная пауза</td><td>trigger</td></tr>
+          <tr><td>active</td><td>completed</td><td>Завершение</td><td>trigger</td></tr>
+          <tr><td>active</td><td>cancelled</td><td>Отмена</td><td>trigger</td></tr>
+          <tr><td>on_hold</td><td>active</td><td>Возобновление</td><td>trigger</td></tr>
+          <tr><td>on_hold</td><td>cancelled</td><td>Отмена из паузы</td><td>trigger</td></tr>
+          <tr><td>completed</td><td>*</td><td>Любой переход</td><td>trigger — запрещено</td></tr>
+          <tr><td>cancelled</td><td>*</td><td>Любой переход</td><td>trigger — запрещено</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. Инварианты БД (что делает БД)</h2>
+
+      <table>
+        <thead>
+          <tr><th>Объект</th><th>Тип</th><th>Что блокирует</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>UNIQUE (tenant_id, code)</code></td><td>constraint</td><td>Дубликат кода проекта</td></tr>
+          <tr><td><code>CHECK (finished_on IS NULL OR finished_on &gt;= started_on)</code></td><td>constraint</td><td>Дата завершения раньше начала</td></tr>
+          <tr><td><code>trg_project_status_transition</code></td><td>trigger</td><td>Недопустимые переходы FSM</td></tr>
+          <tr><td><code>trg_project_status_history_append_only_update</code></td><td>trigger</td><td>UPDATE истории статусов</td></tr>
+          <tr><td><code>trg_project_status_history_append_only_delete</code></td><td>trigger</td><td>DELETE истории статусов</td></tr>
+          <tr><td><code>trg_work_act_project_tenant_match_insert/update</code></td><td>trigger</td><td>Акт другого tenant в этом проекте</td></tr>
+          <tr><td><code>trg_work_act_project_counterparty_match_insert/update</code></td><td>trigger</td><td>Акт другого counterparty в этом проекте</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Обязанности приложения (что БД не проверяет)</h2>
+
+      <ul>
+        <li>Запрет привязывать новые акты к <code>completed</code>/<code>cancelled</code> проекту.</li>
+        <li>Обязательность <code>finished_on</code> при переходе в <code>completed</code>.</li>
+        <li>При смене <code>counterparty_id</code> или <code>tenant_id</code> в акте с <code>project_id</code> — проверить совместимость (триггеры срабатывают только на <code>UPDATE OF project_id</code>).</li>
+      </ul>
+
+      <div class="box">
+        <strong>Известная дыра в схеме:</strong> триггеры <code>trg_work_act_project_*_match</code> срабатывают только при <code>UPDATE OF project_id</code>. Если изменить <code>work_act.counterparty_id</code> при уже установленном <code>project_id</code> — БД это пропустит. Приложение обязано запрещать такое изменение.
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Правило транзакции</h2>
+
+      <p>Каждое изменение статуса выполняется в одной транзакции, содержащей UPDATE и INSERT в историю.</p>
+
+      <pre class="box"><code>BEGIN;
+UPDATE project
+SET status = :new_status, finished_on = :finished_on, updated_at = :now_utc
+WHERE id = :project_id;
+
+INSERT INTO project_status_history (id, project_id, from_status, to_status, changed_by, changed_at, reason)
+VALUES (:id, :project_id, :old_status, :new_status, :user, :now_utc, :reason);
+COMMIT;</code></pre>
+
+      <p class="muted"><code>from_status</code> — читать до UPDATE в той же транзакции.</p>
+    </section>
+
+    <section>
+      <h2>7. Views</h2>
+
+      <table>
+        <thead>
+          <tr><th>View</th><th>Назначение</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>v_nocodb_project_overview</code></td><td>Сводка: статус, контрагент, кол-во актов, суммы, диапазон периодов</td></tr>
+          <tr><td><code>v_nocodb_project_work_acts</code></td><td>Хронология актов проекта с <code>print_url</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. HTML-артефакты</h2>
+
+      <p>Генерируются скриптом <code>scripts/gen_artifacts.py</code>.</p>
+
+      <table>
+        <thead>
+          <tr><th>Артефакт</th><th>Путь</th><th>Содержание</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Карточка проекта</td><td><code>projects/{tenant_id}/{project_id}/project-card.html</code></td><td>Реквизиты, история статусов, хронология актов с суммами</td></tr>
+          <tr><td>Аудит акта</td><td><code>acts/{tenant_id}/{year}/{act_id}/audit/audit.html</code></td><td>Хронология статусов, ревизии, связанные документы</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Запуск генератора</h3>
+      <pre class="box"><code>python3 scripts/gen_artifacts.py</code></pre>
+      <p>Опциональные аргументы: <code>--db path/to/db.sqlite</code>, <code>--out path/to/artifacts/</code></p>
+      <p>Все генерируемые файлы: самодостаточные (inline CSS), относительные ссылки между артефактами, валюта задаётся через <code>const CURRENCY = '$'</code> в каждом файле.</p>
+    </section>
+
+    <section>
+      <h2>9. Тесты</h2>
+
+      <table>
+        <thead>
+          <tr><th>Файл</th><th>Кол-во тестов</th><th>Что проверяет</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>tests/test_db_schema.py</code></td><td>88</td><td>Каждый CHECK, UNIQUE, FK и trigger работает корректно</td></tr>
+          <tr><td><code>tests/test_mutations.py</code></td><td>22</td><td>Каждый guard необходим: удаление любого ломает инвариант</td></tr>
+        </tbody>
+      </table>
+
+      <pre class="box"><code>python3 -m pytest tests/test_db_schema.py -v
+python3 -m pytest tests/test_mutations.py -v</code></pre>
+    </section>
+  </main>
+</body>
+</html>

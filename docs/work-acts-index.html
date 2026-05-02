@@ -48,6 +48,8 @@
           <tr><td><a href="work-acts-migrations-plan.html">work-acts-migrations-plan.html</a></td><td>План миграций и rollout</td><td>Для внедрения и эволюции схемы</td></tr>
           <tr><td><a href="work-acts-sqlite-and-gui.html">work-acts-sqlite-and-gui.html</a></td><td>SQLite-адаптация и выбор CRUD GUI</td><td>Для технологического решения и быстрого запуска</td></tr>
           <tr><td><a href="work-acts-nocodb-views-plan.html">work-acts-nocodb-views-plan.html</a></td><td>NocoDB views plan и режимы доступа</td><td>Для настройки backoffice без поломки истории</td></tr>
+          <tr><td><a href="projects-spec.html">projects-spec.html</a></td><td>Спецификация домена «Проекты»</td><td>Для понимания FSM, инвариантов, артефактов</td></tr>
+          <tr><td><a href="../CHANGELOG.md">../CHANGELOG.md</a></td><td>Changelog (версии и изменения)</td><td>История изменений системы</td></tr>
         </tbody>
       </table>
     </section>
@@ -62,6 +64,7 @@
           <li>После подписи версия и связанные артефакты не изменяются.</li>
           <li>Исправления после подписи оформляются новым актом, связанным с исходным.</li>
           <li>Для быстрого старта допустим SQLite, но immutable-историю и статусы всё равно должен контролировать backend-слой.</li>
+          <li>Проекты — опциональная группировка актов: один tenant, один counterparty, множество договоров и актов.</li>
         </ul>
       </div>
     </section>

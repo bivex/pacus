@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Аудит акта A-2026-001-К1</title>
+<link rel="stylesheet" href="/style.css">
+<script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
+</head>
+<body>
+<main role="main">
+  <nav aria-label="Основная навигация">
+  <div class="topbar no-print">
+    <div>
+      <h1>Аудит акта A-2026-001-К1</h1>
+      <p class="muted">Статус: <span class="status-label status-signed">signed</span> · АО Бета Сервис · Проект: BETA-SUP-2026</p>
+    </div>
+    <div class="actions">
+      <a href="/acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html">Акт</a>
+      <a href="/index.html">К списку</a>
+      <button onclick="window.print()">Печать</button>
+     </div>
+   </div>
+   </nav>
+
+   <h1>Аудит: Акт A-2026-001-К1</h1>
+
+  <div class="grid">
+    <div>
+      <p><strong>Исполнитель:</strong> Демо арендатор / Pacus Demo</p>
+      <p><strong>Заказчик:</strong> АО Бета Сервис</p>
+      <p><strong>Договор:</strong> SUP-2026-04</p>
+      <p><strong>Проект:</strong> BETA-SUP-2026 — Техническая поддержка платформы</p>
+    </div>
+    <div>
+      <p><strong>Дата акта:</strong> 05.02.2026</p>
+      <p><strong>Период:</strong> 01.01.2026 — 31.01.2026</p>
+      <p><strong>Текущий статус:</strong> <span class="status-label status-signed">signed</span></p>
+    </div>
+  </div>
+
+   <h2>Хронология статусов</h2>
+   <table aria-label="Хронология изменения статусов акта">
+     <caption class="sr-only">Хронология изменения статусов акта</caption>
+     <thead><tr><th scope="col">Дата и время</th><th scope="col">Из</th><th scope="col">В</th><th scope="col">Пользователь</th><th scope="col">Причина</th></tr></thead>
+     <tbody>
+ <tr><td>05.02.2026 09:00</td><td><span class='muted'>—</span></td><td><strong>draft</strong></td><td>user_demo_accountant</td><td>Создан корректировочный акт</td></tr>
+<tr><td>05.02.2026 09:15</td><td>draft</td><td><strong>generated</strong></td><td>user_demo_accountant</td><td>Сформирован HTML</td></tr>
+<tr><td>05.02.2026 09:20</td><td>generated</td><td><strong>sent</strong></td><td>user_demo_accountant</td><td>Отправлен клиенту</td></tr>
+<tr><td>05.02.2026 12:00</td><td>sent</td><td><strong>signed</strong></td><td>user_demo_accountant</td><td>Подписан обеими сторонами</td></tr>
+    </tbody>
+   </table>
+
+   <h2>Ревизии документа</h2>
+   <table aria-label="Ревизии документа акта">
+     <caption class="sr-only">Ревизии документа акта</caption>
+     <thead><tr><th scope="col">№</th><th scope="col">Вид</th><th scope="col">Шаблон</th><th scope="col">Создана</th><th scope="col">Создал</th><th scope="col">Комментарий</th><th scope="col">Иммут.</th><th scope="col">Артефакт</th></tr></thead>
+     <tbody>
+ <tr><td>1</td><td>correction</td><td>tpl-2026.02-c1</td><td>08.03.2026 09:23</td><td>user_demo_accountant</td><td>Корректировочный акт к январю</td><td><strong>да</strong></td><td><a href="/acts/tenant_demo/2026/wa_correction_jan/rev-1/act.html">HTML</a></td></tr>
+    </tbody>
+   </table>
+
+  <h2>Связанные документы</h2>
+  <table aria-label="Связанные документы акта">
+    <caption class="sr-only">Связанные документы акта</caption>
+    <thead><tr><th scope="col">Тип</th><th scope="col">Номер / Код</th><th scope="col">Статус / Название</th><th scope="col">Ссылка</th></tr></thead>
+    <tbody>
+<tr><td>Карточка проекта</td><td>BETA-SUP-2026</td><td>Техническая поддержка платформы</td><td><a href='/projects/tenant_demo/proj_beta_support/project-card.html'>Открыть</a></td></tr>
+    </tbody>
+  </table>
+
+  <p class="muted">Аудит-трейл сформирован автоматически из БД · Демо арендатор / Pacus Demo</p>
+</main>
+<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
+</body>
+</html>

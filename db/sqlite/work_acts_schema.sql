@@ -1,3 +1,13 @@
+-- ===========================================
+-- work_acts_schema.sql
+-- Version: 1.0
+-- Effective Date: 2026-05-01
+-- Description: Schema for work acts management system
+-- Includes: tenant, counterparty, contract, work_act, work_act_item,
+--          work_act_revision, document_artifact, audit_event,
+--          integration_inbox_work_act, and related views
+-- ===========================================
+
 PRAGMA foreign_keys = ON;
 PRAGMA journal_mode = WAL;
 PRAGMA busy_timeout = 5000;
@@ -296,6 +306,22 @@ BEFORE DELETE ON audit_event
 FOR EACH ROW
 BEGIN
   SELECT RAISE(ABORT, 'audit event is append only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_work_act_no_counterparty_change_when_linked
+BEFORE UPDATE OF counterparty_id ON work_act
+FOR EACH ROW
+WHEN OLD.project_id IS NOT NULL AND NEW.counterparty_id <> OLD.counterparty_id
+BEGIN
+  SELECT RAISE(ABORT, 'cannot change counterparty_id while project_id is set');
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_work_act_no_tenant_change_when_linked
+BEFORE UPDATE OF tenant_id ON work_act
+FOR EACH ROW
+WHEN OLD.project_id IS NOT NULL AND NEW.tenant_id <> OLD.tenant_id
+BEGIN
+  SELECT RAISE(ABORT, 'cannot change tenant_id while project_id is set');
 END;
 
 CREATE TRIGGER IF NOT EXISTS trg_integration_inbox_no_imported_without_act

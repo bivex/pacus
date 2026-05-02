@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Акт A-2026-004</title><link rel="stylesheet" href="/print.css" /></head>
-<body><main>
-  <div class="topbar no-print"><div><h1>Предварительный акт № A-2026-004</h1><p class="muted">Статус: cancelled · Версия: rev-1 · Шаблон: tpl-2026.04</p></div><div class="actions"><a href="/">К списку</a><button onclick="window.print()">Печать</button></div></div>
-  <div class="grid"><div><p><strong>Исполнитель:</strong> Pacus Demo</p><p><strong>Заказчик:</strong> ООО Альфа Инжиниринг</p><p><strong>Договор:</strong> DEV-2026-01 от 15.01.2026</p></div><div><p><strong>Дата акта:</strong> 03.04.2026</p><p><strong>Период:</strong> 01.04.2026 — 03.04.2026</p><p><strong>Валюта:</strong> RUB</p></div></div>
-  <table><thead><tr><th>#</th><th>Наименование</th><th>Кол-во</th><th>Цена</th><th>Сумма</th><th>НДС</th></tr></thead><tbody>
-    <tr><td>1</td><td>Предварительный аудит интеграции</td><td>1</td><td class="amount">40 000,00 ₽</td><td class="amount">40 000,00 ₽</td><td class="amount">8 000,00 ₽</td></tr>
-  </tbody><tfoot><tr><th colspan="4" class="right">Итого без НДС</th><th class="amount">40 000,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">НДС 20%</th><th class="amount">8 000,00 ₽</th><th></th></tr><tr><th colspan="4" class="right">Итого к оплате</th><th class="amount">48 000,00 ₽</th><th></th></tr></tfoot></table>
-  <p>Этот акт оставлен в демо-наборе как пример отменённого документа, который всё равно сохраняется в истории.</p>
-  <div class="grid"><div><p><strong>Исполнитель</strong></p><div class="signature"></div></div><div><p><strong>Заказчик</strong></p><div class="signature"></div></div></div>
-</main></body>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Акт A-2026-004</title>
+<link rel="stylesheet" href="/style.css">
+<script>const CURRENCY = '$'; // ← меняй здесь: $, €, ₽, £ ...</script>
+</head>
+<body>
+<main role="main">
+  <nav aria-label="Основная навигация">
+  <div class="topbar no-print">
+    <div>
+      <h1>Акт A-2026-004</h1>
+      <p class="muted">Статус: <span class="status-label status-cancelled">cancelled</span> · ООО Альфа Инжиниринг</p>
+    </div>
+    <div class="actions">
+      <a href="/acts/tenant_demo/2026/wa_cancelled_apr/audit/audit.html">Аудит</a>
+      <a href="/index.html">К списку</a>
+      <button onclick="window.print()">Печать</button>
+    </div>
+  </div>
+  </nav>
+
+  <h1>Акт выполненных работ № A-2026-004</h1>
+  <p class="muted">от 03.04.2026</p>
+
+  <div class="grid">
+    <div>
+      <p><strong>Исполнитель:</strong> Демо арендатор / Pacus Demo</p>
+      <p><strong>Заказчик:</strong> ООО Альфа Инжиниринг</p>
+      <p><strong>ИНН/КПП:</strong> 7701234567 / 770101001</p>
+    </div>
+    <div>
+      <p><strong>Договор:</strong> DEV-2026-01 от 15.01.2026</p>
+      <p><strong>Период:</strong> 01.04.2026 — 03.04.2026</p>
+      
+    </div>
+  </div>
+
+  <h2>Состав работ</h2>
+  <table aria-label="Состав выполненных работ">
+    <caption class="sr-only">Состав выполненных работ по акту A-2026-004</caption>
+    <thead><tr>
+      <th scope="col">№</th>
+      <th scope="col">Описание</th>
+      <th scope="col">Ед.</th>
+      <th scope="col">Кол-во</th>
+      <th scope="col">Цена</th>
+      <th scope="col">Сумма</th>
+      <th scope="col">НДС</th>
+      <th scope="col">НДС сумма</th>
+    </tr></thead>
+    <tbody>
+<tr><td>1</td><td>Предварительный аудит интеграции</td><td>JOB</td><td class='amount'>1</td><td class='amount'>40 000,00 <span class="sym"></span></td><td class='amount'>40 000,00 <span class="sym"></span></td><td class='amount'>20%</td><td class='amount'>8 000,00 <span class="sym"></span></td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5" class="right">Итого</th>
+        <td class="amount">40 000,00 <span class="sym"></span></td>
+        <td></td>
+        <td class="amount">8 000,00 <span class="sym"></span></td>
+      </tr>
+      <tr>
+        <th colspan="5" class="right">Всего с НДС</th>
+        <td colspan="3" class="amount"><strong>48 000,00 <span class="sym"></span></strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="grid" style="margin-top: 40px;">
+    <div>
+      <p><strong>Исполнитель:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">Демо арендатор / Pacus Demo</p>
+    </div>
+    <div>
+      <p><strong>Заказчик:</strong></p>
+      <div class="signature"></div>
+      <p class="muted">ООО Альфа Инжиниринг</p>
+    </div>
+  </div>
+
+  <p class='muted'>Ревизия: 1 (user_demo_manager, 08.03.2026 09:24) Черновик был отменён</p>
+  <p class="muted">Документ сформирован автоматически · Демо арендатор / Pacus Demo</p>
+</main>
+<script>document.querySelectorAll(".sym").forEach(e=>e.textContent=CURRENCY);var _c={"$":"USD","€":"EUR","₽":"RUB","£":"GBP"};document.querySelectorAll(".sym-code").forEach(e=>e.textContent=_c[CURRENCY]||CURRENCY);</script>
+</body>
 </html>

@@ -1,3 +1,10 @@
+-- ===========================================
+-- work_acts_seed_demo.sql
+-- Version: 1.0
+-- Effective Date: 2026-05-01
+-- Description: Demo seed data for work acts management system
+-- ===========================================
+
 PRAGMA foreign_keys = ON;
 
 BEGIN TRANSACTION;

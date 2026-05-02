@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Декларация доступности — pacus</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<main>
+  <div class="topbar no-print">
+    <div><h1>Декларация доступности</h1></div>
+    <div class="actions"><a href="/index.html" aria-label="К списку проектов">К списку</a></div>
+  </div>
+
+  <h1>Декларация доступности (ISO 9241-171)</h1>
+  <p class="muted">Дата: 01.05.2026</p>
+
+  <h2>Обязательство</h2>
+  <p>Система «pacus» стремится обеспечить доступность для всех пользователей, включая людей с ограниченными возможностями. Мы ориентируемся на требования ISO 9241-171:2008 и WCAG 2.1 уровня AA.</p>
+
+  <h2>Что реализовано</h2>
+  <ul>
+    <li><strong>Язык документа:</strong> Все страницы содержат атрибут <code>lang="ru"</code></li>
+    <li><strong>Навигация с клавиатуры:</strong> Все интерактивные элементы доступны через Tab/Shift+Tab</li>
+    <li><strong>Визуальная индикация фокуса:</strong> Стилизованные контуры (<code>focus-visible</code>) для ссылок и кнопок</li>
+    <li><strong>Semantic HTML:</strong> Использование <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;table&gt;</code> с <code>scope</code>, <code>aria-label</code></li>
+    <li><strong>Screen reader поддержка:</strong> Класс <code>.sr-only</code> для визуально скрытого, но доступного контента</li>
+    <li><strong>Статусы не только цветом:</strong> Текстовые метки статусов дублируют цветовую индикацию</li>
+    <li><strong>Адаптивная вёрстка:</strong> <code>viewport</code> meta-тег, grid-layout</li>
+    <li><strong>Печать:</strong> Оптимизированные стили для печати через <code>@media print</code></li>
+    <li><strong>Контрастность:</strong> Основной текст #111827 на фоне #fff (контраст &gt; 15:1)</li>
+    <li><strong>Поддержка без JavaScript:</strong> Элемент <code>&lt;noscript&gt;</code> с уведомлением, основной контент доступен</li>
+  </ul>
+
+  <h2>Известные ограничения</h2>
+  <table aria-label="Известные ограничения доступности">
+    <caption class="sr-only">Известные ограничения и планируемые сроки устранения</caption>
+    <thead><tr><th scope="col">Ограничение</th><th scope="col">Пункт ISO 9241-171</th><th scope="col">Плановый срок</th></tr></thead>
+    <tbody>
+      <tr><td>Нет настройки размера шрифта пользователем</td><td>8.2.3</td><td>Q3 2026</td></tr>
+      <tr><td>Нет тёмной темы / настроек контрастности</td><td>8.2.2</td><td>Q3 2026</td></tr>
+      <tr><td>Нет клавиатурных сокращений для навигации</td><td>9.3.7</td><td>Q4 2026</td></tr>
+      <tr><td>Нет текстовой версии для сложных таблиц</td><td>8.4.1</td><td>Q4 2026</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Обратная связь</h2>
+  <p>Если вы столкнулись с проблемой доступности в Системе, сообщите нам:</p>
+  <ul>
+    <li><strong>Email:</strong> <a href="mailto:accessibility@pacust.example.com">accessibility@pacust.example.com</a></li>
+    <li><strong>Форма:</strong> <a href="/feedback.html">Обратная связь</a></li>
+    <li><strong>Телефон:</strong> +7 (495) 123-45-67</td></li>
+  </ul>
+  <p>Мы стремимся отвечать на обращения о доступности в течение 5 рабочих дней.</p>
+
+  <p class="muted">Декларация доступности · pacus · 2026</p>
+</main>
+</body>
+</html>
