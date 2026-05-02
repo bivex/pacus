@@ -406,17 +406,20 @@ a[href*="preview"]:hover {
 }
 
 /* ===========================================
-   Animation — disable Fomantic UI animations
-   for compositing performance
+   Pusher offset — prevents CLS from sidebar
    =========================================== */
-@keyframes flash { }
-@keyframes shake { }
-@keyframes pulse { }
-@keyframes tada { }
-@keyframes bounce { }
-@keyframes glow { }
-.ui.animating,
-.ui.visible.transition {
-  animation-duration: 0s !important;
-  transition-duration: 0s !important;
+.pusher {
+  margin-left: 240px !important;
+}
+
+/* ===========================================
+   Animation — disable Fomantic UI animations
+   =========================================== */
+*,
+*::before,
+*::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

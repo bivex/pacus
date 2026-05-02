@@ -58,6 +58,15 @@ def set_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "font-src https://cdn.jsdelivr.net; "
+        "img-src 'self' data: https:; "
+        "connect-src 'self'"
+    )
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     if not app.debug:
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response

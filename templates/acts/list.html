@@ -41,7 +41,7 @@
   <div class="ui card" style="border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.08); margin-bottom: 1em; border: 1px solid #f0f0f0;">
     <div class="content" style="padding: 1.25em 1.5em;">
       <div class="header" style="font-size: 1.3em; margin-bottom: 0.3em;">
-        <a href="/acts/{{ a.id }}" style="color: #2185d0; text-decoration: none; font-weight: 700;">
+        <a href="/acts/{{ a.id }}" style="text-decoration: none; font-weight: 700;">
           #{{ a.act_number }}
         </a>
       </div>
@@ -83,7 +83,7 @@
         </span>
       </div>
       <div class="right floated">
-        <a href="/acts/{{ a.id }}" class="ui tiny basic button" style="border-radius: 6px;">
+        <a href="/acts/{{ a.id }}" class="ui tiny basic button" style="border-radius: 6px;" aria-label="{{ _('Просмотреть акт') }} {{ a.act_number }}">
           {{ _('Просмотреть') }} <i class="right chevron icon"></i>
         </a>
         {% if a.status == 'draft' %}
