@@ -69,7 +69,6 @@ a:hover { color: #1678c2; text-decoration: underline; }
    Main content area — offset for sidebar
    =========================================== */
 .ui.main.container {
-  margin-left: 256px !important;
   margin-top: 16px !important;
   padding: 28px 36px !important;
   background: #fff;

@@ -29,7 +29,7 @@
   </a>
   {% for s in statuses %}
   <a class="item {% if current_filter == s %}active{% endif %}" href="/projects?status={{ s }}">
-    <i class="status-{{ s }} icon"></i>
+    <i class="{{ { 'active': 'play', 'on_hold': 'pause', 'completed': 'check circle' }.get(s, 'circle') }} icon"></i>
     <span class="ui tiny label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
   </a>
   {% endfor %}

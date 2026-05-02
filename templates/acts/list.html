@@ -29,7 +29,7 @@
   </a>
   {% for s in statuses %}
   <a class="item {% if current_filter == s %}active {% endif %}" href="/acts?status={{ s }}">
-    <i class="status-{{ s }} icon"></i>
+    <i class="{{ { 'draft': 'file alternate', 'generated': 'cog', 'sent': 'paper plane', 'signed': 'check circle', 'corrected': 'sync', 'cancelled': 'cancel' }.get(s, 'question') }} icon"></i>
     <span class="ui tiny label status-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
   </a>
   {% endfor %}
@@ -86,9 +86,11 @@
         <a href="/acts/{{ a.id }}" class="ui tiny basic button" style="border-radius: 6px;">
           {{ _('Просмотреть') }} <i class="right chevron icon"></i>
         </a>
+        {% if a.status == 'draft' %}
         <a href="/acts/{{ a.id }}/edit" class="ui tiny basic button" style="border-radius: 6px;">
           {{ _('Редактировать') }}
         </a>
+        {% endif %}
       </div>
     </div>
   </div>
