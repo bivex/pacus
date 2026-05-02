@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Новый проект{% endblock %}
+
+{% block content %}
+<h2 class="ui header">Новый проект</h2>
+
+<form class="ui form" method="post">
+  <div class="ui segment">
+    <div class="two fields">
+      <div class="field">
+        <label>Контрагент *</label>
+        <select class="ui search dropdown" name="counterparty_id">
+          <option value="">Выберите...</option>
+          {% for cp in counterparties %}
+          <option value="{{ cp.id }}">{{ cp.full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Код проекта *</label>
+        <input type="text" name="code" placeholder="ALPHA-DEV-2026">
+      </div>
+    </div>
+    <div class="field">
+      <label>Название *</label>
+      <input type="text" name="name" placeholder="Разработка платформы актов">
+    </div>
+    <div class="field">
+      <label>Описание</label>
+      <textarea name="description" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label>Дата начала *</label>
+      <input type="date" name="started_on">
+    </div>
+  </div>
+  <button class="ui primary button" type="submit">Создать проект</button>
+  <a href="/projects" class="ui button">Отмена</a>
+</form>
+{% endblock %}

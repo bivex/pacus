@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Pacus — Проекты{% endblock %}
+
+{% block content %}
+<h2 class="ui header">
+  Проекты
+  <a href="/projects/new" class="ui right floated primary button"><i class="plus icon"></i> Новый проект</a>
+</h2>
+
+<div class="ui secondary menu">
+  <a class="item {% if not current_filter %}active{% endif %}" href="/projects">Все</a>
+  {% for s in statuses %}
+  <a class="item {% if current_filter == s %}active{% endif %}" href="/projects?status={{ s }}">
+    <span class="ui mini label status-{{ s }}">{{ s|status_label }}</span>
+  </a>
+  {% endfor %}
+</div>
+
+<table class="ui celled striped table">
+  <thead>
+    <tr>
+      <th>Код</th>
+      <th>Название</th>
+      <th>Контрагент</th>
+      <th>Статус</th>
+      <th class="right aligned">Актов</th>
+      <th class="right aligned amount">Подписано на сумму</th>
+      <th>Начат</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in projects %}
+    <tr>
+      <td><a href="/projects/{{ p.id }}">{{ p.code }}</a></td>
+      <td>{{ p.name }}</td>
+      <td>{{ p.counterparty_name }}</td>
+      <td><span class="ui mini label status-{{ p.status }}">{{ p.status|status_label }}</span></td>
+      <td class="right aligned">{{ p.act_count }}</td>
+      <td class="right aligned amount">{{ p.signed_total_minor|rubles }}</td>
+      <td>{{ p.started_on|fmt_date }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

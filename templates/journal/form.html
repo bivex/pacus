@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Запись в журнал — {{ project.code }}{% endblock %}
+
+{% block content %}
+<h2 class="ui header">
+  Запись в журнал
+  <div class="sub header">Проект: {{ project.code }}</div>
+</h2>
+
+<form class="ui form" method="post">
+  <div class="ui segment">
+    <div class="two fields">
+      <div class="field">
+        <label>Дата *</label>
+        <input type="date" name="entry_date">
+      </div>
+      <div class="field">
+        <label>Тип *</label>
+        <select class="ui dropdown" name="kind">
+          <option value="meeting">Встреча</option>
+          <option value="call">Звонок</option>
+          <option value="email">Письмо</option>
+          <option value="note">Заметка</option>
+          <option value="milestone">Веха</option>
+          <option value="decision">Решение</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Заголовок *</label>
+      <input type="text" name="title" placeholder="Краткое описание события">
+    </div>
+    <div class="field">
+      <label>Содержание</label>
+      <textarea name="body" rows="4"></textarea>
+    </div>
+    <div class="two fields">
+      <div class="field">
+        <label>Принятое решение</label>
+        <input type="text" name="decision_made">
+      </div>
+      <div class="field">
+        <label>Результат</label>
+        <input type="text" name="outcome">
+      </div>
+    </div>
+    {% if linked_acts %}
+    <div class="field">
+      <label>Связанные акты</label>
+      <select class="ui dropdown" name="linked_act_ids" multiple="">
+        {% for a in linked_acts %}
+        <option value="{{ a.id }}">{{ a.act_number }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% endif %}
+  </div>
+  <button class="ui primary button" type="submit">Добавить запись</button>
+  <a href="/projects/{{ project.id }}" class="ui button">Отмена</a>
+</form>
+{% endblock %}

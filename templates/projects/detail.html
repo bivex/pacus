@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% block title %}Проект {{ project.code }}{% endblock %}
+
+{% block content %}
+<div class="ui right floated buttons">
+  {% if valid_transitions %}
+  <div class="ui floating dropdown button">
+    <i class="exchange icon"></i>
+    <span class="text">Сменить статус</span>
+    <div class="menu">
+      {% for ts in valid_transitions %}
+      <div class="item" data-status="{{ ts }}">{{ ts|status_label }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<h2 class="ui header">
+  {{ project.code }} — {{ project.name }}
+  <span class="ui label status-{{ project.status }}">{{ project.status|status_label }}</span>
+</h2>
+
+<div class="ui segment">
+  <div class="ui three column grid">
+    <div class="column">
+      <strong>Контрагент:</strong><br>{{ project.counterparty_name }}
+    </div>
+    <div class="column">
+      <strong>Начат:</strong><br>{{ project.started_on|fmt_date }}
+      {% if project.finished_on %}
+      <br><strong>Завершён:</strong> {{ project.finished_on|fmt_date }}
+      {% endif %}
+    </div>
+    <div class="column">
+      {% if project.description %}
+      <strong>Описание:</strong><br>{{ project.description }}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="ui grid">
+  <div class="ten wide column">
+    <h3 class="ui header">
+      Акты проекта
+      {% if project.status in ('active', 'on_hold') %}
+      <a href="/acts/new" class="ui right floated tiny primary button">Новый акт</a>
+      {% endif %}
+    </h3>
+    {% if acts %}
+    <table class="ui compact striped table">
+      <thead>
+        <tr><th>Номер</th><th>Дата</th><th>Период</th><th class="amount">Сумма</th><th>Статус</th></tr>
+      </thead>
+      <tbody>
+        {% for a in acts %}
+        <tr>
+          <td><a href="/acts/{{ a.act_id }}">{{ a.act_number }}</a></td>
+          <td>{{ a.act_date|fmt_date }}</td>
+          <td>{{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}</td>
+          <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
+          <td><span class="ui mini label status-{{ a.act_status }}">{{ a.act_status|status_label }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="ui info message">Нет актов в этом проекте</p>
+    {% endif %}
+
+    <h3 class="ui header">Журнал</h3>
+    {% if journal %}
+    <table class="ui compact striped table">
+      <thead>
+        <tr><th>Дата</th><th>Тип</th><th>Заголовок</th><th>Решение</th></tr>
+      </thead>
+      <tbody>
+        {% for j in journal %}
+        <tr>
+          <td>{{ j.entry_date|fmt_date }}</td>
+          <td>{{ j.kind }}</td>
+          <td>{{ j.title }}</td>
+          <td>{{ j.decision_made or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="ui info message">Нет записей в журнале</p>
+    {% endif %}
+    <a href="/projects/{{ project.id }}/journal/new" class="ui basic button"><i class="plus icon"></i> Запись в журнал</a>
+  </div>
+
+  <div class="six wide column">
+    <h3 class="ui header">История статусов</h3>
+    <table class="ui very basic compact table">
+      <thead><tr><th>Дата</th><th>Из</th><th>В</th><th>Причина</th></tr></thead>
+      <tbody>
+        {% for h in history %}
+        <tr>
+          <td>{{ h.changed_at|fmt_dt }}</td>
+          <td><span class="ui mini label status-{{ h.from_status or 'active' }}">{{ (h.from_status or '—')|status_label }}</span></td>
+          <td><span class="ui mini label status-{{ h.to_status }}">{{ h.to_status|status_label }}</span></td>
+          <td>{{ h.reason or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{# Status transition modal #}
+<div class="ui tiny modal" id="status-modal">
+  <div class="header">Сменить статус проекта</div>
+  <div class="content">
+    <form class="ui form" id="status-form" method="post" action="/projects/{{ project.id }}/status">
+      <input type="hidden" name="to_status" id="modal-to-status">
+      <div class="field">
+        <label>Причина (необязательно)</label>
+        <textarea name="reason" rows="2"></textarea>
+      </div>
+      <div class="field" id="finished-on-field" style="display:none">
+        <label>Дата завершения</label>
+        <input type="date" name="finished_on">
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <div class="ui cancel button">Отмена</div>
+    <div class="ui ok primary button">Подтвердить</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('.ui.dropdown.button').dropdown({
+  action: function(text, value, el) {
+    var status = el.data('status');
+    $('#modal-to-status').val(status);
+    if (status === 'completed') {
+      $('#finished-on-field').show();
+    } else {
+      $('#finished-on-field').hide();
+    }
+    $('#status-modal').modal('show');
+  }
+});
+$('#status-modal .ok.button').on('click', function() {
+  $('#status-form').submit();
+});
+</script>
+{% endblock %}

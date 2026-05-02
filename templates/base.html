@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Pacus{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.css">
+  <link rel="stylesheet" href="/static/pacus.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div class="ui left visible thin sidebar inverted vertical menu">
+    <a class="header item" href="/">
+      <i class="file alternate icon"></i> Pacus
+    </a>
+    <a class="item {% if request.path == '/' %}active{% endif %}" href="/">
+      <i class="home icon"></i> Главная
+    </a>
+    <a class="item {% if '/acts' in request.path %}active{% endif %}" href="/acts">
+      <i class="file text icon"></i> Акты
+    </a>
+    <a class="item {% if '/projects' in request.path %}active{% endif %}" href="/projects">
+      <i class="folder open icon"></i> Проекты
+    </a>
+    <a class="item" href="/artifacts/index.html">
+      <i class="print icon"></i> Печать
+    </a>
+    <div class="ui divider"></div>
+    <a class="item" href="/admin/regenerate" onclick="return confirm('Регенерировать все HTML?')">
+      <i class="refresh icon"></i> Обновить HTML
+    </a>
+  </div>
+  <div class="pusher">
+    <div class="ui main container" style="margin-left: 210px !important; padding: 24px;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="ui {{ category }} message">
+              <i class="close icon"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.3/dist/semantic.min.js"></script>
+  <script>
+    $('.message .close').on('click', function() { $(this).closest('.message').transition('fade'); });
+    $('.ui.dropdown').dropdown();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,12 @@
+.ui.left.sidebar { overflow-y: auto !important; }
+.status-draft { color: #92400e; background: #fef3c7; }
+.status-generated { color: #1e40af; background: #dbeafe; }
+.status-sent { color: #9a3412; background: #fce7f3; }
+.status-signed { color: #166534; background: #dcfce7; }
+.status-cancelled { color: #991b1b; background: #fee2e2; }
+.status-corrected { color: #5b21b6; background: #f3e8ff; }
+.status-active { color: #166534; background: #dcfce7; }
+.status-on_hold { color: #92400e; background: #fef3c7; }
+.status-completed { color: #1e40af; background: #dbeafe; }
+.ui.table tfoot th { font-weight: bold; }
+.amount { text-align: right; font-variant-numeric: tabular-nums; }

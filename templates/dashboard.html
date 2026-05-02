@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Pacus — Главная{% endblock %}
+
+{% block content %}
+<h2 class="ui header">Дашборд</h2>
+
+<div class="ui four statistics">
+  <div class="statistic">
+    <div class="value">{{ acts|length }}</div>
+    <div class="label">Актов</div>
+  </div>
+  <div class="statistic">
+    <div class="value">{{ acts|selectattr('status','eq','draft')|list|length }}</div>
+    <div class="label">Черновиков</div>
+  </div>
+  <div class="statistic">
+    <div class="value">{{ projects|length }}</div>
+    <div class="label">Проектов</div>
+  </div>
+  <div class="statistic">
+    <div class="value">{{ inbox_count }}</div>
+    <div class="label">Входящих</div>
+  </div>
+</div>
+
+<div class="ui divider"></div>
+
+<div class="ui grid">
+  <div class="eight wide column">
+    <h3 class="ui header">Последние акты
+      <a href="/acts/new" class="ui right floated tiny primary button">Новый акт</a>
+    </h3>
+    <table class="ui compact striped table">
+      <thead>
+        <tr><th>Номер</th><th>Контрагент</th><th>Дата</th><th>Сумма</th><th>Статус</th></tr>
+      </thead>
+      <tbody>
+        {% for a in acts[:10] %}
+        <tr>
+          <td><a href="/acts/{{ a.id }}">{{ a.act_number }}</a></td>
+          <td>{{ a.counterparty_name }}</td>
+          <td>{{ a.act_date|fmt_date }}</td>
+          <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
+          <td><span class="ui mini label status-{{ a.status }}">{{ a.status|status_label }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="eight wide column">
+    <h3 class="ui header">Проекты
+      <a href="/projects/new" class="ui right floated tiny primary button">Новый проект</a>
+    </h3>
+    <table class="ui compact striped table">
+      <thead>
+        <tr><th>Код</th><th>Название</th><th>Актов</th><th>Статус</th></tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td><a href="/projects/{{ p.id }}">{{ p.code }}</a></td>
+          <td>{{ p.name }}</td>
+          <td>{{ p.act_count }}</td>
+          <td><span class="ui mini label status-{{ p.status }}">{{ p.status|status_label }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

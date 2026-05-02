@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Акт {{ act.act_number }}{% endblock %}
+
+{% block content %}
+<div class="ui right floated buttons">
+  {% if act.status == 'draft' %}
+  <a href="/acts/{{ act.id }}/edit" class="ui button"><i class="edit icon"></i> Редактировать</a>
+  {% endif %}
+  {% if valid_transitions %}
+  <div class="ui floating dropdown button">
+    <i class="exchange icon"></i>
+    <span class="text">Сменить статус</span>
+    <div class="menu">
+      {% for ts in valid_transitions %}
+      <div class="item" data-status="{{ ts }}">{{ ts|status_label }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  <a href="/acts/{{ act.id }}/preview" class="ui button" target="_blank"><i class="print icon"></i> Превью</a>
+</div>
+
+<h2 class="ui header">
+  Акт {{ act.act_number }}
+  <span class="ui label status-{{ act.status }}">{{ act.status|status_label }}</span>
+</h2>
+
+<div class="ui segment">
+  <div class="ui four column grid">
+    <div class="column">
+      <strong>Контрагент:</strong><br>{{ act.counterparty_name }}
+    </div>
+    <div class="column">
+      <strong>Договор:</strong><br>{{ act.contract_number }} от {{ act.contract_date|fmt_date }}
+    </div>
+    <div class="column">
+      <strong>Дата акта:</strong><br>{{ act.act_date|fmt_date }}
+    </div>
+    <div class="column">
+      <strong>Период:</strong><br>{{ act.period_from|fmt_date }} — {{ act.period_to|fmt_date }}
+    </div>
+  </div>
+  {% if act.project_code %}
+  <div class="ui divider"></div>
+  <strong>Проект:</strong> <a href="/projects/{{ act.project_id }}">{{ act.project_code }} — {{ act.project_name }}</a>
+  {% endif %}
+</div>
+
+<h3 class="ui header">Позиции</h3>
+<table class="ui celled striped table">
+  <thead>
+    <tr>
+      <th class="collapsing">№</th>
+      <th>Описание</th>
+      <th class="collapsing">Ед.</th>
+      <th class="right aligned collapsing">Кол-во</th>
+      <th class="right aligned collapsing">Цена</th>
+      <th class="right aligned collapsing">Сумма</th>
+      <th class="right aligned collapsing">НДС</th>
+      <th class="right aligned collapsing">Сумма с НДС</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for it in items %}
+    <tr>
+      <td>{{ it.line_no }}</td>
+      <td>{{ it.description }}</td>
+      <td>{{ it.unit_code }}</td>
+      <td class="right aligned">{{ (it.quantity_milli / 1000)|round(3) }}</td>
+      <td class="right aligned amount">{{ it.price_minor|rubles }}</td>
+      <td class="right aligned amount">{{ it.amount_minor|rubles }}</td>
+      <td class="right aligned amount">{{ it.vat_amount_minor|rubles }}</td>
+      <td class="right aligned amount">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="5" class="right aligned">Итого</th>
+      <th class="right aligned amount">{{ act.total_amount_minor|rubles }}</th>
+      <th class="right aligned amount">{{ act.total_vat_amount_minor|rubles }}</th>
+      <th class="right aligned amount">{{ act.grand_total_amount_minor|rubles }}</th>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="ui two column grid">
+  <div class="column">
+    <h3 class="ui header">История статусов</h3>
+    <table class="ui very basic compact table">
+      <thead><tr><th>Дата</th><th>Из</th><th>В</th><th>Причина</th></tr></thead>
+      <tbody>
+        {% for h in history %}
+        <tr>
+          <td>{{ h.changed_at|fmt_dt }}</td>
+          <td><span class="ui mini label status-{{ h.from_status or 'draft' }}">{{ (h.from_status or '—')|status_label }}</span></td>
+          <td><span class="ui mini label status-{{ h.to_status }}">{{ h.to_status|status_label }}</span></td>
+          <td>{{ h.reason or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if revisions %}
+  <div class="column">
+    <h3 class="ui header">Ревизии</h3>
+    <table class="ui very basic compact table">
+      <thead><tr><th>№</th><th>Дата</th><th>HTML</th></tr></thead>
+      <tbody>
+        {% for r in revisions %}
+        <tr>
+          <td>rev-{{ r.revision_no }}</td>
+          <td>{{ r.created_at|fmt_dt }}</td>
+          <td>
+            {% if r.storage_path %}
+            <a href="/artifacts/{{ r.storage_path }}" target="_blank"><i class="external icon"></i></a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+{# Status transition modal #}
+<div class="ui tiny modal" id="status-modal">
+  <div class="header">Сменить статус</div>
+  <div class="content">
+    <form class="ui form" id="status-form" method="post" action="/acts/{{ act.id }}/status">
+      <input type="hidden" name="to_status" id="modal-to-status">
+      <div class="field">
+        <label>Причина (необязательно)</label>
+        <textarea name="reason" rows="2"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <div class="ui cancel button">Отмена</div>
+    <div class="ui ok primary button">Подтвердить</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('.ui.dropdown.button').dropdown({
+  action: function(text, value, el) {
+    var status = el.data('status');
+    $('#modal-to-status').val(status);
+    $('#status-modal').modal('show');
+  }
+});
+$('#status-modal .ok.button').on('click', function() {
+  $('#status-form').submit();
+});
+</script>
+{% endblock %}

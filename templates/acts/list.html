@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Pacus — Акты{% endblock %}
+
+{% block content %}
+<h2 class="ui header">
+  Акты
+  <a href="/acts/new" class="ui right floated primary button"><i class="plus icon"></i> Новый акт</a>
+</h2>
+
+<div class="ui secondary menu">
+  <a class="item {% if not current_filter %}active{% endif %}" href="/acts">Все</a>
+  {% for s in statuses %}
+  <a class="item {% if current_filter == s %}active{% endif %}" href="/acts?status={{ s }}">
+    <span class="ui mini label status-{{ s }}">{{ s|status_label }}</span>
+  </a>
+  {% endfor %}
+</div>
+
+<table class="ui celled striped table">
+  <thead>
+    <tr>
+      <th>Номер</th>
+      <th>Контрагент</th>
+      <th>Договор</th>
+      <th>Дата акта</th>
+      <th>Период</th>
+      <th class="amount">Сумма</th>
+      <th>Статус</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in acts %}
+    <tr>
+      <td><a href="/acts/{{ a.id }}">{{ a.act_number }}</a></td>
+      <td>{{ a.counterparty_name }}</td>
+      <td>{{ a.contract_number }}</td>
+      <td>{{ a.act_date|fmt_date }}</td>
+      <td>{{ a.period_from|fmt_date }} — {{ a.period_to|fmt_date }}</td>
+      <td class="amount">{{ a.grand_total_amount_minor|rubles }}</td>
+      <td><span class="ui mini label status-{{ a.status }}">{{ a.status|status_label }}</span></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colspan="5" class="right aligned">Итого актов: {{ acts|length }}</th>
+      <th class="amount">{{ acts|sum(attribute='grand_total_amount_minor')|rubles }}</th>
+      <th></th>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}

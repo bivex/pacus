@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Новый акт' if mode == 'create' else 'Редактирование акта' }}{% endblock %}
+
+{% block head %}
+<style>
+  .item-row .fields { margin-bottom: 0; }
+  #items-body td { vertical-align: top; padding: 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="ui header">{{ 'Новый акт' if mode == 'create' else 'Редактирование акта' }}</h2>
+
+<form class="ui form" method="post">
+  <div class="ui segment">
+    <h4 class="ui dividing header">Реквизиты</h4>
+    <div class="four fields">
+      <div class="field">
+        <label>Контрагент *</label>
+        <select class="ui search dropdown" name="counterparty_id" id="counterparty_id">
+          <option value="">Выберите...</option>
+          {% for cp in counterparties %}
+          <option value="{{ cp.id }}" {% if mode == 'edit' and act.counterparty_id == cp.id %}selected{% endif %}>{{ cp.full_name }}{% if cp.inn %} ({{ cp.inn }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label>Договор *</label>
+        <select class="ui dropdown" name="contract_id" id="contract_id">
+          <option value="">Выберите контрагента...</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Проект</label>
+        <select class="ui dropdown" name="project_id" id="project_id">
+          <option value="">— нет —</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Номер акта *</label>
+        <input type="text" name="act_number" value="{% if mode == 'edit' %}{{ act.act_number }}{% endif %}" placeholder="A-2026-005">
+      </div>
+    </div>
+    <div class="three fields">
+      <div class="field">
+        <label>Дата акта *</label>
+        <input type="date" name="act_date" value="{% if mode == 'edit' %}{{ act.act_date }}{% endif %}">
+      </div>
+      <div class="field">
+        <label>Период с *</label>
+        <input type="date" name="period_from" value="{% if mode == 'edit' %}{{ act.period_from }}{% endif %}">
+      </div>
+      <div class="field">
+        <label>Период по *</label>
+        <input type="date" name="period_to" value="{% if mode == 'edit' %}{{ act.period_to }}{% endif %}">
+      </div>
+    </div>
+  </div>
+
+  <h4 class="ui dividing header">Позиции</h4>
+  <table class="ui compact celled table" id="items-table">
+    <thead>
+      <tr>
+        <th>Описание</th>
+        <th class="collapsing">Ед.</th>
+        <th class="collapsing">Кол-во</th>
+        <th class="collapsing">Цена (₽)</th>
+        <th class="collapsing">НДС %</th>
+        <th class="collapsing">Сумма</th>
+        <th class="collapsing"></th>
+      </tr>
+    </thead>
+    <tbody id="items-body">
+      {% if mode == 'edit' %}
+      {% for it in items %}
+      <tr data-idx="{{ loop.index0 }}">
+        <td><input type="text" name="item_desc_{{ loop.index0 }}" value="{{ it.description }}"></td>
+        <td><input type="text" name="item_unit_{{ loop.index0 }}" value="{{ it.unit_code }}" style="width:60px"></td>
+        <td><input type="text" name="item_qty_{{ loop.index0 }}" value="{{ (it.quantity_milli / 1000)|round(3) }}" style="width:80px" class="calc-trigger"></td>
+        <td><input type="text" name="item_price_{{ loop.index0 }}" value="{{ (it.price_minor / 100)|round(2) }}" style="width:100px" class="calc-trigger"></td>
+        <td>
+          <select name="item_vat_{{ loop.index0 }}" class="calc-trigger" style="width:80px">
+            <option value="2000" {% if it.vat_rate_basis_points == 2000 %}selected{% endif %}>20%</option>
+            <option value="1000" {% if it.vat_rate_basis_points == 1000 %}selected{% endif %}>10%</option>
+            <option value="0" {% if it.vat_rate_basis_points == 0 %}selected{% endif %}>0%</option>
+          </select>
+        </td>
+        <td class="right aligned amount line-total">{{ (it.amount_minor + it.vat_amount_minor)|rubles }}</td>
+        <td><button type="button" class="ui red mini icon button remove-row"><i class="trash icon"></i></button></td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="5" class="right aligned">Итого с НДС</th>
+        <th class="right aligned amount" id="grand-total">0,00</th>
+        <th></th>
+      </tr>
+    </tfoot>
+  </table>
+  <button type="button" class="ui basic button" id="add-row"><i class="plus icon"></i> Добавить позицию</button>
+
+  <div class="ui divider"></div>
+  <button class="ui primary button" type="submit">{{ 'Создать акт' if mode == 'create' else 'Сохранить' }}</button>
+  {% if mode == 'edit' %}
+  <a href="/acts/{{ act.id }}" class="ui button">Отмена</a>
+  {% else %}
+  <a href="/acts" class="ui button">Отмена</a>
+  {% endif %}
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var rowIdx = {% if mode == 'edit' %}{{ items|length }}{% else %}0{% endif %};
+
+function rowHtml(i) {
+  return '<tr data-idx="' + i + '">' +
+    '<td><input type="text" name="item_desc_' + i + '" placeholder="Описание работ"></td>' +
+    '<td><input type="text" name="item_unit_' + i + '" value="JOB" style="width:60px"></td>' +
+    '<td><input type="text" name="item_qty_' + i + '" value="1" style="width:80px" class="calc-trigger"></td>' +
+    '<td><input type="text" name="item_price_' + i + '" value="0" style="width:100px" class="calc-trigger"></td>' +
+    '<td><select name="item_vat_' + i + '" class="calc-trigger" style="width:80px">' +
+      '<option value="2000">20%</option><option value="1000">10%</option><option value="0">0%</option></select></td>' +
+    '<td class="right aligned amount line-total">0,00</td>' +
+    '<td><button type="button" class="ui red mini icon button remove-row"><i class="trash icon"></i></button></td></tr>';
+}
+
+function recalc() {
+  var total = 0;
+  $('#items-body tr').each(function() {
+    var idx = $(this).data('idx');
+    if (idx === undefined) return;
+    var qty = parseFloat($('input[name=item_qty_' + idx + ']', this).val().replace(',', '.')) || 0;
+    var price = parseFloat($('input[name=item_price_' + idx + ']', this).val().replace(',', '.').replace(/\s/g, '')) || 0;
+    var vatBp = parseInt($('select[name=item_vat_' + idx + ']', this).val()) || 0;
+    var amount = Math.round(qty * price * 100);
+    var vat = Math.round(amount * vatBp / 10000);
+    var lineTotal = amount + vat;
+    $('.line-total', this).text(fmtRub(lineTotal));
+    total += lineTotal;
+  });
+  $('#grand-total').text(fmtRub(total));
+}
+
+function fmtRub(minor) {
+  var rub = Math.abs(minor) / 100;
+  var intPart = Math.floor(rub);
+  var frac = Math.round((rub - intPart) * 100);
+  var s = intPart.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return s + ',' + (frac < 10 ? '0' : '') + frac;
+}
+
+$('#add-row').on('click', function() {
+  $('#items-body').append(rowHtml(rowIdx));
+  rowIdx++;
+  recalc();
+});
+
+$('#items-body').on('click', '.remove-row', function() {
+  $(this).closest('tr').remove();
+  recalc();
+});
+
+$('#items-body').on('input change', '.calc-trigger', recalc);
+
+// Cascading dropdowns
+function loadContracts(cpId) {
+  $.getJSON('/api/contracts?counterparty_id=' + cpId, function(data) {
+    var sel = $('#contract_id');
+    sel.empty().append('<option value="">Выберите...</option>');
+    data.forEach(function(c) {
+      sel.append('<option value="' + c.id + '">' + c.contract_number + ' от ' + c.contract_date + '</option>');
+    });
+  });
+}
+
+function loadProjects(cpId) {
+  $.getJSON('/api/projects?counterparty_id=' + cpId, function(data) {
+    var sel = $('#project_id');
+    sel.empty().append('<option value="">— нет —</option>');
+    data.forEach(function(p) {
+      sel.append('<option value="' + p.id + '">' + p.code + ' — ' + p.name + '</option>');
+    });
+  });
+}
+
+$('#counterparty_id').on('change', function() {
+  var v = $(this).val();
+  if (v) { loadContracts(v); loadProjects(v); }
+});
+
+{% if mode == 'edit' and act.counterparty_id %}
+loadContracts('{{ act.counterparty_id }}');
+loadProjects('{{ act.counterparty_id }}');
+setTimeout(function() {
+  $('#contract_id').val('{{ act.contract_id }}');
+  {% if act.project_id %}$('#project_id').val('{{ act.project_id }}');{% endif %}
+}, 200);
+{% endif %}
+
+recalc();
+</script>
+{% endblock %}
